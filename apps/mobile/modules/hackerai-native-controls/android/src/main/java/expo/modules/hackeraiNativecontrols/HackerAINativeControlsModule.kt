@@ -21,7 +21,9 @@ import java.net.URI
 class HackerAINativeControlsModule : Module() {
   private var filePreviewPromise: Promise? = null
 
-  @Suppress("TooGenericExceptionCaught") // Clear the pending promise before rethrowing.
+  // Clear the pending promise before rethrowing. The definition only lists one entry per
+  // exported function, so its length is not complexity.
+  @Suppress("TooGenericExceptionCaught", "LongMethod")
   override fun definition() = ModuleDefinition {
     Name("HackerAINativeControls")
 
@@ -45,7 +47,9 @@ class HackerAINativeControlsModule : Module() {
       HackerAIDpopKeys.matches(privateKey, publicKey)
     }
 
-    AsyncFunction("signDpop") { key: ByteArray, input: ByteArray -> HackerAIDpopKeys.sign(key, input) }
+    AsyncFunction("signDpop") { key: ByteArray, input: ByteArray ->
+      HackerAIDpopKeys.sign(key, input)
+    }
 
     AsyncFunction("openFile") { uri: String, mimeType: String, promise: Promise ->
       check(filePreviewPromise == null) { "A document viewer is already open." }

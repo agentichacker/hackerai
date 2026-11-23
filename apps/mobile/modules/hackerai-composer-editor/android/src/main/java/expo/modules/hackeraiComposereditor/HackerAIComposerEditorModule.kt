@@ -96,7 +96,10 @@ class HackerAIComposerEditorModule : Module() {
       Prop("lineHeight") { view: HackerAIComposerEditorView, lineHeight: Double ->
         view.setLineHeight(lineHeight.toFloat())
       }
-      Prop("contentInsetVertical") { view: HackerAIComposerEditorView, contentInsetVertical: Double ->
+      Prop("contentInsetVertical") {
+          view: HackerAIComposerEditorView,
+          contentInsetVertical: Double
+        ->
         view.setContentInsetVertical(contentInsetVertical.toInt())
       }
 

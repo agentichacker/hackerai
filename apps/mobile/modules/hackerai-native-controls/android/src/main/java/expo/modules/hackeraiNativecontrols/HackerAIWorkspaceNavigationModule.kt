@@ -68,7 +68,9 @@ class HackerAIWorkspaceNavigationModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("HackerAIWorkspaceNavigation")
     View(HackerAIWorkspaceNavigationView::class) {
-      Prop("tabs") { view: HackerAIWorkspaceNavigationView, value: List<String> -> view.tabs = value }
+      Prop("tabs") { view: HackerAIWorkspaceNavigationView, value: List<String> ->
+        view.tabs = value
+      }
       Prop("selectedTab") { view: HackerAIWorkspaceNavigationView, value: String ->
         view.selectedTab = value
       }
@@ -79,7 +81,10 @@ class HackerAIWorkspaceNavigationModule : Module() {
       }
       Prop("rail") { view: HackerAIWorkspaceNavigationView, value: Boolean -> view.rail = value }
       Prop("dark") { view: HackerAIWorkspaceNavigationView, value: Boolean -> view.dark = value }
-      Prop("textScale") { view: HackerAIWorkspaceNavigationView, value: Float -> view.textScale = value }
+      Prop("textScale") { view: HackerAIWorkspaceNavigationView, value: Float ->
+        view.textScale =
+          value
+      }
       Prop("newEnabled") { view: HackerAIWorkspaceNavigationView, value: Boolean ->
         view.newEnabled = value
       }

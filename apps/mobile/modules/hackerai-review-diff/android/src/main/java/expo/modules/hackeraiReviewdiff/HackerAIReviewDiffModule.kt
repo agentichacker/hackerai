@@ -15,6 +15,8 @@ private val REVIEW_DIFF_EVENTS = arrayOf(
 )
 
 class HackerAIReviewDiffModule : Module() {
+  // The definition only lists one entry per prop and function, so its length is not complexity.
+  @Suppress("LongMethod")
   override fun definition() = ModuleDefinition {
     Name("HackerAIReviewDiffSurface")
 
@@ -34,7 +36,10 @@ class HackerAIReviewDiffModule : Module() {
       Prop("selectedRowIdsJson") { view: HackerAIReviewDiffView, selectedRowIdsJson: String ->
         view.setSelectedRowIdsJson(selectedRowIdsJson)
       }
-      Prop("collapsedCommentIdsJson") { view: HackerAIReviewDiffView, collapsedCommentIdsJson: String ->
+      Prop("collapsedCommentIdsJson") {
+          view: HackerAIReviewDiffView,
+          collapsedCommentIdsJson: String
+        ->
         view.setCollapsedCommentIdsJson(collapsedCommentIdsJson)
       }
       Prop("appearanceScheme") { view: HackerAIReviewDiffView, appearanceScheme: String ->
@@ -66,13 +71,21 @@ class HackerAIReviewDiffModule : Module() {
 
       Events(REVIEW_DIFF_EVENTS)
 
-      AsyncFunction("scrollToFile") { view: HackerAIReviewDiffView, fileId: String, animated: Boolean ->
+      AsyncFunction("scrollToFile") {
+          view: HackerAIReviewDiffView,
+          fileId: String,
+          animated: Boolean
+        ->
         view.scrollToFile(fileId, animated)
       }
       AsyncFunction("scrollToTop") { view: HackerAIReviewDiffView, animated: Boolean ->
         view.scrollToTop(animated)
       }
-      AsyncFunction("setRowsJson") { view: HackerAIReviewDiffView, rowsJson: String, resetKey: String ->
+      AsyncFunction("setRowsJson") {
+          view: HackerAIReviewDiffView,
+          rowsJson: String,
+          resetKey: String
+        ->
         view.setContentResetKey(resetKey)
         view.setRowsJson(rowsJson)
       }
