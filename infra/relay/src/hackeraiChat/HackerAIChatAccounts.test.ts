@@ -110,7 +110,9 @@ describe("HackerAIChatAccounts", () => {
   );
 
   it.effect("asks HackerAI Chat for the link with the shared secret", () => {
-    const hackeraiChat = fakeHackerAIChat({ link: { email: "user@example.test", plan: "premier", linkedAt: 1 } });
+    const hackeraiChat = fakeHackerAIChat({
+      link: { email: "user@example.test", plan: "premier", linkedAt: 1 },
+    });
     return Effect.gen(function* () {
       const accounts = yield* HackerAIChatAccounts.HackerAIChatAccounts;
       const link = yield* accounts.getLink({ userId: "user_1" });

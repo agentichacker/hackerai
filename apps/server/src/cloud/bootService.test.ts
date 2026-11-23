@@ -67,7 +67,9 @@ it("reads the served HackerAI home and log back out of a rendered unit, plist, o
   });
 
   expect(
-    BootService.bootServiceBaseDirOf(BootService.renderBootServiceUnit(plan("/home/theo/.hackerai"))),
+    BootService.bootServiceBaseDirOf(
+      BootService.renderBootServiceUnit(plan("/home/theo/.hackerai")),
+    ),
   ).toBe("/home/theo/.hackerai");
   expect(
     BootService.bootServiceBaseDirOf(
@@ -95,7 +97,10 @@ it("reads the served HackerAI home and log back out of a rendered unit, plist, o
   ).toBe("/Users/theo/a&b");
   expect(
     BootService.bootServiceBaseDirOf(
-      BootService.renderBootServiceTask(plan("C:\\Users\\theo\\HackerAI a&b\\"), windowsTaskOptions),
+      BootService.renderBootServiceTask(
+        plan("C:\\Users\\theo\\HackerAI a&b\\"),
+        windowsTaskOptions,
+      ),
     ),
   ).toBe("C:\\Users\\theo\\HackerAI a&b\\");
   expect(BootService.bootServiceBaseDirOf("[Service]\nExecStart=/x\n")).toBeUndefined();
@@ -263,7 +268,8 @@ const makeHarness = Effect.fn("test.make_boot_service_harness")(function* (
       if (command === control.interruptCommand) return yield* Effect.interrupt;
       invocations.push(input);
       timeouts.set(command, input.timeout);
-      if (command === "systemctl --user reset-failed hackerai.service") control.startLimitHit = false;
+      if (command === "systemctl --user reset-failed hackerai.service")
+        control.startLimitHit = false;
       const refusedStart = control.startLimitHit && command.startsWith("systemctl --user restart ");
       // `--no-block` only queues the job, so systemd reports success even when it refuses it.
       const failed =
@@ -1297,7 +1303,11 @@ process.disconnect();
       expect(commands).toEqual([]);
       expect((yield* other.status).otherBaseDir).toBe(baseDir);
 
-      const quoted = yield* makeService(undefined, "1.2.3", path.join(otherHome, 'HackerAI "Data"'));
+      const quoted = yield* makeService(
+        undefined,
+        "1.2.3",
+        path.join(otherHome, 'HackerAI "Data"'),
+      );
       commands.length = 0;
       const unloadable = yield* quoted.install().pipe(Effect.flip);
       expect(unloadable._tag).toBe("BootServiceBaseDirUnsupportedError");
@@ -1531,9 +1541,9 @@ process.disconnect();
       expect((yield* service.status).installed).toBe(false);
       expect(commands.some((command) => command.startsWith("systemctl "))).toBe(false);
       // launchd can take 90s to bootout; the runner's 60s default could let bootstrap race it.
-      expect(timeouts.get("launchctl bootout --wait gui/501/com.hackerai.hackerai.service")).toEqual(
-        Duration.seconds(120),
-      );
+      expect(
+        timeouts.get("launchctl bootout --wait gui/501/com.hackerai.hackerai.service"),
+      ).toEqual(Duration.seconds(120));
     }),
   );
 

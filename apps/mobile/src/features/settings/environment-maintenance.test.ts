@@ -123,7 +123,9 @@ describe("environment release checks", () => {
   it("reports failed checks instead of claiming the server is current", async () => {
     for (const status of [403, 429]) {
       vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status })));
-      await expect(findEnvironmentUpdate("1.0.0", signal, repository)).rejects.toThrow(String(status));
+      await expect(findEnvironmentUpdate("1.0.0", signal, repository)).rejects.toThrow(
+        String(status),
+      );
     }
     vi.stubGlobal(
       "fetch",
@@ -131,9 +133,9 @@ describe("environment release checks", () => {
         url.endsWith(".atom") ? feed("v1.0.0") : Response.json([{ tag_name: "v1.0.0" }]),
       ),
     );
-    await expect(findEnvironmentUpdate("1.0.0-nightly.20260923.1", signal, repository)).rejects.toThrow(
-      "No nightly release",
-    );
+    await expect(
+      findEnvironmentUpdate("1.0.0-nightly.20260923.1", signal, repository),
+    ).rejects.toThrow("No nightly release");
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json({ error: "invalid" })));
     await expect(findEnvironmentUpdate("1.0.0", signal, repository)).rejects.toThrow();
   });

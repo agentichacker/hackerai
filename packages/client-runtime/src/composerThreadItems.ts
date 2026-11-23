@@ -5,7 +5,11 @@ import {
   type ScopedThreadRef,
   type ThreadId,
 } from "@hackerai/contracts";
-import { foldSearchQuery, rankSearchItems, scoreThreadSearch } from "@hackerai/shared/paletteSearch";
+import {
+  foldSearchQuery,
+  rankSearchItems,
+  scoreThreadSearch,
+} from "@hackerai/shared/paletteSearch";
 
 import type { EnvironmentThreadShell } from "./state/models.ts";
 import { threadSearchSubject, type ThreadSearchShell } from "./state/threadSearch.ts";

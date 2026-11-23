@@ -35,20 +35,24 @@ describe("resolveHackerAIMcpToolPresentation", () => {
 
   it("matches OpenCode 2's per-thread server names, whose thread ids hold underscores", () => {
     expect(
-      resolveHackerAIMcpToolPresentation("hackerai-code-thread_opencode2-adapter_delegate_task")?.displayName,
+      resolveHackerAIMcpToolPresentation("hackerai-code-thread_opencode2-adapter_delegate_task")
+        ?.displayName,
     ).toBe("Delegate a child task");
-    expect(resolveHackerAIMcpToolPresentation("hackerai-code-thread_opencode2-adapter_not_a_tool")).toBeNull();
+    expect(
+      resolveHackerAIMcpToolPresentation("hackerai-code-thread_opencode2-adapter_not_a_tool"),
+    ).toBeNull();
   });
 });
 
 describe("resolveHackerAIMcpToolDefinition", () => {
   it("labels an action tool call as the action it ran", () => {
     expect(
-      resolveHackerAIMcpToolDefinition("mcp__hackerai-code__preview_act", { action: "type" })?.labels,
+      resolveHackerAIMcpToolDefinition("mcp__hackerai-code__preview_act", { action: "type" })
+        ?.labels,
     ).toEqual(resolveHackerAIMcpToolDefinition("preview_type")?.labels);
-    expect(resolveHackerAIMcpToolDefinition("hackerai_thread_transfer", { action: "fork" })?.displayName).toBe(
-      resolveHackerAIMcpToolDefinition("hackerai_thread_fork")?.displayName,
-    );
+    expect(
+      resolveHackerAIMcpToolDefinition("hackerai_thread_transfer", { action: "fork" })?.displayName,
+    ).toBe(resolveHackerAIMcpToolDefinition("hackerai_thread_fork")?.displayName);
     expect(resolveHackerAIMcpToolDefinition("preview_act", { action: "unknown" })?.labels[2]).toBe(
       "Used",
     );
@@ -57,14 +61,18 @@ describe("resolveHackerAIMcpToolDefinition", () => {
 
 describe("resolveHackerAIMcpSummaryAction", () => {
   it("summarizes an action tool by the action each call ran", () => {
-    expect(resolveHackerAIMcpSummaryAction("mcp__hackerai-code__hackerai_queue", { action: "list" })).toBe(
-      "queue-list",
+    expect(
+      resolveHackerAIMcpSummaryAction("mcp__hackerai-code__hackerai_queue", { action: "list" }),
+    ).toBe("queue-list");
+    expect(resolveHackerAIMcpSummaryAction("hackerai_queue", { action: "edit" })).toBe(
+      "queue-edit",
     );
-    expect(resolveHackerAIMcpSummaryAction("hackerai_queue", { action: "edit" })).toBe("queue-edit");
     expect(resolveHackerAIMcpSummaryAction("hackerai_thread_transfer", { action: "status" })).toBe(
       "thread-transfers",
     );
-    expect(resolveHackerAIMcpSummaryAction("hackerai_thread_configure", {})).toBe("thread-configuration");
+    expect(resolveHackerAIMcpSummaryAction("hackerai_thread_configure", {})).toBe(
+      "thread-configuration",
+    );
     expect(resolveHackerAIMcpSummaryAction("schedule_task", { scheduledTaskId: "task-1" })).toBe(
       "schedule-update",
     );

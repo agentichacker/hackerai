@@ -799,7 +799,10 @@ describe("project overrides at environment scope", () => {
         label: laptop,
         previous: expect.anything(),
         patch: {
-          projectSettingsOverrides: { [fleet]: { defaultThreadEnvMode: "local" }, [hackerai]: null },
+          projectSettingsOverrides: {
+            [fleet]: { defaultThreadEnvMode: "local" },
+            [hackerai]: null,
+          },
         },
       },
     ]);

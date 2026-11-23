@@ -7,7 +7,10 @@ import * as NodeVM from "node:vm";
 import { assert, describe, it } from "@effect/vitest";
 import { PULL_REQUEST_LINKING_INSTRUCTIONS } from "@hackerai/provider-core/server/runtimeInstructions";
 
-import { PI_HACKERAI_MCP_EXTENSION_SOURCE, PI_HACKERAI_SERVICE_TIER_COMMAND } from "./mcpExtensionSource.ts";
+import {
+  PI_HACKERAI_MCP_EXTENSION_SOURCE,
+  PI_HACKERAI_SERVICE_TIER_COMMAND,
+} from "./mcpExtensionSource.ts";
 import { loadMcpBridge } from "./mcpBridge.testkit.ts";
 
 type RequestHook = (
@@ -349,7 +352,9 @@ describe("Pi MCP tool exposure", () => {
         const start = bridge.handlers.get("session_start");
         await start!({ systemPrompt: "Pi system prompt" }, discoveryContext);
       }
-      const publicTools = bridge.tools.filter((tool) => tool.name.startsWith("mcp__hackerai-code__"));
+      const publicTools = bridge.tools.filter((tool) =>
+        tool.name.startsWith("mcp__hackerai-code__"),
+      );
       assert.equal(publicTools.length, 4);
       assert.isTrue(
         publicTools.every((tool) => tool.exposure === undefined || tool.exposure === "direct"),
@@ -360,7 +365,9 @@ describe("Pi MCP tool exposure", () => {
           .map((tool) => tool.exposure),
         mode === "legacy Pi" ? [] : ["model-only", "model-only", "model-only", "model-only"],
       );
-      const tool = bridge.tools.find((tool) => tool.name === "mcp__hackerai-code__preview_snapshot");
+      const tool = bridge.tools.find(
+        (tool) => tool.name === "mcp__hackerai-code__preview_snapshot",
+      );
       assert.isDefined(tool);
       const controller = new AbortController();
       const result = await tool!.execute("call-1", { depth: 2 }, controller.signal);
@@ -504,7 +511,10 @@ describe("Pi tool discovery permissions", () => {
       );
     }
     assert.equal(confirmations.length, 0);
-    const result = await toolCall!({ toolName: "mcp__hackerai-code__preview_snapshot", input: {} }, ctx);
+    const result = await toolCall!(
+      { toolName: "mcp__hackerai-code__preview_snapshot", input: {} },
+      ctx,
+    );
     assert.equal(result?.block, true);
     assert.deepEqual(confirmations, ["Allow mcp__hackerai-code__preview_snapshot?"]);
 

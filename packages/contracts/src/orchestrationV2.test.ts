@@ -666,7 +666,11 @@ describe("withMessageSenderNote", () => {
     senderThreadId: ThreadId.make("t"),
   } as const;
   it.each([
-    [thread, "Hi", '[HackerAI: the agent in HackerAI thread "t" sent this message, not the user.]\n\nHi'],
+    [
+      thread,
+      "Hi",
+      '[HackerAI: the agent in HackerAI thread "t" sent this message, not the user.]\n\nHi',
+    ],
     [thread, "", '[HackerAI: the agent in HackerAI thread "t" sent this message, not the user.]'],
     [thread, " /git/review staged", " /git/review staged"],
     [thread, "$deploy ship it", "$deploy ship it"],

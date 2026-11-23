@@ -151,7 +151,11 @@ describe("resolveWorkEntryToolPresentation", () => {
       resolveWorkEntryToolPresentation({
         label: "Tool call complete",
         toolTitle: "Inspect the current page",
-        toolData: { server: "hackerai-code", tool: "preview_snapshot", result: { title: "Example" } },
+        toolData: {
+          server: "hackerai-code",
+          tool: "preview_snapshot",
+          result: { title: "Example" },
+        },
       }),
     ).toEqual({ displayName: "Taking a snapshot of the preview page", icon: "browser" });
   });

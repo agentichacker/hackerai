@@ -246,7 +246,9 @@ export function makeDevice(options: DeviceOptions) {
     nodes,
     center,
     open: (path: string) =>
-      evaluate(`__hackeraiBehavior.open(${JSON.stringify(`${SCHEME}://${path.replace(/^\//, "")}`)})`),
+      evaluate(
+        `__hackeraiBehavior.open(${JSON.stringify(`${SCHEME}://${path.replace(/^\//, "")}`)})`,
+      ),
     openUrl: (url: string) => evaluate(`__hackeraiBehavior.open(${JSON.stringify(url)})`),
     /** Reloads JS, then opens Home; the app restores the last thread, and split layouts keep one open. */
     reload: Effect.fn("device.reload")(function* (ready: (state: ProbeState) => boolean) {

@@ -282,7 +282,9 @@ const connectDeviceRevokeCommand = Command.make("revoke", {
 );
 
 const connectDeviceCommand = Command.make("connect-device").pipe(
-  Command.withDescription("Approve and revoke devices that reach this host through HackerAI Connect."),
+  Command.withDescription(
+    "Approve and revoke devices that reach this host through HackerAI Connect.",
+  ),
   Command.withSubcommands([
     connectDeviceListCommand,
     connectDeviceApproveCommand,

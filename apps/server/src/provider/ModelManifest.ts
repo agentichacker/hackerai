@@ -217,7 +217,12 @@ export const make = Effect.gen(function* () {
   // Remote manifest refresh is opt-in so a fork does not depend on another repository's raw URL.
   const manifestUrl = yield* Config.option(Config.String(MODEL_MANIFEST_URL_ENV)).pipe(
     Effect.orElseSucceed(() => Option.none<string>()),
-    Effect.map((url) => url.pipe(Option.map((value) => value.trim()), Option.getOrElse(() => ""))),
+    Effect.map((url) =>
+      url.pipe(
+        Option.map((value) => value.trim()),
+        Option.getOrElse(() => ""),
+      ),
+    ),
   );
 
   const cachePath = path.join(config.stateDir, "model-manifest.json");

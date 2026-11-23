@@ -521,11 +521,14 @@ export const HACKERAI_CONNECT_TROUBLESHOOTING_SECTIONS = [
   "the-host-runs-an-older-hackerai",
   "hackerai-connect-returned-an-error",
 ] as const;
-export type HackerAIConnectTroubleshootingSection = (typeof HACKERAI_CONNECT_TROUBLESHOOTING_SECTIONS)[number];
+export type HackerAIConnectTroubleshootingSection =
+  (typeof HACKERAI_CONNECT_TROUBLESHOOTING_SECTIONS)[number];
 
 /** Clients, the CLI, and server logs link here as "More info". */
-export function hackeraiConnectTroubleshootingUrl(section: HackerAIConnectTroubleshootingSection): string {
-  return `https://github.com/your-org/hackerai/blob/main/docs/user/hackerai-connect-troubleshooting.md#${section}`;
+export function hackeraiConnectTroubleshootingUrl(
+  section: HackerAIConnectTroubleshootingSection,
+): string {
+  return `https://github.com/agentichacker/hackerai/blob/main/docs/user/hackerai-connect-troubleshooting.md#${section}`;
 }
 
 const REACHABILITY_SECTION = {
@@ -534,8 +537,8 @@ const REACHABILITY_SECTION = {
   connector_not_ready: "the-hosts-tunnel-is-offline",
   no_connector: "the-hosts-tunnel-is-offline",
   edge_unreachable: "port-7844-is-blocked-on-the-host",
-  origin_unreachable: "the-tunnel-works-but-hackerai-code-does-not-answer",
-  unexpected_response: "the-tunnel-works-but-hackerai-code-does-not-answer",
+  origin_unreachable: "the-tunnel-works-but-hackerai-does-not-answer",
+  unexpected_response: "the-tunnel-works-but-hackerai-does-not-answer",
   dns_failed: "the-hackerai-connect-address-does-not-resolve-or-answer",
   timeout: "the-hackerai-connect-address-does-not-resolve-or-answer",
 } satisfies Record<EnvironmentConnectReachabilityCause, HackerAIConnectTroubleshootingSection>;

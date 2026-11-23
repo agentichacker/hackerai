@@ -62,9 +62,12 @@ export function CliCommandSettingsRow() {
   const installed = state.installedPath !== null;
   const description = state.shadowedBy
     ? resolve(
-        msg("Another hackerai at {path} runs first in a new terminal. Remove it to use HackerAI's.", {
-          path: state.shadowedBy,
-        }),
+        msg(
+          "Another hackerai at {path} runs first in a new terminal. Remove it to use HackerAI's.",
+          {
+            path: state.shadowedBy,
+          },
+        ),
       )
     : !installed
       ? resolve(msg("Run HackerAI's CLI as `hackerai` from any terminal."))

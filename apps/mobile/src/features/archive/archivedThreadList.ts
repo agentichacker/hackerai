@@ -7,7 +7,11 @@ import {
 } from "@hackerai/client-runtime/state/shell";
 import { threadSearchSubject } from "@hackerai/client-runtime/state/thread-search";
 import type { EnvironmentId } from "@hackerai/contracts";
-import { foldSearchQuery, rankSearchItems, scoreThreadSearch } from "@hackerai/shared/paletteSearch";
+import {
+  foldSearchQuery,
+  rankSearchItems,
+  scoreThreadSearch,
+} from "@hackerai/shared/paletteSearch";
 import * as Arr from "effect/Array";
 import * as Order from "effect/Order";
 

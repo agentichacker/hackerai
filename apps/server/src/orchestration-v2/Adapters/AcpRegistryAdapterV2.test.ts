@@ -217,7 +217,9 @@ const openClaudeReplaySession = Effect.fn("openClaudeReplaySession")(function* (
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const childProcessSpawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-  const replayDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-lifecycle-" });
+  const replayDir = yield* fileSystem.makeTempDirectoryScoped({
+    prefix: "hackerai-claude-lifecycle-",
+  });
   const scriptPath = yield* path.fromFileUrl(
     new URL("../../../scripts/acp-replay-agent.ts", import.meta.url),
   );
@@ -1613,10 +1615,13 @@ describe("AcpRegistryAdapterV2", () => {
         new: stdio("Bearer opened-token"),
         load: stdio("Bearer rotated-token"),
       });
-      assert.deepEqual(yield* sessionMcpServers({ agentId: "gemini" }, { HACKERAI_ACP_MCP_HTTP: "1" }), {
-        new: stdio("Bearer opened-token"),
-        load: stdio("Bearer rotated-token"),
-      });
+      assert.deepEqual(
+        yield* sessionMcpServers({ agentId: "gemini" }, { HACKERAI_ACP_MCP_HTTP: "1" }),
+        {
+          new: stdio("Bearer opened-token"),
+          load: stdio("Bearer rotated-token"),
+        },
+      );
       // Command Code cannot start the stdio bridge on Windows: it spawns MCP commands through
       // cmd.exe, which splits the unquoted HackerAI executable path at the space.
       const commandCode = {
@@ -1738,7 +1743,11 @@ describe("AcpRegistryAdapterV2", () => {
               ordinal === 1
                 ? hackeraiAcpPromptWithInstructions({
                     prompt: "test prompt",
-                    state: { interactionMode: "default", hasHackerAIMcp: false, hasDeviceTools: false },
+                    state: {
+                      interactionMode: "default",
+                      hasHackerAIMcp: false,
+                      hasDeviceTools: false,
+                    },
                   })
                 : "test prompt",
           },
@@ -3256,7 +3265,8 @@ describe("AcpRegistryAdapterV2", () => {
               ...update("grandchild", {
                 sessionUpdate: "terminal_update",
                 terminalId: "nested-terminal",
-                command: "/usr/bin/node /srv/hackerai/bin.ts acp-mcp-call orchestrator_capabilities {}",
+                command:
+                  "/usr/bin/node /srv/hackerai/bin.ts acp-mcp-call orchestrator_capabilities {}",
               }),
               label: "nested-output",
             },
@@ -3832,7 +3842,9 @@ describe("AcpRegistryAdapterV2", () => {
       const childProcessSpawner = yield* ChildProcessSpawner.ChildProcessSpawner;
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const replayDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-copilot-lost-" });
+      const replayDir = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-copilot-lost-",
+      });
       const scriptPath = yield* path.fromFileUrl(
         new URL("../../../scripts/acp-replay-agent.ts", import.meta.url),
       );

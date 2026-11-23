@@ -19,7 +19,11 @@ import {
   threadSearchMatchKey,
   threadSearchSubject,
 } from "@hackerai/client-runtime/state/thread-search";
-import { foldSearchQuery, rankSearchItems, scoreThreadSearch } from "@hackerai/shared/paletteSearch";
+import {
+  foldSearchQuery,
+  rankSearchItems,
+  scoreThreadSearch,
+} from "@hackerai/shared/paletteSearch";
 import {
   createInboxReturnTracker,
   isThreadWorking,

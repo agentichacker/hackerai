@@ -1671,7 +1671,9 @@ const BuildEnvConfig = Config.all({
   signed: Config.Boolean("HACKERAI_DESKTOP_SIGNED").pipe(Config.withDefault(false)),
   verbose: Config.Boolean("HACKERAI_DESKTOP_VERBOSE").pipe(Config.withDefault(false)),
   mockUpdates: Config.Boolean("HACKERAI_DESKTOP_MOCK_UPDATES").pipe(Config.withDefault(false)),
-  mockUpdateServerPort: Config.String("HACKERAI_DESKTOP_MOCK_UPDATE_SERVER_PORT").pipe(Config.option),
+  mockUpdateServerPort: Config.String("HACKERAI_DESKTOP_MOCK_UPDATE_SERVER_PORT").pipe(
+    Config.option,
+  ),
   wslRuntime: Config.String("HACKERAI_DESKTOP_WSL_RUNTIME").pipe(Config.option),
 });
 
@@ -1943,9 +1945,9 @@ const rustTargetIsInstalled = Effect.fn("rustTargetIsInstalled")(function* (targ
 export const preflightLinuxDesktopBuild = Effect.fn("preflightLinuxDesktopBuild")(function* (
   arch: typeof BuildArch.Type = "x64",
 ) {
-  const reuseResourceMonitor = yield* Config.Boolean("HACKERAI_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
-    Config.withDefault(false),
-  );
+  const reuseResourceMonitor = yield* Config.Boolean(
+    "HACKERAI_DESKTOP_REUSE_RESOURCE_MONITOR",
+  ).pipe(Config.withDefault(false));
   const reuseCaptureHelpers = yield* Config.Boolean(
     "HACKERAI_DESKTOP_REUSE_LINUX_CAPTURE_HELPERS",
   ).pipe(Config.withDefault(false));
@@ -1984,9 +1986,9 @@ export const preflightMacDesktopBuild = Effect.fn("preflightMacDesktopBuild")(fu
   arch: typeof BuildArch.Type,
 ) {
   const rustTargets = resolveResourceMonitorRustTargets("mac", arch);
-  const reuseResourceMonitor = yield* Config.Boolean("HACKERAI_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
-    Config.withDefault(false),
-  );
+  const reuseResourceMonitor = yield* Config.Boolean(
+    "HACKERAI_DESKTOP_REUSE_RESOURCE_MONITOR",
+  ).pipe(Config.withDefault(false));
   const checks = yield* Effect.all(
     {
       rust: reuseResourceMonitor
@@ -2232,7 +2234,9 @@ export const copyDirectoryPreservingSymlinks = Effect.fn("copyDirectoryPreservin
 export const verifyPackagedBundleIsSelfContained = Effect.fn("verifyPackagedBundleIsSelfContained")(
   function* (input: { readonly asarPath: string; readonly verbose: boolean }) {
     // A PR preview's bundle is untrusted and this job may hold signing secrets, so never run it.
-    if (yield* Config.Boolean("HACKERAI_DESKTOP_UNTRUSTED_BUNDLE").pipe(Config.withDefault(false))) {
+    if (
+      yield* Config.Boolean("HACKERAI_DESKTOP_UNTRUSTED_BUNDLE").pipe(Config.withDefault(false))
+    ) {
       yield* Effect.log(
         "[desktop-artifact] Skipped the bundle self-check for an untrusted bundle.",
       );
@@ -2386,9 +2390,9 @@ export const stageResourceMonitor = Effect.fn("stageResourceMonitor")(function* 
   const manifestPath = path.join(input.repoRoot, "native/resource-monitor/Cargo.toml");
   const executableName = resourceMonitorExecutableName(input.platform);
   const rustTargets = resolveResourceMonitorRustTargets(input.platform, input.arch);
-  const reuseResourceMonitor = yield* Config.Boolean("HACKERAI_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
-    Config.withDefault(false),
-  );
+  const reuseResourceMonitor = yield* Config.Boolean(
+    "HACKERAI_DESKTOP_REUSE_RESOURCE_MONITOR",
+  ).pipe(Config.withDefault(false));
   const builtBinaries: string[] = [];
 
   for (const rustTarget of rustTargets) {
@@ -2985,7 +2989,9 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
     if (buildConfig.publish) {
       buildConfig.appImage = {
         artifactName:
-          updateChannel === "nightly" ? "HackerAI-Nightly-${arch}.${ext}" : "HackerAI-${arch}.${ext}",
+          updateChannel === "nightly"
+            ? "HackerAI-Nightly-${arch}.${ext}"
+            : "HackerAI-${arch}.${ext}",
       };
     }
     buildConfig.deb = {
@@ -3352,66 +3358,66 @@ export const verifyWindowsPrimaryFffNativeLoad = Effect.fn(
   );
 });
 
-export const verifyWindowsPackagedAppBoot = Effect.fn("desktopArtifact.verifyWindowsPackagedAppBoot")(
-  function* (input: {
-    readonly packagedAppDir: string;
-    readonly appExecutableName: string;
-    readonly verbose: boolean;
-  }) {
-    const hostPlatform = yield* HostProcess.Platform;
-    const fs = yield* FileSystem.FileSystem;
-    const path = yield* Path.Path;
-    const executablePath = path.join(input.packagedAppDir, input.appExecutableName);
-    const executableStat = yield* fs.stat(executablePath).pipe(Effect.orElseSucceed(() => null));
-    if (executableStat?.type !== "File") {
-      return yield* new WindowsPackagedAppBootError({
-        executablePath,
-        exitCode: -1,
-        output: "The unpacked application does not contain its expected primary executable.",
-      });
-    }
-    if (hostPlatform !== "win32") {
-      yield* Effect.log(`[desktop-artifact] Skipped the app boot probe on a ${hostPlatform} host.`);
-      return;
-    }
-    const env = { ...process.env };
-    delete env.ELECTRON_RUN_AS_NODE;
-    delete env.NODE_OPTIONS;
+export const verifyWindowsPackagedAppBoot = Effect.fn(
+  "desktopArtifact.verifyWindowsPackagedAppBoot",
+)(function* (input: {
+  readonly packagedAppDir: string;
+  readonly appExecutableName: string;
+  readonly verbose: boolean;
+}) {
+  const hostPlatform = yield* HostProcess.Platform;
+  const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const executablePath = path.join(input.packagedAppDir, input.appExecutableName);
+  const executableStat = yield* fs.stat(executablePath).pipe(Effect.orElseSucceed(() => null));
+  if (executableStat?.type !== "File") {
+    return yield* new WindowsPackagedAppBootError({
+      executablePath,
+      exitCode: -1,
+      output: "The unpacked application does not contain its expected primary executable.",
+    });
+  }
+  if (hostPlatform !== "win32") {
+    yield* Effect.log(`[desktop-artifact] Skipped the app boot probe on a ${hostPlatform} host.`);
+    return;
+  }
+  const env = { ...process.env };
+  delete env.ELECTRON_RUN_AS_NODE;
+  delete env.NODE_OPTIONS;
 
-    yield* runCommand(
-      ChildProcess.make(executablePath, ["--version"], {
-        cwd: input.packagedAppDir,
-        stdout: "pipe",
-        stderr: "pipe",
-        env,
-      }),
-      {
-        label: "Windows packaged app boot probe (app.exe --version)",
-        verbose: input.verbose,
-      },
-    ).pipe(
-      Effect.timeout(WINDOWS_PACKAGED_APP_BOOT_TIMEOUT),
-      Effect.catchTags({
-        TimeoutError: () =>
-          Effect.fail(
-            new WindowsPackagedAppBootError({
-              executablePath,
-              exitCode: -1,
-              output: `The app did not finish starting within ${Duration.toSeconds(WINDOWS_PACKAGED_APP_BOOT_TIMEOUT)}s.`,
-            }),
-          ),
-        BuildCommandFailedError: (error) =>
-          Effect.fail(
-            new WindowsPackagedAppBootError({
-              executablePath,
-              exitCode: error.exitCode,
-              output: `${error.stderrTail ?? ""}${error.stdoutTail ?? ""}`.trim(),
-            }),
-          ),
-      }),
-    );
-  },
-);
+  yield* runCommand(
+    ChildProcess.make(executablePath, ["--version"], {
+      cwd: input.packagedAppDir,
+      stdout: "pipe",
+      stderr: "pipe",
+      env,
+    }),
+    {
+      label: "Windows packaged app boot probe (app.exe --version)",
+      verbose: input.verbose,
+    },
+  ).pipe(
+    Effect.timeout(WINDOWS_PACKAGED_APP_BOOT_TIMEOUT),
+    Effect.catchTags({
+      TimeoutError: () =>
+        Effect.fail(
+          new WindowsPackagedAppBootError({
+            executablePath,
+            exitCode: -1,
+            output: `The app did not finish starting within ${Duration.toSeconds(WINDOWS_PACKAGED_APP_BOOT_TIMEOUT)}s.`,
+          }),
+        ),
+      BuildCommandFailedError: (error) =>
+        Effect.fail(
+          new WindowsPackagedAppBootError({
+            executablePath,
+            exitCode: error.exitCode,
+            output: `${error.stderrTail ?? ""}${error.stdoutTail ?? ""}`.trim(),
+          }),
+        ),
+    }),
+  );
+});
 
 /**
  * The fff probe needs a host of the target's platform and architecture; the
@@ -4318,7 +4324,9 @@ const buildDesktopArtifactCli = Command.make("build-desktop-artifact", {
     Flag.optional,
   ),
   arch: Flag.Literals("arch", BuildArch.literals).pipe(
-    Flag.withDescription("Build arch, for example arm64/x64/universal (env: HACKERAI_DESKTOP_ARCH)."),
+    Flag.withDescription(
+      "Build arch, for example arm64/x64/universal (env: HACKERAI_DESKTOP_ARCH).",
+    ),
     Flag.optional,
   ),
   buildVersion: Flag.String("build-version").pipe(
@@ -4357,7 +4365,9 @@ const buildDesktopArtifactCli = Command.make("build-desktop-artifact", {
   ),
   mockUpdateServerPort: Flag.Int("mock-update-server-port").pipe(
     Flag.withSchema(Schema.Int.check(Schema.isBetween({ minimum: 1, maximum: 65535 }))),
-    Flag.withDescription("Mock update server port (env: HACKERAI_DESKTOP_MOCK_UPDATE_SERVER_PORT)."),
+    Flag.withDescription(
+      "Mock update server port (env: HACKERAI_DESKTOP_MOCK_UPDATE_SERVER_PORT).",
+    ),
     Flag.optional,
   ),
   wslRuntime: Flag.String("wsl-runtime").pipe(

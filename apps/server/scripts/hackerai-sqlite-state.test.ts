@@ -51,7 +51,9 @@ it.layer(NodeServices.layer)("hackerai-sqlite-state", (it) => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-sqlite-state-exec-" });
+        const baseDir = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-sqlite-state-exec-",
+        });
         yield* createFixtureDatabase(baseDir);
 
         const mutation = yield* runSqliteState({

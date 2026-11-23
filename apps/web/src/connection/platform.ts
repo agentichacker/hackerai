@@ -22,7 +22,10 @@ import {
 } from "@hackerai/client-runtime/connection";
 import { bootstrapRemoteBearerSession } from "@hackerai/client-runtime/authorization";
 import { fetchRemoteEnvironmentDescriptor } from "@hackerai/client-runtime/environment";
-import { managedRelayAccountChanges, managedRelaySessionAtom } from "@hackerai/client-runtime/relay";
+import {
+  managedRelayAccountChanges,
+  managedRelaySessionAtom,
+} from "@hackerai/client-runtime/relay";
 import { EnvironmentRpcRequestObserver } from "@hackerai/client-runtime/rpc";
 import {
   AuthStandardClientScopes,

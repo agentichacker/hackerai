@@ -206,7 +206,9 @@ describe("isSourceInstalled", () => {
         Effect.gen(function* () {
           const fileSystem = yield* FileSystem.FileSystem;
           const path = yield* Path.Path;
-          const home = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-sources-xdg-" });
+          const home = yield* fileSystem.makeTempDirectoryScoped({
+            prefix: "hackerai-sources-xdg-",
+          });
           const xdgConfigHome =
             configHome === "relocated" || configHome === "chrome-override"
               ? path.join(home, "config")
@@ -669,7 +671,9 @@ describe("Firefox Snap profiles", () => {
     run(
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
-        const home = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-firefox-snap-" });
+        const home = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-firefox-snap-",
+        });
         const context = yield* sourcePathContext.pipe(
           Effect.provideService(HostProcess.Environment, { HOME: home }),
           Effect.provideService(HostProcess.Platform, "linux"),

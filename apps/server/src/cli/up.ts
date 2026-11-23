@@ -483,7 +483,10 @@ export const upCommand = Command.make("up", {
   ),
   Command.withExamples([
     { command: "hackerai up", description: "Choose remote access." },
-    { command: "hackerai up --connect", description: "Turn on HackerAI Connect. Keep other settings." },
+    {
+      command: "hackerai up --connect",
+      description: "Turn on HackerAI Connect. Keep other settings.",
+    },
     { command: "hackerai up --lan", description: "Allow LAN access with pairing codes." },
     { command: "hackerai up --no-lan", description: "Stop LAN access." },
     { command: "hackerai up --yes", description: "Take the defaults with no questions." },
@@ -496,7 +499,9 @@ export const connectCommand = Command.make("connect", {
   ...projectLocationFlags,
   headless: headlessFlag,
 }).pipe(
-  Command.withDescription("Set up HackerAI Connect for this machine. Same as `hackerai up --connect`."),
+  Command.withDescription(
+    "Set up HackerAI Connect for this machine. Same as `hackerai up --connect`.",
+  ),
   Command.withHandler((flags) =>
     runCloudCommand(
       flags,

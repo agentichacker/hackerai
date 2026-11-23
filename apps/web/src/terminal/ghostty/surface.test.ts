@@ -970,7 +970,9 @@ describe("terminalLinkAtPositionWithRange", () => {
       isWrapContinuation: false,
       wrapsToNext: false,
     };
-    expect(terminalLinkAtPositionWithRange([unwrittenTail], 0, 8)?.text).toBe("https://hackerai.sh");
+    expect(terminalLinkAtPositionWithRange([unwrittenTail], 0, 8)?.text).toBe(
+      "https://hackerai.sh",
+    );
   });
 });
 

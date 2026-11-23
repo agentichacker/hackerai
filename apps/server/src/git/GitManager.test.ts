@@ -4787,7 +4787,10 @@ it.layer(layerGitManagerTest)("GitManager", (it) => {
         yield* runGit(repoDir, ["push", "origin", "refs/heads/upstream/release"]);
 
         const driver = yield* GitVcsDriver.GitVcsDriver;
-        const worktreePath = NodePath.join(yield* makeTempDir("hackerai-git-worktrees-"), "feature");
+        const worktreePath = NodePath.join(
+          yield* makeTempDir("hackerai-git-worktrees-"),
+          "feature",
+        );
         yield* driver.createWorktree({
           cwd: repoDir,
           path: worktreePath,
@@ -4863,7 +4866,10 @@ it.layer(layerGitManagerTest)("GitManager", (it) => {
         ]);
 
         const driver = yield* GitVcsDriver.GitVcsDriver;
-        const worktreePath = NodePath.join(yield* makeTempDir("hackerai-git-worktrees-"), "feature");
+        const worktreePath = NodePath.join(
+          yield* makeTempDir("hackerai-git-worktrees-"),
+          "feature",
+        );
         yield* driver.createWorktree({
           cwd: repoDir,
           path: worktreePath,
@@ -5682,7 +5688,8 @@ it.layer(layerGitManagerTest)("GitManager", (it) => {
           "keep me\n",
         );
         expect(
-          (yield* runGit(repoDir, ["config", "branch.feature/pr-safe.hackerai-pull-request"])).stdout,
+          (yield* runGit(repoDir, ["config", "branch.feature/pr-safe.hackerai-pull-request"]))
+            .stdout,
         ).toBe("https://github.com/your-org/codething-mvp/pull/91\n");
       }),
   );

@@ -63,10 +63,22 @@ export function SubscriptionUsage(props: SubscriptionUsageProps, environment: Wi
     moreInApp: {} as Record<string, string>,
   };
   const providers = props.providers ?? [
-    // oxlint-disable-next-line hackerai/no-untranslated-copy -- widget fallback until the app publishes translated text
-    { name: "Codex", detail: "Open HackerAI to connect", windows: [], expiresAt: 0, totalWindows: 0 },
-    // oxlint-disable-next-line hackerai/no-untranslated-copy -- widget fallback until the app publishes translated text
-    { name: "Claude", detail: "Open HackerAI to connect", windows: [], expiresAt: 0, totalWindows: 0 },
+    {
+      name: "Codex",
+      // oxlint-disable-next-line hackerai/no-untranslated-copy -- widget fallback until the app publishes translated text
+      detail: "Open HackerAI to connect",
+      windows: [],
+      expiresAt: 0,
+      totalWindows: 0,
+    },
+    {
+      name: "Claude",
+      // oxlint-disable-next-line hackerai/no-untranslated-copy -- widget fallback until the app publishes translated text
+      detail: "Open HackerAI to connect",
+      windows: [],
+      expiresAt: 0,
+      totalWindows: 0,
+    },
   ];
 
   const pad = 14;

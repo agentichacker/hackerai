@@ -450,7 +450,8 @@ const toolResult = (id: string, content: unknown): Block => ({
 });
 const texts = (content: typeof Content.Type) =>
   typeof content === "string" ? [content] : content.flatMap((block) => block.text ?? []);
-const isHackerAIName = (name: string) => name.startsWith(HACKERAI_PREFIX) || name.startsWith("mcp__hackerai_code__");
+const isHackerAIName = (name: string) =>
+  name.startsWith(HACKERAI_PREFIX) || name.startsWith("mcp__hackerai_code__");
 const hasTool = (tools: ReadonlyArray<ApiTool>, name: string) =>
   tools.some((tool) => tool.name === name);
 
@@ -651,7 +652,10 @@ export const hackeraiSubagentContext = async (model: Model, device = true, brows
  */
 const hackeraiContextReport = (model: Model) => {
   const size = (chars: number) => `${chars} chars (~${Math.round(chars / 4)} tokens)`;
-  const descriptions = hackeraiTools.reduce((sum, tool) => sum + valueText(tool.description).length, 0);
+  const descriptions = hackeraiTools.reduce(
+    (sum, tool) => sum + valueText(tool.description).length,
+    0,
+  );
   const schemas = JSON.stringify(hackeraiTools).length;
   return [
     `- HackerAI context: system text ${size((isCodex(model) ? JSON.stringify(buildCodexAdditionalContext({ model }, { browser: true, device: true })) : hackeraiSystemAppend(model)).length)}`,
@@ -1191,7 +1195,9 @@ export const buildMessages = (sample: Sample) => {
           ? "withBackgroundWait"
           : undefined;
       if (call.result === "default" && builder && !sample.priorResults.has(call)) {
-        throw new Error(`${testCase.id}: prior ${call.tool} needs HackerAI's result; run ${builder}.`);
+        throw new Error(
+          `${testCase.id}: prior ${call.tool} needs HackerAI's result; run ${builder}.`,
+        );
       }
       return { ...call, id: `toolu_prior_${nextId++}`, name: tool.name, tool, prior: call };
     });
@@ -2247,7 +2253,12 @@ export const answerToolCall = Effect.fn("evaluateMcpToolUse.answerToolCall")(fun
     const result = yield* sample.devices.call(name, input, failure);
     return result.isError ? failed(result.text) : toolResult(call.id, result.text);
   }
-  if (sample.backgroundWait && isHackerAIName(call.name) && name === "hackerai_background_wait" && fromWorld) {
+  if (
+    sample.backgroundWait &&
+    isHackerAIName(call.name) &&
+    name === "hackerai_background_wait" &&
+    fromWorld
+  ) {
     const result = yield* sample.backgroundWait(input);
     return result.isError ? failed(result.text) : toolResult(call.id, result.text);
   }

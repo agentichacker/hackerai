@@ -10,11 +10,16 @@ export interface HackerAIToolSentence {
   readonly changeRequest?: string;
 }
 
-export function hackeraiToolSentence(labels: ReadonlyArray<string>): HackerAIToolSentence | undefined {
+export function hackeraiToolSentence(
+  labels: ReadonlyArray<string>,
+): HackerAIToolSentence | undefined {
   return HACKERAI_TOOL_SENTENCES.get(labels.join("\n"));
 }
 
-const HACKERAI_TOOL_SENTENCES: ReadonlyMap<string, HackerAIToolSentence> = new Map<string, HackerAIToolSentence>([
+const HACKERAI_TOOL_SENTENCES: ReadonlyMap<string, HackerAIToolSentence> = new Map<
+  string,
+  HackerAIToolSentence
+>([
   [
     "Link\nLinking\nLinked\na pull request",
     {

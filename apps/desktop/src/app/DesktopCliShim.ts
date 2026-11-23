@@ -34,8 +34,8 @@ export const renderCliShim = (input: {
 }) => {
   const { target } = input;
   if (target.kind === "windows") {
-    const utf8 = [target.executable, target.entry, input.shimPath, input.hackeraiHome].some((value) =>
-      [...value].some((character) => character.codePointAt(0)! > 0x7f),
+    const utf8 = [target.executable, target.entry, input.shimPath, input.hackeraiHome].some(
+      (value) => [...value].some((character) => character.codePointAt(0)! > 0x7f),
     );
     const restore = utf8 ? ["chcp %hackerai_codepage% >nul"] : [];
     return [
@@ -160,9 +160,10 @@ export const install = Effect.gen(function* () {
     return Option.some(shimPath);
   }).pipe(
     Effect.catchCause((cause) =>
-      logWarning("could not install hackerai launcher", { shimPath, cause: Cause.pretty(cause) }).pipe(
-        Effect.as(Option.none<string>()),
-      ),
+      logWarning("could not install hackerai launcher", {
+        shimPath,
+        cause: Cause.pretty(cause),
+      }).pipe(Effect.as(Option.none<string>())),
     ),
     Effect.withSpan("desktop.cliShim.install"),
   );

@@ -338,7 +338,8 @@ export function subscriptionUsageTimeline(snapshot: SubscriptionUsageSnapshot, n
         provider.windows.length > 0 && provider.expiresAt <= date
           ? {
               ...provider,
-              detail: snapshot.text?.refresh ?? m(msg("Open {app} to refresh", { app: "HackerAI" })),
+              detail:
+                snapshot.text?.refresh ?? m(msg("Open {app} to refresh", { app: "HackerAI" })),
               windows: [],
               totalWindows: 0,
             }

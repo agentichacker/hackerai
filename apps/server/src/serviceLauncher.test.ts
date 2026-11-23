@@ -532,7 +532,9 @@ setInterval(() => {}, 1_000);
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-xdg-" });
+        const root = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-service-launcher-xdg-",
+        });
         const home = path.join(root, "home");
         const managerUnitDir = path.join(home, ".config", "systemd", "user");
         const unitPath = path.join(managerUnitDir, "hackerai.service");
@@ -635,7 +637,9 @@ setInterval(() => {}, 1_000);
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-migrate-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-service-launcher-migrate-",
+      });
       const statePath = path.join(root, "runtime", "service-state.json");
       const activeVersion = "0.0.43-nightly.20260919.1962+build.1";
       const versionDir = path.join(root, "runtime", "versions", activeVersion);
@@ -668,7 +672,9 @@ process.exit(0);
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const parent = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-space-" });
+      const parent = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-service-launcher-space-",
+      });
       const root = path.join(parent, "HackerAI data ");
       const versionDir = path.join(root, "runtime", "versions", "1.0.0");
       yield* writeFakeRuntime(
@@ -698,7 +704,9 @@ process.exit(0);
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-reject-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-service-launcher-reject-",
+      });
       const statePath = path.join(root, "runtime", "service-state.json");
       yield* writeFakeRuntime(
         fs,
@@ -740,7 +748,9 @@ process.exit(0);
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-layout-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-service-launcher-layout-",
+      });
       const statePath = path.join(root, "runtime", "service-state.json");
       const contents = '{ "protocol": 2, "activeVersion": "1.0.0" }';
       yield* fs.makeDirectory(path.dirname(statePath), { recursive: true });
@@ -761,7 +771,9 @@ process.exit(0);
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-restart-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-service-launcher-restart-",
+      });
       const statePath = path.join(root, "runtime", "service-state.json");
       const restartPending = path.join(root, "runtime", SERVICE_RESTART_PENDING_FILE);
       yield* writeFakeRuntime(
@@ -806,7 +818,9 @@ process.exit(0);
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-repoint-" });
+        const root = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-service-launcher-repoint-",
+        });
         const statePath = path.join(root, "runtime", "service-state.json");
         yield* writeFakeRuntime(
           fs,
@@ -896,75 +910,77 @@ process.exit(0);
       }),
   );
 
-  it.effect("waits without exiting and restarts once the other owner releases the HackerAI home", () =>
-    Effect.gen(function* () {
-      const fs = yield* FileSystem.FileSystem;
-      const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-reclaim-" });
-      const statePath = path.join(root, "runtime", "service-state.json");
-      const ownerPath = path.join(root, "userdata", "server-owner.sqlite");
-      yield* fs.makeDirectory(path.dirname(ownerPath), { recursive: true });
-      yield* writeFakeRuntime(
-        fs,
-        path,
-        path.join(root, "runtime", "versions", "1.0.0"),
-        [
-          `const db = new (require("node:sqlite").DatabaseSync)(${JSON.stringify(ownerPath)});`,
-          `try { db.exec("PRAGMA busy_timeout = 0; BEGIN EXCLUSIVE;"); }`,
-          `catch { process.exit(${SERVER_EXIT_CODE_STATE_DIR_OWNED}); }`,
-          'process.send("owner");',
-          "setInterval(() => {}, 1_000);",
-        ].join("\n"),
-      );
-      yield* Effect.promise(() =>
-        writeServiceState(statePath, {
-          protocol: SERVICE_LAUNCHER_PROTOCOL,
-          activeVersion: "1.0.0",
-        }),
-      );
-      using otherOwner = new NodeSqlite.DatabaseSync(ownerPath);
-      otherOwner.exec("BEGIN EXCLUSIVE;");
-      const refused = Promise.withResolvers<void>();
-      const owned = Promise.withResolvers<void>();
-      yield* Effect.acquireRelease(
-        Effect.sync(() =>
-          vi.spyOn(process.stderr, "write").mockImplementation((chunk) => {
-            if (String(chunk).includes("owns this HackerAI home")) refused.resolve();
-            return true;
+  it.effect(
+    "waits without exiting and restarts once the other owner releases the HackerAI home",
+    () =>
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
+        const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-reclaim-" });
+        const statePath = path.join(root, "runtime", "service-state.json");
+        const ownerPath = path.join(root, "userdata", "server-owner.sqlite");
+        yield* fs.makeDirectory(path.dirname(ownerPath), { recursive: true });
+        yield* writeFakeRuntime(
+          fs,
+          path,
+          path.join(root, "runtime", "versions", "1.0.0"),
+          [
+            `const db = new (require("node:sqlite").DatabaseSync)(${JSON.stringify(ownerPath)});`,
+            `try { db.exec("PRAGMA busy_timeout = 0; BEGIN EXCLUSIVE;"); }`,
+            `catch { process.exit(${SERVER_EXIT_CODE_STATE_DIR_OWNED}); }`,
+            'process.send("owner");',
+            "setInterval(() => {}, 1_000);",
+          ].join("\n"),
+        );
+        yield* Effect.promise(() =>
+          writeServiceState(statePath, {
+            protocol: SERVICE_LAUNCHER_PROTOCOL,
+            activeVersion: "1.0.0",
           }),
-        ),
-        (spy) => Effect.sync(() => spy.mockRestore()),
-      );
-      yield* Effect.acquireRelease(
-        Effect.sync(() => {
-          spawnHook.current = (child) => child.once("message", () => owned.resolve());
-        }),
-        () =>
+        );
+        using otherOwner = new NodeSqlite.DatabaseSync(ownerPath);
+        otherOwner.exec("BEGIN EXCLUSIVE;");
+        const refused = Promise.withResolvers<void>();
+        const owned = Promise.withResolvers<void>();
+        yield* Effect.acquireRelease(
+          Effect.sync(() =>
+            vi.spyOn(process.stderr, "write").mockImplementation((chunk) => {
+              if (String(chunk).includes("owns this HackerAI home")) refused.resolve();
+              return true;
+            }),
+          ),
+          (spy) => Effect.sync(() => spy.mockRestore()),
+        );
+        yield* Effect.acquireRelease(
           Effect.sync(() => {
-            spawnHook.current = undefined;
+            spawnHook.current = (child) => child.once("message", () => owned.resolve());
           }),
-      );
-      const spawnsBefore = spawnedChildren.length;
-      const launcher = new Launcher(
-        root,
-        yield* Effect.promise(() => readServiceState(statePath)),
-        { stateDirOwnerPollMs: 10 },
-      );
-      let completed = false;
-      const running = launcher.run().finally(() => {
-        completed = true;
-      });
-      yield* Effect.promise(() => refused.promise);
-      assert.isFalse(completed);
-      // An idle launcher must not make an SSH launch wait for a server it is not starting.
-      assert.isFalse(yield* Effect.promise(() => serviceLauncherIsServing(root)));
-      otherOwner.close();
-      yield* Effect.promise(() => owned.promise);
-      assert.isTrue(yield* Effect.promise(() => serviceLauncherIsServing(root)));
-      yield* Effect.promise(() => launcher.stop("SIGTERM"));
-      yield* Effect.promise(() => running);
-      assert.strictEqual(spawnedChildren.length - spawnsBefore, 2);
-    }),
+          () =>
+            Effect.sync(() => {
+              spawnHook.current = undefined;
+            }),
+        );
+        const spawnsBefore = spawnedChildren.length;
+        const launcher = new Launcher(
+          root,
+          yield* Effect.promise(() => readServiceState(statePath)),
+          { stateDirOwnerPollMs: 10 },
+        );
+        let completed = false;
+        const running = launcher.run().finally(() => {
+          completed = true;
+        });
+        yield* Effect.promise(() => refused.promise);
+        assert.isFalse(completed);
+        // An idle launcher must not make an SSH launch wait for a server it is not starting.
+        assert.isFalse(yield* Effect.promise(() => serviceLauncherIsServing(root)));
+        otherOwner.close();
+        yield* Effect.promise(() => owned.promise);
+        assert.isTrue(yield* Effect.promise(() => serviceLauncherIsServing(root)));
+        yield* Effect.promise(() => launcher.stop("SIGTERM"));
+        yield* Effect.promise(() => running);
+        assert.strictEqual(spawnedChildren.length - spawnsBefore, 2);
+      }),
   );
 
   it.effect(
@@ -973,7 +989,9 @@ process.exit(0);
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-reclaim-update-" });
+        const root = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-service-reclaim-update-",
+        });
         const statePath = path.join(root, "runtime", "service-state.json");
         const ownerPath = path.join(root, "userdata", "server-owner.sqlite");
         const databasePath = path.join(root, "userdata", "state.sqlite");
@@ -1315,7 +1333,9 @@ if (context.update?.status === "pending") {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-rollback-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-service-launcher-rollback-",
+      });
       const statePath = path.join(root, "runtime", "service-state.json");
       const databasePath = path.join(root, "userdata", "state.sqlite");
       const observationsPath = path.join(root, "environment-observations.jsonl");
@@ -1486,7 +1506,9 @@ if (context.update?.status === "pending") {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-online-" });
+        const root = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-service-launcher-online-",
+        });
         const statePath = path.join(root, "runtime", "service-state.json");
         const databasePath = path.join(root, "userdata", "state.sqlite");
         const observationsPath = path.join(root, "observations.json");
@@ -1603,7 +1625,9 @@ if (context.update?.status === "pending") {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-space-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-service-launcher-space-",
+      });
       const statePath = path.join(root, "runtime", "service-state.json");
       const databasePath = path.join(root, "userdata", "state.sqlite");
       const replyPath = path.join(root, "rejection.txt");
@@ -1911,7 +1935,9 @@ setInterval(() => {}, 1_000);
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-orphan-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-service-launcher-orphan-",
+      });
       const databasePath = path.join(root, "state.sqlite");
       yield* writeSparseFile(databasePath, 10 * 1024 ** 3);
       const backupRoot = path.join(root, "runtime", "db-backup");
@@ -1940,7 +1966,9 @@ setInterval(() => {}, 1_000);
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-service-launcher-blocker-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-service-launcher-blocker-",
+      });
       const databasePath = path.join(root, "state.sqlite");
       yield* writeSparseFile(databasePath, 10 * 1024 ** 3);
       const check = (free: number, cloneable: boolean) =>

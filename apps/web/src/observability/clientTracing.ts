@@ -5,7 +5,10 @@ import * as Scope from "effect/Scope";
 import { HttpClient } from "effect/http";
 import { OtlpExporter, OtlpSerialization, OtlpTracer } from "effect/observability";
 
-import { settleAsyncResult, squashAtomCommandFailure } from "@hackerai/client-runtime/state/runtime";
+import {
+  settleAsyncResult,
+  squashAtomCommandFailure,
+} from "@hackerai/client-runtime/state/runtime";
 import { safeErrorLogAttributes } from "@hackerai/client-runtime/errors";
 import { resolvePrimaryEnvironmentHttpUrl } from "../environments/primary";
 import { releaseChannelOf, releaseResourceAttributes } from "@hackerai/shared/releaseResource";

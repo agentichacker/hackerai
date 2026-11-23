@@ -1,4 +1,8 @@
-import { type EnvironmentId, HACKERAI_PROJECT_FILE_NAME, type HackerAIProjectFile } from "@hackerai/contracts";
+import {
+  type EnvironmentId,
+  HACKERAI_PROJECT_FILE_NAME,
+  type HackerAIProjectFile,
+} from "@hackerai/contracts";
 import { parseHackerAIProjectFile } from "@hackerai/shared/hackeraiProjectFile";
 import { useAtomValue } from "@effect/atom-react";
 import { AsyncResult, Atom } from "effect/reactivity";

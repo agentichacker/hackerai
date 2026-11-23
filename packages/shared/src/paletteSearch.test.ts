@@ -200,7 +200,9 @@ describe("scoreThreadSearch", () => {
 
   it("finds a branch pasted with the app's worktree prefix", () => {
     const subject = thread("Cmd+K search", { branch: "hackerai/cmdk-search-v2" });
-    expect(scoreThreadSearch(foldSearchQuery("hackerai/cmdk-search-v2"), subject, NOW)).not.toBeNull();
+    expect(
+      scoreThreadSearch(foldSearchQuery("hackerai/cmdk-search-v2"), subject, NOW),
+    ).not.toBeNull();
     expect(scoreThreadSearch(foldSearchQuery("hackerai/cmdk"), subject, NOW)).not.toBeNull();
   });
 
@@ -218,7 +220,11 @@ describe("scoreThreadSearch", () => {
     ).toBe("HackerAI Connect Tunnel Lifecycle Review");
     expect(
       rankTitles("hackerai", [
-        thread("Fix sidebar lag", { ...busy, projectTitle: "hackerai", branch: "hackerai/sidebar" }),
+        thread("Fix sidebar lag", {
+          ...busy,
+          projectTitle: "hackerai",
+          branch: "hackerai/sidebar",
+        }),
         thread("HackerAI vs Gemini Token Volume", { projectTitle: "slophouse" }),
       ])[0],
     ).toBe("HackerAI vs Gemini Token Volume");
@@ -341,7 +347,11 @@ describe("scoreThreadSearch beyond Latin text and titles", () => {
     expect(scoreThreadSearch("hackerai", flat, NOW)).toBeNull();
     expect(scoreThreadSearch("hackerai connect", flat, NOW)).toBeNull();
     expect(scoreThreadSearch("abcd1234", flat, NOW)).not.toBeNull();
-    for (const query of ["hackerai-abcd", "hackerai-abcd1234 connect", "connect hackerai-abcd1234"]) {
+    for (const query of [
+      "hackerai-abcd",
+      "hackerai-abcd1234 connect",
+      "connect hackerai-abcd1234",
+    ]) {
       expect(scoreThreadSearch(query, { ...flat, projectTitle: "connect" }, NOW)).not.toBeNull();
     }
   });
@@ -371,7 +381,9 @@ describe("scoreThreadSearch beyond Latin text and titles", () => {
     // Short words before a mere prefix are a coincidence.
     expect(rankTitles("inth", [thread("Show skill names in thread overview")])).toEqual([]);
     expect(rankTitles("tos", [thread("Move Client State to Server")])).toEqual([]);
-    expect(rankTitles("hackeraico", [thread("HackerAI vs Gemini")])).toEqual(["HackerAI vs Gemini"]);
+    expect(rankTitles("hackeraico", [thread("HackerAI vs Gemini")])).toEqual([
+      "HackerAI vs Gemini",
+    ]);
     expect(rankTitles('"sidebar lag"', [thread("Fix sidebar lag")])).toEqual(["Fix sidebar lag"]);
     // A pasted query with a separate accent mark matches the composed title.
     expect(rankTitles("cafe\u0301", [thread("Café menu")])).toEqual(["Café menu"]);
@@ -460,7 +472,10 @@ describe("scoreThreadSearch with heavy use and loose input", () => {
       pullRequests: [
         {
           number: 22889,
-          references: ["your-org/hackerai#22889", "https://github.com/your-org/hackerai/pull/22889"],
+          references: [
+            "your-org/hackerai#22889",
+            "https://github.com/your-org/hackerai/pull/22889",
+          ],
         },
       ],
     });

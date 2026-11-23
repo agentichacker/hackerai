@@ -100,9 +100,8 @@ export const resolveServerInstallation = Effect.gen(function* () {
       baseDir: linked[1] || "/",
     } satisfies ServerInstallation;
   }
-  const match = /^(.*)\/lib\/node_modules\/@hackerai\/cli\/(?:dist\/bin\.mjs|bin\/hackerai\.mjs)$/.exec(
-    entry,
-  );
+  const match =
+    /^(.*)\/lib\/node_modules\/@hackerai\/cli\/(?:dist\/bin\.mjs|bin\/hackerai\.mjs)$/.exec(entry);
   if (!match) {
     const runner = detectCliRunner(entry);
     return runner === null

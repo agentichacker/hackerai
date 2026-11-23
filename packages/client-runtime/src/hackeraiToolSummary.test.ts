@@ -26,7 +26,9 @@ describe("summarizeHackerAIToolCalls", () => {
         output,
       ),
     );
-    expect(summarizeHackerAIToolCalls("thread-send", calls).label).toBe("Sent 1 message to 1 thread");
+    expect(summarizeHackerAIToolCalls("thread-send", calls).label).toBe(
+      "Sent 1 message to 1 thread",
+    );
     expect(
       summarizeHackerAIToolCalls("thread-send", [
         completed({ toolName: "hackerai_thread_send", args: { threadId: "input-thread" } }),
@@ -49,12 +51,16 @@ describe("summarizeHackerAIToolCalls", () => {
       "Unlinked 3 pull requests",
     );
     const uncounted = completed({ states: ["merged"] }, { isError: false });
-    expect(summarizeHackerAIToolCalls("unlink-pr", [uncounted]).label).toBe("Unlinked pull requests");
+    expect(summarizeHackerAIToolCalls("unlink-pr", [uncounted]).label).toBe(
+      "Unlinked pull requests",
+    );
   });
 
   it("tells opened and merged pull requests from found ones and auto-merges", () => {
     const create = (created: boolean) => completed({ title: "t" }, { number: 1, created });
-    expect(summarizeHackerAIToolCalls("create-pr", [create(true)]).label).toBe("Opened 1 pull request");
+    expect(summarizeHackerAIToolCalls("create-pr", [create(true)]).label).toBe(
+      "Opened 1 pull request",
+    );
     expect(summarizeHackerAIToolCalls("create-pr", [create(false)]).label).toBe(
       "Found 1 open pull request",
     );
@@ -74,9 +80,9 @@ describe("summarizeHackerAIToolCalls", () => {
     expect(
       summarizeHackerAIToolCalls("merge-pr", [merge(true, "merged"), merge(true, "open")]).label,
     ).toBe("Merged 1 pull request, queued 1");
-    expect(summarizeHackerAIToolCalls("review-pr", [completed({ verdict: "approve" }, {})]).label).toBe(
-      "Reviewed 1 pull request",
-    );
+    expect(
+      summarizeHackerAIToolCalls("review-pr", [completed({ verdict: "approve" }, {})]).label,
+    ).toBe("Reviewed 1 pull request");
   });
 
   it("counts the checks a CI rerun restarted, and the ones the host refused", () => {
@@ -127,7 +133,10 @@ describe("summarizeHackerAIToolCalls", () => {
   it("does not confuse a child's failure or wait timeout with failure of the orchestration call", () => {
     const failedChild = { taskId: "task-1", status: "failed", summary: "command not found" };
     expect(
-      summarizeHackerAIToolCalls("delegate", [completed({}, failedChild), completed({}, failedChild)]),
+      summarizeHackerAIToolCalls("delegate", [
+        completed({}, failedChild),
+        completed({}, failedChild),
+      ]),
     ).toEqual({
       label: "Delegated 1 task",
       failedCount: 0,

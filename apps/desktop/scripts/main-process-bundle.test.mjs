@@ -10,7 +10,9 @@ import { assert, it } from "vite-plus/test";
 import desktopConfig from "../vite.config.ts";
 
 it("keeps lazy Linux imports and worker bundles from executing desktop startup twice", async () => {
-  const directory = await NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "hackerai-desktop-bundle-"));
+  const directory = await NodeFSP.mkdtemp(
+    NodePath.join(NodeOS.tmpdir(), "hackerai-desktop-bundle-"),
+  );
   try {
     const workerEntries = [
       "src/electron/WindowsForegroundFocusWorker.ts",

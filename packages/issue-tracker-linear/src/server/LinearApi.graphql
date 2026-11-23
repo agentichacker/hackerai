@@ -107,7 +107,12 @@ query HackerAIViewer {
   }
 }
 
-query HackerAIIssues($first: Int!, $after: String, $filter: IssueFilter!, $orderBy: PaginationOrderBy!) {
+query HackerAIIssues(
+  $first: Int!
+  $after: String
+  $filter: IssueFilter!
+  $orderBy: PaginationOrderBy!
+) {
   issues(first: $first, after: $after, filter: $filter, orderBy: $orderBy) {
     nodes {
       ...LinearIssue

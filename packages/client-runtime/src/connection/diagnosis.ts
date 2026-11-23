@@ -217,10 +217,14 @@ function steps(
     case "not_linked":
       return [
         resolve(
-          msg("Check that this device is signed in to the same HackerAI Connect account as the host."),
+          msg(
+            "Check that this device is signed in to the same HackerAI Connect account as the host.",
+          ),
         ),
         resolve(
-          msg("On {host}, open Settings > Sharing & access and turn HackerAI Connect on.", { host }),
+          msg("On {host}, open Settings > Sharing & access and turn HackerAI Connect on.", {
+            host,
+          }),
         ),
       ];
     case "tunnel_pending":
@@ -233,7 +237,9 @@ function steps(
     case "tunnel_not_enabled":
       return [
         resolve(
-          msg("On {host}, open Settings > Sharing & access and turn HackerAI Connect on.", { host }),
+          msg("On {host}, open Settings > Sharing & access and turn HackerAI Connect on.", {
+            host,
+          }),
         ),
       ];
     case "released":
@@ -274,7 +280,9 @@ function steps(
         ? [resolve(msg("Sign out of HackerAI Connect and sign in again."))]
         : [
             resolve(msg("Check this device's internet connection.")),
-            resolve(msg("A VPN, firewall, or ad blocker on this device can block HackerAI Connect.")),
+            resolve(
+              msg("A VPN, firewall, or ad blocker on this device can block HackerAI Connect."),
+            ),
           ];
     case "tunnel":
       return failure?.reason === "network" ||
@@ -310,7 +318,7 @@ function helpSection(
     case "offline":
       return "this-device-cant-reach-hackerai-connect";
     case "outdated":
-      return "the-host-runs-an-older-hackerai-code";
+      return "the-host-runs-an-older-hackerai";
     case "clock_skew":
       return "the-clock-is-off";
     case "session_pending":
@@ -326,7 +334,7 @@ function helpSection(
       return "the-hosts-tunnel-is-offline";
     case "origin_unreachable":
     case "invalid_response":
-      return "the-tunnel-works-but-hackerai-code-does-not-answer";
+      return "the-tunnel-works-but-hackerai-does-not-answer";
     case "dns":
     case "tls":
     case "refused":
@@ -348,11 +356,13 @@ function helpSection(
         ? "sign-in-account-or-link-problems"
         : "this-device-cant-reach-hackerai-connect";
     case "tunnel":
-      return onThisDevice ? "this-device-cant-reach-hackerai-connect" : "the-hosts-tunnel-is-offline";
+      return onThisDevice
+        ? "this-device-cant-reach-hackerai-connect"
+        : "the-hosts-tunnel-is-offline";
     case "server":
       return failure?.reason === "authentication" || failure?.reason === "permission"
         ? "sign-in-account-or-link-problems"
-        : "the-tunnel-works-but-hackerai-code-does-not-answer";
+        : "the-tunnel-works-but-hackerai-does-not-answer";
   }
 }
 

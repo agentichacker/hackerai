@@ -389,7 +389,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-desktop-build-version-" });
+        const root = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-desktop-build-version-",
+        });
         const packageJson = `{
           "name": "desktop-version-fixture",
           "version": "0.0.42",
@@ -466,7 +468,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-manifest-restore-failure-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-manifest-restore-failure-",
+      });
       yield* fs.writeFileString(
         path.join(root, "package.json"),
         `{
@@ -566,7 +570,11 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         undefined,
       );
 
-      assert.nestedPropertyVal(linux, "linux.desktop.entry.StartupWMClass", "com.hackerai.HackerAI");
+      assert.nestedPropertyVal(
+        linux,
+        "linux.desktop.entry.StartupWMClass",
+        "com.hackerai.HackerAI",
+      );
     }),
   );
 
@@ -829,7 +837,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-windows-preflight-" });
+        const tempDir = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-windows-preflight-",
+        });
         const pythonPath = path.join(tempDir, "python.exe");
         yield* fs.writeFileString(pythonPath, "python");
         const spawner = Layer.succeed(
@@ -871,7 +881,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-windows-preflight-" });
+        const tempDir = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-windows-preflight-",
+        });
         const pythonPath = path.join(tempDir, "python.exe");
         yield* fs.writeFileString(pythonPath, "python");
         const commands: string[] = [];
@@ -913,7 +925,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-python2-preflight-" });
+        const tempDir = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-python2-preflight-",
+        });
         const pythonPath = path.join(tempDir, "python");
         yield* fs.writeFileString(pythonPath, "python2");
         const spawner = Layer.succeed(
@@ -1486,7 +1500,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
     Effect.scoped(
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
-        const stageDistDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-mac-payload-test-" });
+        const stageDistDir = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-mac-payload-test-",
+        });
         const error = yield* validateMacPackagedPayload({ stageDistDir }).pipe(Effect.flip);
 
         assert.instanceOf(error, MacPackagedAppMissingError);
@@ -1498,7 +1514,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
     Effect.scoped(
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
-        const stageDistDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-mac-payload-test-" });
+        const stageDistDir = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-mac-payload-test-",
+        });
         yield* fs.makeDirectory(`${stageDistDir}/mac-arm64/HackerAI.app/Contents/Resources`, {
           recursive: true,
         });
@@ -1523,7 +1541,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         assert.instanceOf(error, BundleNotSelfContainedError);
         assert.include(error.output, "hackerai-deliberately-missing-package");
 
-        const emptyStage = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-linux-payload-test-" });
+        const emptyStage = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-linux-payload-test-",
+        });
         const missing = yield* validateLinuxPackagedPayload({ stageDistDir: emptyStage }).pipe(
           Effect.flip,
         );
@@ -1743,7 +1763,10 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         );
 
       const onWindows = yield* signedWinConfig("win32");
-      assert.equal((onWindows.azureSignOptions as Record<string, unknown>).publisherName, "HackerAI");
+      assert.equal(
+        (onWindows.azureSignOptions as Record<string, unknown>).publisherName,
+        "HackerAI",
+      );
       assert.notProperty(onWindows, "signtoolOptions");
 
       const onLinux = yield* signedWinConfig("linux");
@@ -1770,7 +1793,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
 
   it("parses Windows bsdtar member listings with CRLF line endings", () => {
     assert.deepStrictEqual(
-      parseWslRuntimeArchiveMembers("./hackerai-1.2.3-linux-x64/hackerai\r\nhackerai-1.2.3-linux-x64/client/\r\n"),
+      parseWslRuntimeArchiveMembers(
+        "./hackerai-1.2.3-linux-x64/hackerai\r\nhackerai-1.2.3-linux-x64/client/\r\n",
+      ),
       ["hackerai-1.2.3-linux-x64/hackerai", "hackerai-1.2.3-linux-x64/client"],
     );
   });

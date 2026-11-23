@@ -117,7 +117,11 @@ describe("resolveMcpGate", () => {
       { ...saved, relay: { status: "listed", endpoint: undefined } },
       "turn-on",
     ],
-    ["HackerAI Connect's list still loading", { ...saved, relay: { status: "loading" } }, "checking"],
+    [
+      "HackerAI Connect's list still loading",
+      { ...saved, relay: { status: "loading" } },
+      "checking",
+    ],
     [
       "a disconnected saved machine while HackerAI Connect's list refreshes",
       { ...saved, connected: false, relay: { status: "loading" } },

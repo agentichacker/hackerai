@@ -82,7 +82,12 @@ it.layer(NodeServices.layer)("root CLI commands", (it) => {
         }),
       ).toBe(`sudo env "PATH=$PATH" hackerai browser setup --base-dir '/srv/hackerai home'`);
       expect(
-        yield* rootCommand({ node: "/opt/hackerai/hackerai", entry: "/opt/hackerai/hackerai", executable: true, args }),
+        yield* rootCommand({
+          node: "/opt/hackerai/hackerai",
+          entry: "/opt/hackerai/hackerai",
+          executable: true,
+          args,
+        }),
       ).toBe("sudo /opt/hackerai/hackerai browser setup --base-dir '/srv/hackerai home'");
     }),
   );
@@ -171,7 +176,10 @@ it.layer(NodeServices.layer)("host CLI commands", (it) => {
       yield* fs.writeFileString(shim, "@echo off\r\n");
       const hostCommand = (platform: NodeJS.Platform, env: Record<string, string>) =>
         resolveHostCliCommand("doctor", ["--base-dir", "C:\\Users\\Jane Doe\\.hackerai"]).pipe(
-          Effect.provideService(HostProcess.ExecutablePath, "C:\\Program Files\\HackerAI\\hackerai.exe"),
+          Effect.provideService(
+            HostProcess.ExecutablePath,
+            "C:\\Program Files\\HackerAI\\hackerai.exe",
+          ),
           Effect.provideService(HostProcess.Arguments, [
             "C:\\Program Files\\HackerAI\\hackerai.exe",
             "C:\\Program Files\\HackerAI\\resources\\app.asar\\apps\\server\\dist\\bin.mjs",
@@ -187,7 +195,10 @@ it.layer(NodeServices.layer)("host CLI commands", (it) => {
         'hackerai doctor "--base-dir" "C:\\Users\\Jane Doe\\.hackerai"',
       );
       expect(
-        (yield* resolveHostCliCommand("doctor", ["--base-dir", "C:\\HackerAI\\\u201CArchive\u201D"]).pipe(
+        (yield* resolveHostCliCommand("doctor", [
+          "--base-dir",
+          "C:\\HackerAI\\\u201CArchive\u201D",
+        ]).pipe(
           Effect.provideService(HostProcess.Platform, "win32"),
           Effect.provideService(HostProcess.Environment, { PATH: "" }),
           Effect.provideService(HostProcess.ExecutablePath, "C:\\hackerai.exe"),

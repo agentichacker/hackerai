@@ -57,7 +57,9 @@ const extractingRunner = (fs: FileSystem.FileSystem, path: Path.Path, commands: 
         if (input.command !== "tar" || stagingDir === undefined) {
           return yield* Effect.die(`unexpected command ${input.command}`);
         }
-        yield* fs.writeFileString(path.join(stagingDir, "hackerai"), "#!/bin/sh\n").pipe(Effect.orDie);
+        yield* fs
+          .writeFileString(path.join(stagingDir, "hackerai"), "#!/bin/sh\n")
+          .pipe(Effect.orDie);
         return {
           stdout: "",
           stderr: "",
@@ -111,7 +113,9 @@ it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-pinned-progress-failed-" });
+      const baseDir = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-pinned-progress-failed-",
+      });
       const checksums = yield* validChecksums;
       const progress: PinnedRuntimeProgress[] = [];
       let cancelled = false;
@@ -164,7 +168,9 @@ it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-pinned-archive-missing-" });
+      const baseDir = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-pinned-archive-missing-",
+      });
       const checksums = yield* validChecksums;
       const failsWith = (status: number) =>
         ensurePinnedRuntimeInstalled({
@@ -439,7 +445,9 @@ it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-pinned-runtime-test-" });
+      const baseDir = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-pinned-runtime-test-",
+      });
       const finalPaths = pinnedRuntimePaths(path, baseDir, version, "linux");
       let validatedDirectory = "";
 
@@ -471,7 +479,9 @@ it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-pinned-runtime-test-" });
+      const baseDir = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-pinned-runtime-test-",
+      });
       const finalPaths = pinnedRuntimePaths(path, baseDir, version, "linux");
 
       yield* ensurePinnedRuntimeInstalled({
@@ -501,7 +511,9 @@ it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-pinned-runtime-repair-" });
+      const baseDir = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-pinned-runtime-repair-",
+      });
       const finalPaths = pinnedRuntimePaths(path, baseDir, version, "linux");
       yield* fs.makeDirectory(finalPaths.versionDir, { recursive: true });
       yield* fs.writeFileString(path.join(finalPaths.versionDir, "partial"), "incomplete\n");
@@ -527,7 +539,9 @@ it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-pinned-runtime-mirror-" });
+      const baseDir = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-pinned-runtime-mirror-",
+      });
       const cached = pinnedRuntimePaths(path, baseDir, version, "linux");
       yield* fs.makeDirectory(path.dirname(cached.entryPath), { recursive: true });
       yield* fs.writeFileString(cached.entryPath, "#!/bin/sh\n");
@@ -563,7 +577,9 @@ it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-pinned-runtime-repair-" });
+      const baseDir = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-pinned-runtime-repair-",
+      });
       const finalPaths = pinnedRuntimePaths(path, baseDir, version, "linux");
       yield* fs.makeDirectory(path.dirname(finalPaths.entryPath), { recursive: true });
       yield* fs.writeFileString(finalPaths.entryPath, "broken\n");
@@ -599,7 +615,13 @@ it.layer(NodeServices.layer)("ensurePinnedRuntimeInstalled", (it) => {
 
 it("isVersionExecutable accepts only <version>/hackerai, never another drive or program", () => {
   const win32 = NodePath.win32 as unknown as Path.Path;
-  assert.isTrue(isVersionExecutable(win32, "C:\\hackerai\\versions", "C:\\hackerai\\versions\\1.0.0\\hackerai.exe"));
+  assert.isTrue(
+    isVersionExecutable(
+      win32,
+      "C:\\hackerai\\versions",
+      "C:\\hackerai\\versions\\1.0.0\\hackerai.exe",
+    ),
+  );
   assert.isFalse(isVersionExecutable(win32, "C:\\hackerai\\versions", "D:\\hackerai.exe"));
   assert.isFalse(
     isVersionExecutable(win32, "C:\\hackerai\\versions", "C:\\hackerai\\versions\\1.0.0\\node.exe"),
@@ -674,9 +696,15 @@ it.layer(NodeServices.layer)("prunePinnedRuntimes", (it) => {
       yield* fs.makeDirectory(binDir);
       yield* fs.makeDirectory(customBinDir);
       // Chained: the launcher reaches its runtime through a second link.
-      yield* fs.symlink(path.join(versionsDir, "1.2.0", "hackerai"), path.join(baseDir, "alias-hackerai"));
+      yield* fs.symlink(
+        path.join(versionsDir, "1.2.0", "hackerai"),
+        path.join(baseDir, "alias-hackerai"),
+      );
       yield* fs.symlink(path.join(baseDir, "alias-hackerai"), path.join(binDir, "hackerai"));
-      yield* fs.symlink(path.join(versionsDir, "1.2.5", "hackerai"), path.join(customBinDir, "hackerai"));
+      yield* fs.symlink(
+        path.join(versionsDir, "1.2.5", "hackerai"),
+        path.join(customBinDir, "hackerai"),
+      );
       yield* fs.writeFileString(
         path.join(baseDir, "runtime", "launchers"),
         `${path.join(customBinDir, "hackerai")}\n`,
@@ -797,7 +825,10 @@ it.layer(NodeServices.layer)("prunePinnedRuntimes", (it) => {
         // The installer accepts any bin directory, including one under the versions directory.
         const binDir = path.join(versionsDir, "bin");
         yield* fs.makeDirectory(binDir);
-        yield* fs.symlink(path.join(versionsDir, "1.0.0", "hackerai"), path.join(binDir, "hackerai"));
+        yield* fs.symlink(
+          path.join(versionsDir, "1.0.0", "hackerai"),
+          path.join(binDir, "hackerai"),
+        );
         yield* fs.writeFileString(
           path.join(baseDir, "runtime", "launchers"),
           `${path.join(binDir, "hackerai")}\n`,

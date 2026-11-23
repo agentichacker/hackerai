@@ -193,7 +193,6 @@ function SidebarBrandMark({ onBackdrop }: { onBackdrop: boolean }) {
           onBackdrop ? "text-white/70" : "text-muted-foreground",
         )}
       >
-        {/* oxlint-disable-next-line hackerai/no-untranslated-copy -- product wordmark */}
         {"HackerAI"}
       </span>
     </span>

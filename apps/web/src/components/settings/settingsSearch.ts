@@ -1308,7 +1308,9 @@ export const SETTINGS_SEARCH_ITEMS = [
     id: "project-actions",
     title: msg("Actions"),
     to: "/settings/projects",
-    searchTerms: [msg("commands scripts setup run dev server checkout worktree hackerai.json import")],
+    searchTerms: [
+      msg("commands scripts setup run dev server checkout worktree hackerai.json import"),
+    ],
   },
   {
     id: "environment-icon",

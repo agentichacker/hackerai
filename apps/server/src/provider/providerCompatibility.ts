@@ -77,7 +77,8 @@ export function resolveProviderCompatibility(
   hackeraiCodeVersion = packageJson.version,
 ): ServerProviderCompatibilityAdvisory | undefined {
   const policy = policies?.find(
-    (entry) => entry.driver === driver && satisfiesSemverRange(hackeraiCodeVersion, entry.hackeraiCodeRange),
+    (entry) =>
+      entry.driver === driver && satisfiesSemverRange(hackeraiCodeVersion, entry.hackeraiCodeRange),
   );
   if (!policy) return undefined;
   const unprefixed = version?.replace(/^v/, "");

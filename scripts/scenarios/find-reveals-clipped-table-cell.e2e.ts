@@ -17,7 +17,11 @@ test(
   WEB,
   async ({ hackerai, app, screen, browser }) => {
     const project = await hackerai.project("wide-table");
-    const thread = await hackerai.thread({ project, title: "Diagnostics table", messages: [TABLE] });
+    const thread = await hackerai.thread({
+      project,
+      title: "Diagnostics table",
+      messages: [TABLE],
+    });
     await hackerai.open(thread);
     await screen.getByText("first fixture turn complete", { exact: false }).waitFor({
       timeout: 120_000,

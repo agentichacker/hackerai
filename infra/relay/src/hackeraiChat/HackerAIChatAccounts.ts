@@ -65,7 +65,10 @@ export class HackerAIChatAccounts extends Context.Service<
     }) => Effect.Effect<string, HackerAIChatNotConfigured | ClerkUserLookupFailed>;
     readonly getLink: (input: {
       readonly userId: string;
-    }) => Effect.Effect<RelayHackerAIChatLink | null, HackerAIChatNotConfigured | HackerAIChatRequestFailed>;
+    }) => Effect.Effect<
+      RelayHackerAIChatLink | null,
+      HackerAIChatNotConfigured | HackerAIChatRequestFailed
+    >;
     readonly unlink: (input: {
       readonly userId: string;
     }) => Effect.Effect<void, HackerAIChatNotConfigured | HackerAIChatRequestFailed>;
@@ -113,27 +116,27 @@ export const make = Effect.gen(function* () {
     );
   });
 
-  const lookupClerkPrimaryEmail = Effect.fn("relay.hackeraiChat.lookup_clerk_primary_email")(function* (
-    userId: string,
-  ) {
-    return yield* Effect.tryPromise({
-      try: async () => {
-        const user = await createClerkClient({
-          secretKey: Redacted.value(config.clerkSecretKey),
-          publishableKey: config.clerkPublishableKey,
-        }).users.getUser(userId);
-        const email = user.primaryEmailAddress?.emailAddress;
-        if (!email) throw new Error("Clerk user has no primary email address.");
-        return email;
-      },
-      catch: (cause) => new ClerkUserLookupFailed({ cause }),
-    }).pipe(
-      Effect.timeoutOrElse({
-        duration: HackerAICHAT_REQUEST_TIMEOUT,
-        orElse: () => Effect.fail(new ClerkUserLookupFailed({ cause: "timed out" })),
-      }),
-    );
-  });
+  const lookupClerkPrimaryEmail = Effect.fn("relay.hackeraiChat.lookup_clerk_primary_email")(
+    function* (userId: string) {
+      return yield* Effect.tryPromise({
+        try: async () => {
+          const user = await createClerkClient({
+            secretKey: Redacted.value(config.clerkSecretKey),
+            publishableKey: config.clerkPublishableKey,
+          }).users.getUser(userId);
+          const email = user.primaryEmailAddress?.emailAddress;
+          if (!email) throw new Error("Clerk user has no primary email address.");
+          return email;
+        },
+        catch: (cause) => new ClerkUserLookupFailed({ cause }),
+      }).pipe(
+        Effect.timeoutOrElse({
+          duration: HackerAICHAT_REQUEST_TIMEOUT,
+          orElse: () => Effect.fail(new ClerkUserLookupFailed({ cause: "timed out" })),
+        }),
+      );
+    },
+  );
 
   return HackerAIChatAccounts.of({
     available: settings !== undefined,

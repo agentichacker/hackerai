@@ -231,7 +231,12 @@ describe("ssh tunnel scripts", () => {
       const fs = yield* FileSystem.FileSystem;
       const home = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-ssh-launch-log-" });
       const target = { alias: "devbox", hostname: "devbox", username: null, port: null };
-      const stateDir = NodePath.join(home, ".hackerai", "ssh-launch", yield* remoteStateKey(target));
+      const stateDir = NodePath.join(
+        home,
+        ".hackerai",
+        "ssh-launch",
+        yield* remoteStateKey(target),
+      );
       const bin = NodePath.join(home, "bin");
       yield* fs.makeDirectory(stateDir, { recursive: true });
       yield* fs.makeDirectory(bin);
@@ -587,7 +592,9 @@ describe("ssh tunnel scripts", () => {
               },
               stdin: {
                 stream: Stream.make(
-                  new TextEncoder().encode('printf "%s:%s" "${HACKERAI_SSH_LOGIN_ENV:-missing}" "$1"'),
+                  new TextEncoder().encode(
+                    'printf "%s:%s" "${HACKERAI_SSH_LOGIN_ENV:-missing}" "$1"',
+                  ),
                 ),
                 endOnDone: true,
               },
@@ -1826,26 +1833,28 @@ const canBind = (port) =>
   );
 
   // An NFS home can carry a ~/.hackerai symlink whose target exists only on another host.
-  it.live.skipIf(windowsHost)("launches through a ~/.hackerai symlink whose target is missing", () =>
-    Effect.gen(function* () {
-      const fs = yield* FileSystem.FileSystem;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-dangling-home-" });
-      const home = `${root}/home`;
-      const target = `${root}/shared/hackerai`;
-      yield* fs.makeDirectory(home, { recursive: true });
-      yield* fs.symlink(target, `${home}/.hackerai`);
-      const launch = `${root}/launch.sh`;
-      yield* fs.writeFileString(
-        launch,
-        SshTunnel.buildRemoteLaunchScript({
-          archiveVersion: "0.1.6",
-          releaseBaseUrl: "http://127.0.0.1:9",
-        }),
-      );
-      const result = yield* runScript(home, [launch, "test-state"]);
-      assert.notInclude(result.stderr, "File exists");
-      assert.isTrue(yield* fs.exists(`${target}/ssh-launch/test-state`), result.stderr);
-    }).pipe(Effect.provide(NodeServices.layer)),
+  it.live.skipIf(windowsHost)(
+    "launches through a ~/.hackerai symlink whose target is missing",
+    () =>
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-dangling-home-" });
+        const home = `${root}/home`;
+        const target = `${root}/shared/hackerai`;
+        yield* fs.makeDirectory(home, { recursive: true });
+        yield* fs.symlink(target, `${home}/.hackerai`);
+        const launch = `${root}/launch.sh`;
+        yield* fs.writeFileString(
+          launch,
+          SshTunnel.buildRemoteLaunchScript({
+            archiveVersion: "0.1.6",
+            releaseBaseUrl: "http://127.0.0.1:9",
+          }),
+        );
+        const result = yield* runScript(home, [launch, "test-state"]);
+        assert.notInclude(result.stderr, "File exists");
+        assert.isTrue(yield* fs.exists(`${target}/ssh-launch/test-state`), result.stderr);
+      }).pipe(Effect.provide(NodeServices.layer)),
   );
 
   it.live.skipIf(windowsHost)("a newer client still replaces an older managed server", () =>

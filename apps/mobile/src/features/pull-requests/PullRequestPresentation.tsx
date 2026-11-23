@@ -65,7 +65,10 @@ export function PullRequestAvatar(props: {
       className="items-center justify-center rounded-full bg-grouped-card"
       style={{ width: size, height: size }}
     >
-      <Text className="font-hackerai-medium text-foreground-muted" style={{ fontSize: size * 0.45 }}>
+      <Text
+        className="font-hackerai-medium text-foreground-muted"
+        style={{ fontSize: size * 0.45 }}
+      >
         {props.actor?.login.slice(0, 1).toUpperCase() ?? "?"}
       </Text>
     </View>
@@ -81,7 +84,12 @@ export function PullRequestDiffStats(props: {
   return (
     <View className="shrink-0 flex-row items-center gap-2">
       {!props.compact || props.additions > 0 ? (
-        <Text className={cn(textSize, "font-hackerai-medium tabular-nums text-adaptive-emerald-600-400")}>
+        <Text
+          className={cn(
+            textSize,
+            "font-hackerai-medium tabular-nums text-adaptive-emerald-600-400",
+          )}
+        >
           +{props.additions.toLocaleString()}
         </Text>
       ) : null}

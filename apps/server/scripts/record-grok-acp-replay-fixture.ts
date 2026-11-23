@@ -205,7 +205,8 @@ function wireToEntries(wire: ReadonlyArray<WireMessage>): {
   return { entries, droppedFrames };
 }
 
-const HACKERAI_INSTRUCTIONS_BODY = /<hackerai_code_instructions>\n[\s\S]*?\n<\/hackerai_code_instructions>/u;
+const HACKERAI_INSTRUCTIONS_BODY =
+  /<hackerai_code_instructions>\n[\s\S]*?\n<\/hackerai_code_instructions>/u;
 
 function normalizeOutboundFrame(frame: Record<string, unknown>, runtimeInstructions: string) {
   const params = isRecord(frame.params) ? frame.params : undefined;
@@ -374,7 +375,10 @@ function normalizeEntries(input: {
 const DEFAULT_GROK_SETTINGS = Schema.decodeSync(GrokSettings)({});
 
 const RecorderEnv = Config.all({
-  HACKERAI_GROK_BIN: Config.String("HACKERAI_GROK_BIN").pipe(Config.option, Config.map(Option.getOrUndefined)),
+  HACKERAI_GROK_BIN: Config.String("HACKERAI_GROK_BIN").pipe(
+    Config.option,
+    Config.map(Option.getOrUndefined),
+  ),
   HOME: Config.String("HOME").pipe(Config.option, Config.map(Option.getOrUndefined)),
   USER: Config.String("USER").pipe(Config.option, Config.map(Option.getOrUndefined)),
 });
@@ -414,7 +418,10 @@ const recordScenario = Effect.fn("recordGrokScenario")(function* (fixtureName: s
   };
 
   const tee = makeWireTee();
-  const settings = { ...DEFAULT_GROK_SETTINGS, binaryPath: recorderEnv.HACKERAI_GROK_BIN ?? "grok" };
+  const settings = {
+    ...DEFAULT_GROK_SETTINGS,
+    binaryPath: recorderEnv.HACKERAI_GROK_BIN ?? "grok",
+  };
   const layerRegistry = ProviderAdapterRegistry.layerFromAdaptersEffect(
     Effect.gen(function* () {
       const environment = yield* HostProcess.Environment;

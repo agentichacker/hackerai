@@ -245,7 +245,10 @@ describe("orchestration V2 wire projection", () => {
       },
     };
     expect(projectTurnItemForDetail(appItem)).toMatchObject({
-      output: { hackeraiMcpApp, result: { content: [text, { type: "image", mimeType: "image/png" }] } },
+      output: {
+        hackeraiMcpApp,
+        result: { content: [text, { type: "image", mimeType: "image/png" }] },
+      },
     });
     const largeOutput = projectTurnItemForDetail(appItem);
     expect(
@@ -262,7 +265,10 @@ describe("orchestration V2 wire projection", () => {
 
     const forged = projectTurnItemForDetail({
       ...appItem,
-      output: { hackeraiMcpApp: { ...hackeraiMcpApp, resourceUri: data }, result: { content: [text] } },
+      output: {
+        hackeraiMcpApp: { ...hackeraiMcpApp, resourceUri: data },
+        result: { content: [text] },
+      },
     });
     expect(
       JSON.stringify(forged.type === "dynamic_tool" ? forged.output : null).length,

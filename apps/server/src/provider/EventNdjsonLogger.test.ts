@@ -90,7 +90,9 @@ it.layer(NodeServices.layer)("EventNdjsonLogger", (it) => {
     "falls back to a global segment when orchestration thread id is missing or invalid",
     () =>
       Effect.gen(function* () {
-        const tempDir = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "hackerai-provider-log-"));
+        const tempDir = NodeFS.mkdtempSync(
+          NodePath.join(NodeOS.tmpdir(), "hackerai-provider-log-"),
+        );
         const basePath = NodePath.join(tempDir, "provider-canonical.ndjson");
 
         try {
@@ -562,7 +564,9 @@ it.layer(NodeServices.layer)("EventNdjsonLogger", (it) => {
     "keeps unrelated work responsive and drains before close while a disk write is held",
     () =>
       Effect.gen(function* () {
-        const tempDir = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "hackerai-provider-log-"));
+        const tempDir = NodeFS.mkdtempSync(
+          NodePath.join(NodeOS.tmpdir(), "hackerai-provider-log-"),
+        );
         const basePath = NodePath.join(tempDir, "events.log");
         const fs = yield* FileSystem.FileSystem;
         const started = yield* Deferred.make<void>();

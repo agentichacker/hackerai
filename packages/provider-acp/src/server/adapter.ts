@@ -2299,7 +2299,9 @@ export const makeAcpAdapterV2 = Effect.fn("makeAcpAdapterV2")(function* (
         const configuredRuntimeMode = yield* Ref.make<
           ProviderAdapter.ProviderAdapterV2RuntimePolicy["runtimeMode"] | null
         >(null);
-        const promptInstructionStates = yield* Ref.make(new Map<string, HackerAIAcpInstructionState>());
+        const promptInstructionStates = yield* Ref.make(
+          new Map<string, HackerAIAcpInstructionState>(),
+        );
         const promptRuntimeInstructions = yield* Ref.make(new Map<string, string>());
         // Unique markers keep delayed prompt completions from clearing later compactions.
         const compactionMarkers = yield* Ref.make(new Map<string, symbol>());

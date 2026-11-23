@@ -5,7 +5,9 @@ import { createMessageTimeFormatter } from "./messageTimestamp";
 
 function systemUses24HourClock() {
   if (Platform.OS !== "android") return undefined;
-  return requireNativeModule<{ is24HourFormat(): boolean }>("HackerAINativeControls").is24HourFormat();
+  return requireNativeModule<{ is24HourFormat(): boolean }>(
+    "HackerAINativeControls",
+  ).is24HourFormat();
 }
 
 export function useMessageTimeFormatter() {

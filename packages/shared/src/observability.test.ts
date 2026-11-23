@@ -308,7 +308,9 @@ describe("observability", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-trace-sink-" });
+        const tempDir = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-trace-sink-",
+        });
         const tracePath = path.join(tempDir, "exit.trace.ndjson");
         const sink = yield* makeTraceSink({
           filePath: tracePath,
@@ -333,7 +335,9 @@ describe("observability", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-trace-sink-" });
+        const tempDir = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-trace-sink-",
+        });
         const tracePath = path.join(tempDir, "shared.trace.ndjson");
         const maxBytes = 1_024;
 
@@ -364,7 +368,9 @@ describe("observability", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-trace-sink-" });
+        const tempDir = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-trace-sink-",
+        });
         const tracePath = path.join(tempDir, "shared.trace.ndjson");
         const maxBytes = 1_024;
 
@@ -393,7 +399,9 @@ describe("observability", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-trace-sink-" });
+        const tempDir = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-trace-sink-",
+        });
         const tracePath = path.join(tempDir, "shared.trace.ndjson");
         const sink = yield* makeTraceSink({
           filePath: tracePath,
@@ -458,7 +466,9 @@ describe("observability", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-trace-sink-" });
+        const tempDir = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-trace-sink-",
+        });
         const tracePath = path.join(tempDir, "shared.trace.ndjson");
 
         const sink = yield* makeTraceSink({
@@ -494,7 +504,9 @@ describe("observability", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-local-tracer-" });
+        const tempDir = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-local-tracer-",
+        });
         const tracePath = path.join(tempDir, "shared.trace.ndjson");
 
         yield* Effect.scoped(
@@ -550,7 +562,9 @@ describe("observability", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const tempDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-local-tracer-" });
+        const tempDir = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-local-tracer-",
+        });
         const tracePath = path.join(tempDir, "shared.trace.ndjson");
 
         yield* Effect.scoped(

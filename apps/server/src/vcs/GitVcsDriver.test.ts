@@ -672,7 +672,9 @@ it.effect.each(["sha1", "sha256"] as const)(
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const driver = yield* GitVcsDriver.makeVcsDriverShape();
-      const sandbox = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-worktree-" });
+      const sandbox = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-checkpoint-worktree-",
+      });
       // A separator must remain part of the alternate's path, not split the list.
       const platform = yield* HostProcess.Platform;
       const cwd = path.join(sandbox, platform === "win32" ? "repo;space" : 'repo:space"\u0001');
@@ -702,7 +704,9 @@ it.effect("checkpoint capture skips untracked nested repositories without a comm
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const driver = yield* GitVcsDriver.makeVcsDriverShape();
-    const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-unborn-" });
+    const cwd = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-checkpoint-unborn-",
+    });
     const { git, checkpointRef } = yield* makeCheckpointFixture(driver, cwd);
     const nested = "scratch/empty [repo]";
     yield* git(["init", nested]);
@@ -907,7 +911,9 @@ it.effect("checkpoint capture keeps LF files that core.safecrlf would refuse to 
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const driver = yield* GitVcsDriver.makeVcsDriverShape();
-    const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-safecrlf-" });
+    const cwd = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-checkpoint-safecrlf-",
+    });
     const { git, checkpointRef } = yield* makeCheckpointFixture(driver, cwd);
     yield* fileSystem.writeFileString(path.join(cwd, ".gitattributes"), "*.txt text eol=crlf\n");
     yield* git(["config", "core.safecrlf", "true"]);
@@ -1001,7 +1007,9 @@ it.effect.each([
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const driver = yield* GitVcsDriver.makeVcsDriverShape();
-      const parent = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-crlf-ignore-" });
+      const parent = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-checkpoint-crlf-ignore-",
+      });
       const { git, checkpointRef } = yield* makeCheckpointFixture(driver, parent);
       yield* fs.writeFileString(path.join(parent, ".gitignore"), "a.txt\r\n\r\nb.txt\r\n");
       const cwd = path.join(parent, subdirectory);
@@ -1029,7 +1037,9 @@ it.effect.each([
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const driver = yield* GitVcsDriver.makeVcsDriverShape();
-      const parent = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-ignored-later-" });
+      const parent = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-checkpoint-ignored-later-",
+      });
       const { git, checkpointRef } = yield* makeCheckpointFixture(driver, parent);
       const cwd = path.join(parent, "sub");
       yield* fs.makeDirectory(cwd);
@@ -1182,7 +1192,9 @@ it.effect("checkpoint recovery preserves interruption and removes the private in
     const fs = yield* FileSystem.FileSystem;
     const liveProcess = yield* VcsProcess.VcsProcess;
     const driver = yield* GitVcsDriver.makeVcsDriverShape();
-    const cwd = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-recovery-interrupt-" });
+    const cwd = yield* fs.makeTempDirectoryScoped({
+      prefix: "hackerai-checkpoint-recovery-interrupt-",
+    });
     const { git, checkpointRef } = yield* makeCheckpointFixture(driver, cwd);
     yield* git(["init", "empty"]);
     const entered = yield* Deferred.make<void>();
@@ -1404,7 +1416,9 @@ it.effect.each([1_700_000_000, 1_700_000_000.9999])(
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const driver = yield* GitVcsDriver.makeVcsDriverShape();
-      const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-racy-" });
+      const cwd = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-checkpoint-racy-",
+      });
       const { git, checkpointRef } = yield* makeCheckpointFixture(driver, cwd);
       const filePath = path.join(cwd, "file.txt");
       const indexPath = path.join(cwd, ".git", "index");
@@ -1564,7 +1578,9 @@ it.effect("a branch switch landing after the snapshot belongs to the next checkp
     const path = yield* Path.Path;
     const liveProcess = yield* VcsProcess.VcsProcess;
     const driver = yield* GitVcsDriver.makeVcsDriverShape();
-    const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-switch-race-" });
+    const cwd = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-checkpoint-switch-race-",
+    });
     const git = (args: ReadonlyArray<string>) =>
       driver.execute({ operation: "checkpoint-test", cwd, args });
     yield* git(["init"]);
@@ -1621,7 +1637,9 @@ it.effect("checkpoint capture preserves racy edits made after resetting the inde
     const path = yield* Path.Path;
     const liveProcess = yield* VcsProcess.VcsProcess;
     const driver = yield* GitVcsDriver.makeVcsDriverShape();
-    const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-racy-reset-" });
+    const cwd = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-checkpoint-racy-reset-",
+    });
     const { git, checkpointRef } = yield* makeCheckpointFixture(driver, cwd);
     const racyPath = path.join(cwd, "racy.txt");
     const indexPath = path.join(cwd, ".git", "index");
@@ -1669,7 +1687,9 @@ it.effect.each(
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const driver = yield* GitVcsDriver.makeVcsDriverShape();
-      const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-turns-" });
+      const cwd = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-checkpoint-turns-",
+      });
       const { git } = yield* makeCheckpointFixture(driver, cwd);
       const write = (name: string, contents: string) =>
         fileSystem.writeFileString(path.join(cwd, name), contents);
@@ -1743,7 +1763,9 @@ it.effect.each(["missing", "invalid"] as const)(
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const driver = yield* GitVcsDriver.makeVcsDriverShape();
-      const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-index-" });
+      const cwd = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-checkpoint-index-",
+      });
       const { git, checkpointRef } = yield* makeCheckpointFixture(driver, cwd);
       const indexPath = path.join(cwd, ".git", "index");
       if (indexState === "missing") {
@@ -1790,7 +1812,9 @@ it.effect.each(["committed", "unborn"] as const)(
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const driver = yield* GitVcsDriver.makeVcsDriverShape();
-      const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-processes-" });
+      const cwd = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-checkpoint-processes-",
+      });
       const git = (args: ReadonlyArray<string>) =>
         driver.execute({ operation: "checkpoint-test", cwd, args });
       const checkpointRef = CheckpointRef.make("refs/hackerai/checkpoints/test");
@@ -1833,7 +1857,9 @@ it.effect.each(["committed", "unborn"] as const)(
 it.effect("checkpoint capture outside a repository fails with the common dir lookup error", () =>
   Effect.gen(function* () {
     const fileSystem = yield* FileSystem.FileSystem;
-    const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-no-repo-" });
+    const cwd = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-checkpoint-no-repo-",
+    });
 
     const error = yield* captureRecordingGitCommands(
       cwd,
@@ -1853,7 +1879,9 @@ it.effect.skipIf(HostProcess.Platform.defaultValue() === "win32")(
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const driver = yield* GitVcsDriver.makeVcsDriverShape();
-      const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-new\nline-" });
+      const cwd = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-checkpoint-new\nline-",
+      });
       const { git, checkpointRef } = yield* makeCheckpointFixture(driver, cwd);
       const originalIndex = yield* fileSystem.readFile(path.join(cwd, ".git", "index"));
 
@@ -1891,7 +1919,9 @@ it.effect("restores empty checkpoints without changing paths outside the workspa
     const path = yield* Path.Path;
     const driver = yield* GitVcsDriver.makeVcsDriverShape();
     for (const nested of [false, true]) {
-      const root = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-empty-checkpoint-" });
+      const root = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-empty-checkpoint-",
+      });
       yield* runGit(root, ["init"]);
       yield* runGit(root, ["config", "user.email", "test@test.com"]);
       yield* runGit(root, ["config", "user.name", "Test"]);
@@ -1995,7 +2025,9 @@ it.effect("restores a checkpoint before the first commit without staging its fil
     const path = yield* Path.Path;
     const driver = yield* GitVcsDriver.makeVcsDriverShape();
     for (const nested of [false, true]) {
-      const root = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-unborn-restore-" });
+      const root = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-unborn-restore-",
+      });
       yield* runGit(root, ["init"]);
       yield* runGit(root, ["config", "user.email", "test@test.com"]);
       yield* runGit(root, ["config", "user.name", "Test"]);
@@ -2035,7 +2067,9 @@ it.effect("restores edits to skip-worktree files whose checkpoint content matche
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const driver = yield* GitVcsDriver.makeVcsDriverShape();
-    const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-skip-worktree-restore-" });
+    const cwd = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-skip-worktree-restore-",
+    });
     const { git, checkpointRef } = yield* makeCheckpointFixture(driver, cwd);
     const skippedPath = path.join(cwd, "skipped.txt");
     yield* fileSystem.writeFileString(skippedPath, "original\n");
@@ -2210,7 +2244,9 @@ it.effect.skipIf(HostProcess.Platform.defaultValue() === "win32")(
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const parent = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-newline-repo-" });
+      const parent = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-newline-repo-",
+      });
       const cwd = path.join(parent, "multi\nline");
       yield* fileSystem.makeDirectory(cwd);
       yield* runGit(cwd, ["init"]);
@@ -2481,7 +2517,9 @@ it.effect("checkpoint capture meters every git process it starts, including stre
         },
       }),
     );
-    const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-checkpoint-metrics-" });
+    const cwd = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-checkpoint-metrics-",
+    });
     const { checkpointRef } = yield* makeCheckpointFixture(driver, cwd);
 
     yield* captureDriver.checkpoints.captureCheckpoint({ cwd, checkpointRef });

@@ -46,11 +46,11 @@ Every user on the machine can read the policy, so do not put credentials in it.
 
 Use one of these per machine:
 
-| OS      | Native policy                                                                                        | Policy file                                       |
-| ------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| OS      | Native policy                                                                                           | Policy file                                         |
+| ------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | macOS   | Configuration profile for `com.hackerai.hackerai`                                                       | `/Library/Application Support/HackerAI/policy.json` |
 | Windows | Group Policy template, or a `Policy` JSON value (both under `HKLM\SOFTWARE\Policies\HackerAI\HackerAI`) | `C:\Program Files\HackerAI\policy.json`             |
-| Linux   |                                                                                                      | `/etc/hackerai/policy.json`                         |
+| Linux   |                                                                                                         | `/etc/hackerai/policy.json`                         |
 
 HackerAI does not merge sources. If a machine has both a native policy and a policy file, HackerAI
 refuses to start until you remove one.

@@ -177,7 +177,9 @@ export async function captureHyprlandWindow(
   }
   if (state.status !== "ready") throw new CaptureSetupRequiredError({ state: state.message });
   const executable = hyprlandCaptureExecutable(paths);
-  const directory = await NodeFSP.mkdtemp(NodePath.join(NodeOS.tmpdir(), "hackerai-hyprland-capture-"));
+  const directory = await NodeFSP.mkdtemp(
+    NodePath.join(NodeOS.tmpdir(), "hackerai-hyprland-capture-"),
+  );
   const cleanup = () => NodeFSP.rm(directory, { recursive: true, force: true });
   let retained = false;
   try {

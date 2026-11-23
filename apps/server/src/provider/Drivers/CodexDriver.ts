@@ -243,11 +243,7 @@ export const CodexDriver: ProviderDriver<
       launchArgs:
         bridge === undefined || bridgeUpstream === undefined
           ? launchArgs
-          : withCodexResponsesBridgeLaunchArgs(
-              launchArgs,
-              bridge.baseUrl,
-              bridgeUpstream.apiKey,
-            ),
+          : withCodexResponsesBridgeLaunchArgs(launchArgs, bridge.baseUrl, bridgeUpstream.apiKey),
     } satisfies CodexSettings;
     const resolveInstallation = yield* makeCachedProviderMaintenanceResolution(
       resolveProviderMaintenanceCapabilitiesEffect(

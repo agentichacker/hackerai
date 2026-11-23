@@ -791,7 +791,8 @@ async function terminateChild(
 }
 
 /** Task Scheduler names are machine-wide, so each Windows account runs its own task. */
-export const serviceTaskName = (domain: string, userName: string) => `hackerai-${domain}-${userName}`;
+export const serviceTaskName = (domain: string, userName: string) =>
+  `hackerai-${domain}-${userName}`;
 
 export const serviceLauncherLockPath = (baseDir: string) =>
   NodePath.join(baseDir, "runtime", SERVICE_LAUNCHER_LOCK_FILE);
@@ -1598,7 +1599,9 @@ export async function main(options: LauncherOptions = {}): Promise<void> {
       state = adoptLegacyServiceState(contents);
       if (state === undefined) throw new Error("Service state is invalid or unsupported.");
       if (!(await runtimeExists(baseDir, state.activeVersion))) {
-        throw new Error(`Selected hackerai@${state.activeVersion} runtime is missing or incomplete.`);
+        throw new Error(
+          `Selected hackerai@${state.activeVersion} runtime is missing or incomplete.`,
+        );
       }
     }
     const serviceUnit = await serviceUnitFromEnvironment(managerEnvironment);

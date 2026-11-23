@@ -21,7 +21,10 @@ const { endpoint } = JSON.parse(
 );
 const token = process.env.HACKERAI_TASK_CACHE_READ_TOKEN;
 if (!token || token.length < 32) throw new Error("Missing task-cache read credential");
-const credentialFile = NodePath.join(NodeOS.homedir(), ".config/hackerai-task-cache/credentials.json");
+const credentialFile = NodePath.join(
+  NodeOS.homedir(),
+  ".config/hackerai-task-cache/credentials.json",
+);
 await NodeFSP.mkdir(NodePath.dirname(credentialFile), { recursive: true, mode: 0o700 });
 await NodeFSP.writeFile(
   credentialFile,

@@ -21,7 +21,11 @@ test(
   WEB,
   async ({ hackerai, app, screen, browser }) => {
     const project = await hackerai.project("demo", { "decisions.odt": await repeatedTableOdt() });
-    const thread = await hackerai.thread({ project, title: "Review decisions", messages: ["Start"] });
+    const thread = await hackerai.thread({
+      project,
+      title: "Review decisions",
+      messages: ["Start"],
+    });
     await hackerai.open(thread);
     await expect(screen.getByText("fixture turn complete", { exact: false })).toBeVisible();
 

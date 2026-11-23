@@ -14,15 +14,12 @@ export type CliReleaseEnvironment = Readonly<Record<string, string | undefined>>
 export function cliReleaseRepository(env: CliReleaseEnvironment): string | undefined {
   // A self-hosted fork may publish releases from its source repository, so accept
   // the general repository setting when no dedicated release repository is set.
-  const repository =
-    env[CLI_RELEASE_REPOSITORY_ENV]?.trim() || env["HACKERAI_REPOSITORY"]?.trim();
+  const repository = env[CLI_RELEASE_REPOSITORY_ENV]?.trim() || env["HACKERAI_REPOSITORY"]?.trim();
   const match = repository === undefined ? null : /^([\w.-]+)\/([\w.-]+)$/.exec(repository);
   if (match === null) return undefined;
   const [, owner, name] = match;
   // "." and ".." pass the character class but do not name a GitHub repository.
-  return owner === "." || owner === ".." || name === "." || name === ".."
-    ? undefined
-    : repository;
+  return owner === "." || owner === ".." || name === "." || name === ".." ? undefined : repository;
 }
 
 export function cliReleasesPageUrl(repository: string): string {
@@ -81,11 +78,7 @@ export function releaseAssetUrl(baseUrl: string, ...segments: ReadonlyArray<stri
 }
 
 /** A file of release `version`, from `baseUrl` laid out as GitHub's release downloads. */
-export function cliReleaseAssetUrl(
-  version: string,
-  fileName: string,
-  baseUrl: string,
-): string {
+export function cliReleaseAssetUrl(version: string, fileName: string, baseUrl: string): string {
   return releaseAssetUrl(baseUrl, `v${version}`, fileName);
 }
 

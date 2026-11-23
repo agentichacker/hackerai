@@ -580,7 +580,9 @@ describe("CloudManagedEndpointRuntime", () => {
       Effect.gen(function* () {
         const context = yield* Layer.build(
           ServerSecretStore.layer.pipe(
-            Layer.provide(ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-transport-test-" })),
+            Layer.provide(
+              ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-transport-test-" }),
+            ),
             Layer.provide(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)),
           ),
         );
@@ -644,7 +646,9 @@ describe("CloudManagedEndpointRuntime", () => {
     Effect.gen(function* () {
       const context = yield* Layer.build(
         ServerSecretStore.layer.pipe(
-          Layer.provide(ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-transport-test-" })),
+          Layer.provide(
+            ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-transport-test-" }),
+          ),
           Layer.provide(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)),
         ),
       );

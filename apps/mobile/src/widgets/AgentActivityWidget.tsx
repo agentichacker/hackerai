@@ -114,9 +114,7 @@ export function AgentActivityWidget(
   // The template image ignores frame/foregroundStyle applied to itself; size
   // and tint it through a container the resizable image fills.
   const renderLogo = (height: number) => (
-    <HStack
-      modifiers={[frame({ width: height, height }), foregroundStyle(primaryForeground)]}
-    >
+    <HStack modifiers={[frame({ width: height, height }), foregroundStyle(primaryForeground)]}>
       <Image assetName="HackerAIMark" modifiers={[resizable()]} />
     </HStack>
   );

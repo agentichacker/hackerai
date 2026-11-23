@@ -80,7 +80,9 @@ export function ReactionPills(props: {
           )}
         >
           <Text className="text-sm">{pullRequestReactionEmoji(reaction.content)}</Text>
-          <Text className="text-xs font-hackerai-medium text-foreground-muted">{reaction.count}</Text>
+          <Text className="text-xs font-hackerai-medium text-foreground-muted">
+            {reaction.count}
+          </Text>
         </Pressable>
       ))}
       {props.canReact ? (

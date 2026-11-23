@@ -70,8 +70,8 @@ describe("Codex orchestration context", () => {
 describe("Codex device context", () => {
   it("adds the shared device block only when the session holds device access", () => {
     const tools = (device: boolean) =>
-      buildCodexAdditionalContext({ model: "gpt-6.1-sol" }, { browser: true, device }).hackerai_code_tools
-        ?.value ?? "";
+      buildCodexAdditionalContext({ model: "gpt-6.1-sol" }, { browser: true, device })
+        .hackerai_code_tools?.value ?? "";
 
     NodeAssert.ok(tools(true).includes(HACKERAI_CODE_DEVICE_TOOL_INSTRUCTIONS));
     NodeAssert.ok(!tools(true).includes("ToolSearch"));

@@ -27,7 +27,7 @@ if (repository !== "") {
 
 const shRepositoryFallback = 'repo="${HACKERAI_RELEASE_REPOSITORY:-${HACKERAI_REPOSITORY:-}}"';
 const ps1RepositoryFallback = [
-  '$repo = if ($env:HACKERAI_RELEASE_REPOSITORY) {',
+  "$repo = if ($env:HACKERAI_RELEASE_REPOSITORY) {",
   "  $env:HACKERAI_RELEASE_REPOSITORY.Trim()",
   "} elseif ($env:HACKERAI_REPOSITORY) {",
   "  $env:HACKERAI_REPOSITORY.Trim()",

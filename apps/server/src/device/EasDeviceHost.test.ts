@@ -325,9 +325,9 @@ describe("Expo Simulators host", () => {
       ).toBeNull();
 
       yield* Scope.close(scope, Exit.void);
-      expect(expo.named("HackerAIStopEasSimulatorSession").map((call) => call.variables.id)).toEqual([
-        "session-1",
-      ]);
+      expect(
+        expo.named("HackerAIStopEasSimulatorSession").map((call) => call.variables.id),
+      ).toEqual(["session-1"]);
     }).pipe(Effect.scoped, Effect.provide(layer)),
   );
 

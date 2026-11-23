@@ -72,30 +72,34 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer, NetService.layer))
     it.effect.each([
       { subcommand: "status", hint: "connect link" },
       { subcommand: "publish", hint: "connect login" },
-    ])("hackerai connect $subcommand names `hackerai $hint` with --base-dir", ({ subcommand, hint }) =>
-      Effect.gen(function* () {
-        const fs = yield* FileSystem.FileSystem;
-        const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-connect-hint-test-" });
+    ])(
+      "hackerai connect $subcommand names `hackerai $hint` with --base-dir",
+      ({ subcommand, hint }) =>
+        Effect.gen(function* () {
+          const fs = yield* FileSystem.FileSystem;
+          const baseDir = yield* fs.makeTempDirectoryScoped({
+            prefix: "hackerai-connect-hint-test-",
+          });
 
-        yield* Command.runWith(makeCli({ cloudEnabled: true }), { version: "0.0.0" })([
-          "connect",
-          subcommand,
-          "--base-dir",
-          baseDir,
-        ]);
+          yield* Command.runWith(makeCli({ cloudEnabled: true }), { version: "0.0.0" })([
+            "connect",
+            subcommand,
+            "--base-dir",
+            baseDir,
+          ]);
 
-        const { command } = yield* resolveHostCliCommand(hint, ["--base-dir", baseDir]);
-        assert.include((yield* TestConsole.logLines).join("\n"), `\`${command}\``);
-      }).pipe(
-        Effect.scoped,
-        Effect.provideService(HostProcess.Environment, {}),
-        Effect.provide(
-          Layer.mergeAll(
-            ConfigProvider.layer(ConfigProvider.fromEnv({ env: {} })),
-            Layer.fresh(TestConsole.layer),
+          const { command } = yield* resolveHostCliCommand(hint, ["--base-dir", baseDir]);
+          assert.include((yield* TestConsole.logLines).join("\n"), `\`${command}\``);
+        }).pipe(
+          Effect.scoped,
+          Effect.provideService(HostProcess.Environment, {}),
+          Effect.provide(
+            Layer.mergeAll(
+              ConfigProvider.layer(ConfigProvider.fromEnv({ env: {} })),
+              Layer.fresh(TestConsole.layer),
+            ),
           ),
         ),
-      ),
     );
   },
 );
@@ -138,7 +142,9 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer, NetService.layer))
         }
 
         const fs = yield* FileSystem.FileSystem;
-        const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-connect-unlink-test-" });
+        const baseDir = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-connect-unlink-test-",
+        });
         const state = yield* makePersistedServerRuntimeState({
           config: { host: "127.0.0.1", devUrl: undefined },
           port: address.port,

@@ -358,7 +358,9 @@ export async function runAcpMcpCliFastPath(
   const endpoint = process.env.HACKERAI_ACP_MCP_ENDPOINT;
   const authorization = process.env.HACKERAI_ACP_MCP_AUTHORIZATION;
   if (endpoint === undefined || authorization === undefined) {
-    process.stderr.write(`${command} requires HACKERAI_ACP_MCP_ENDPOINT and HACKERAI_ACP_MCP_AUTHORIZATION.\n`);
+    process.stderr.write(
+      `${command} requires HACKERAI_ACP_MCP_ENDPOINT and HACKERAI_ACP_MCP_AUTHORIZATION.\n`,
+    );
     process.exitCode = 2;
     return;
   }

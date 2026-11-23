@@ -13,7 +13,11 @@ test(
   async ({ hackerai, app, browser, screen }) => {
     await holdImageCompression(browser);
     const project = await hackerai.project("demo");
-    const source = await hackerai.thread({ project, title: "Screenshot work", messages: ["first"] });
+    const source = await hackerai.thread({
+      project,
+      title: "Screenshot work",
+      messages: ["first"],
+    });
     await hackerai.thread({ project, title: "Other work", messages: ["first"] });
     await hackerai.open(source);
     await expect(screen.getByText("first fixture turn complete", { exact: false })).toBeVisible();

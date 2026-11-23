@@ -128,7 +128,9 @@ export function ApproveAgentSurface() {
     return (
       <Message
         title={gt("Could not load sign-in")}
-        description={gt("HackerAI Connect sign-in did not load. Check your connection, then try again.")}
+        description={gt(
+          "HackerAI Connect sign-in did not load. Check your connection, then try again.",
+        )}
       >
         <div className="mt-6">
           <Button type="button" onClick={retryClerkLoad}>
@@ -156,7 +158,9 @@ export function ApproveAgentSurface() {
     return (
       <Message
         title={gt("Sign in to approve")}
-        description={gt("Sign in to HackerAI Connect with the account this environment is linked to.")}
+        description={gt(
+          "Sign in to HackerAI Connect with the account this environment is linked to.",
+        )}
       >
         <div className="mt-6">
           <Button type="button" onClick={openSignIn}>

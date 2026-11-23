@@ -2320,7 +2320,12 @@ it.effect("lets a worktree checkout that is still working run past five minutes"
     const worktreePath = path.join(cwd, "worktree");
 
     const creation = yield* driver
-      .createWorktree({ cwd, refName: "main", newRefName: "hackerai/slow-checkout", path: worktreePath })
+      .createWorktree({
+        cwd,
+        refName: "main",
+        newRefName: "hackerai/slow-checkout",
+        path: worktreePath,
+      })
       .pipe(Effect.forkChild);
     yield* Deferred.await(checkoutStarted);
     yield* TestClock.adjust("6 minutes");
@@ -6127,25 +6132,27 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
       }),
     );
 
-    it.effect.each(["hackerai", "HackerAI"])("flattens a generated name when parent %s blocks it", (parent) =>
-      Effect.gen(function* () {
-        const cwd = yield* makeTmpDir();
-        yield* initRepoWithCommit(cwd);
-        const driver = yield* GitVcsDriver.GitVcsDriver;
-        // A local `hackerai` branch is why launches start on the flat `hackerai-<hex>` temporary branch.
-        yield* git(cwd, ["branch", parent]);
-        yield* git(cwd, ["checkout", "-b", "hackerai-abcd1234"]);
-        yield* git(cwd, ["branch", "hackerai-fix-login"]);
+    it.effect.each(["hackerai", "HackerAI"])(
+      "flattens a generated name when parent %s blocks it",
+      (parent) =>
+        Effect.gen(function* () {
+          const cwd = yield* makeTmpDir();
+          yield* initRepoWithCommit(cwd);
+          const driver = yield* GitVcsDriver.GitVcsDriver;
+          // A local `hackerai` branch is why launches start on the flat `hackerai-<hex>` temporary branch.
+          yield* git(cwd, ["branch", parent]);
+          yield* git(cwd, ["checkout", "-b", "hackerai-abcd1234"]);
+          yield* git(cwd, ["branch", "hackerai-fix-login"]);
 
-        const renamed = yield* driver.renameBranch({
-          cwd,
-          oldBranch: "hackerai-abcd1234",
-          newBranch: "hackerai/fix-login",
-        });
+          const renamed = yield* driver.renameBranch({
+            cwd,
+            oldBranch: "hackerai-abcd1234",
+            newBranch: "hackerai/fix-login",
+          });
 
-        assert.equal(renamed.branch, "hackerai-fix-login-1");
-        assert.equal(yield* git(cwd, ["branch", "--show-current"]), "hackerai-fix-login-1");
-      }),
+          assert.equal(renamed.branch, "hackerai-fix-login-1");
+          assert.equal(yield* git(cwd, ["branch", "--show-current"]), "hackerai-fix-login-1");
+        }),
     );
 
     it.effect.each(["hackerai-fix-login/child", "HackerAI-Fix-Login/child", "HackerAI-FIX-LOGIN"])(
@@ -7583,40 +7590,42 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
       }),
     );
 
-    it.effect("fails without a worktree when the hackerai.json sparse pattern path is not a file", () =>
-      Effect.gen(function* () {
-        const fileSystem = yield* FileSystem.FileSystem;
-        const pathService = yield* Path.Path;
-        const cwd = yield* makeTmpDir();
-        const { initialBranch } = yield* initRepoWithCommit(cwd);
-        yield* writeTextFile(cwd, "patterns/keep.txt", "/*\n");
-        const driver = yield* GitVcsDriver.GitVcsDriver;
-        const worktrees = yield* makeTmpDir("git-worktrees-");
-        for (const patternsPath of ["missing.txt", "patterns"]) {
-          yield* writeTextFile(
-            cwd,
-            "hackerai.json",
-            JSON.stringify({ worktreeSparsePatternsPath: patternsPath }),
-          );
-          yield* git(cwd, ["add", "."]);
-          yield* git(cwd, ["commit", "-m", "missing sparse patterns"]);
-          const worktreePath = pathService.join(worktrees, patternsPath);
-
-          const error = yield* Effect.flip(
-            driver.createWorktree({
+    it.effect(
+      "fails without a worktree when the hackerai.json sparse pattern path is not a file",
+      () =>
+        Effect.gen(function* () {
+          const fileSystem = yield* FileSystem.FileSystem;
+          const pathService = yield* Path.Path;
+          const cwd = yield* makeTmpDir();
+          const { initialBranch } = yield* initRepoWithCommit(cwd);
+          yield* writeTextFile(cwd, "patterns/keep.txt", "/*\n");
+          const driver = yield* GitVcsDriver.GitVcsDriver;
+          const worktrees = yield* makeTmpDir("git-worktrees-");
+          for (const patternsPath of ["missing.txt", "patterns"]) {
+            yield* writeTextFile(
               cwd,
-              path: worktreePath,
-              refName: initialBranch,
-              newRefName: `feature/${patternsPath}`,
-            }),
-          );
+              "hackerai.json",
+              JSON.stringify({ worktreeSparsePatternsPath: patternsPath }),
+            );
+            yield* git(cwd, ["add", "."]);
+            yield* git(cwd, ["commit", "-m", "missing sparse patterns"]);
+            const worktreePath = pathService.join(worktrees, patternsPath);
 
-          assert.include(error.detail, patternsPath);
-          assert.isFalse(yield* fileSystem.exists(worktreePath));
-          assert.notInclude(yield* git(cwd, ["worktree", "list"]), worktreePath);
-          assert.equal(yield* git(cwd, ["branch", "--list", `feature/${patternsPath}`]), "");
-        }
-      }),
+            const error = yield* Effect.flip(
+              driver.createWorktree({
+                cwd,
+                path: worktreePath,
+                refName: initialBranch,
+                newRefName: `feature/${patternsPath}`,
+              }),
+            );
+
+            assert.include(error.detail, patternsPath);
+            assert.isFalse(yield* fileSystem.exists(worktreePath));
+            assert.notInclude(yield* git(cwd, ["worktree", "list"]), worktreePath);
+            assert.equal(yield* git(cwd, ["branch", "--list", `feature/${patternsPath}`]), "");
+          }
+        }),
     );
 
     it.effect("still creates the worktree when the base-ref config stays locked", () =>
@@ -7653,7 +7662,10 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
           "# test\n",
         );
         assert.equal(
-          yield* driver.readConfigValue(worktreePath, "branch.feature/locked-config.hackerai-merge-base"),
+          yield* driver.readConfigValue(
+            worktreePath,
+            "branch.feature/locked-config.hackerai-merge-base",
+          ),
           null,
         );
         assert.equal(yield* fileSystem.exists(pathService.join(cwd, ".git/config.lock")), true);
@@ -9209,7 +9221,10 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
         assert.strictEqual(status.branchChanges?.deletions, 0);
         // gh pr create consumes this setting verbatim as the hosted target branch.
         assert.equal(
-          yield* driver.readConfigValue(worktreePath, "branch.feature/from-upstream.hackerai-merge-base"),
+          yield* driver.readConfigValue(
+            worktreePath,
+            "branch.feature/from-upstream.hackerai-merge-base",
+          ),
           "release",
         );
         assert.equal(changes.baseRef, "upstream/release");

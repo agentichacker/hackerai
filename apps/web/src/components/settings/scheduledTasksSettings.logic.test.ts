@@ -80,7 +80,10 @@ function group(
 }
 
 const sameIdElsewhere = member("first", serverId);
-const groups = [group("hackerai", [first, second, third]), group("other", [other, sameIdElsewhere])];
+const groups = [
+  group("hackerai", [first, second, third]),
+  group("other", [other, sameIdElsewhere]),
+];
 const tasks = [first, second, third, other, sameIdElsewhere].map((project, index) => ({
   id: `task-${index}`,
   environmentId: project.environmentId,

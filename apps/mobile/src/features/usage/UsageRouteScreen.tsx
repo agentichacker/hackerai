@@ -828,7 +828,9 @@ function MetricCell(props: {
   return (
     <View className="gap-0.5 p-4" style={{ width: `${100 / props.columns}%` }}>
       <Text className="text-sm text-foreground-muted">{props.label}</Text>
-      <Text className="text-xl font-hackerai-medium tabular-nums text-foreground">{props.value}</Text>
+      <Text className="text-xl font-hackerai-medium tabular-nums text-foreground">
+        {props.value}
+      </Text>
       <Text className="text-xs text-foreground-tertiary">{props.detail}</Text>
     </View>
   );

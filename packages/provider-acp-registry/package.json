@@ -33,11 +33,11 @@
     "test": "vp test run --config ../../vite.config.ts --dir ."
   },
   "dependencies": {
-    "@noble/hashes": "catalog:",
     "@hackerai/contracts": "workspace:*",
     "@hackerai/provider-acp": "workspace:*",
     "@hackerai/provider-core": "workspace:*",
     "@hackerai/shared": "workspace:*",
+    "@noble/hashes": "catalog:",
     "effect": "catalog:"
   },
   "devDependencies": {

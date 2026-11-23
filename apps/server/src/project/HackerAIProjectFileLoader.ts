@@ -48,44 +48,44 @@ export const make = Effect.gen(function* () {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
 
-  const load: HackerAIProjectFileLoader["Service"]["load"] = Effect.fn("HackerAIProjectFileLoader.load")(
-    function* (workspaceRoot) {
-      const filePath = path.join(workspaceRoot, HACKERAI_PROJECT_FILE_NAME);
-      const raw = yield* fileSystem.readFileString(filePath).pipe(
-        Effect.asSome,
-        Effect.catchTags({
-          PlatformError: (error) =>
-            error.reason._tag === "NotFound"
-              ? Effect.succeed(Option.none<string>())
-              : logHackerAIProjectFileLoadError(
-                  new HackerAIProjectFileLoadError({
-                    operation: "read",
-                    workspaceRoot,
-                    filePath,
-                    cause: error,
-                  }),
-                ).pipe(Effect.as(Option.none<string>())),
-        }),
-      );
-      if (Option.isNone(raw)) {
-        return Option.none<HackerAIProjectFile>();
-      }
-      return yield* decodeHackerAIProjectFileJson(raw.value).pipe(
-        Effect.asSome,
-        Effect.catchTags({
-          SchemaError: (error) =>
-            logHackerAIProjectFileLoadError(
-              new HackerAIProjectFileLoadError({
-                operation: "decode",
-                workspaceRoot,
-                filePath,
-                cause: error,
-              }),
-            ).pipe(Effect.as(Option.none<HackerAIProjectFile>())),
-        }),
-      );
-    },
-  );
+  const load: HackerAIProjectFileLoader["Service"]["load"] = Effect.fn(
+    "HackerAIProjectFileLoader.load",
+  )(function* (workspaceRoot) {
+    const filePath = path.join(workspaceRoot, HACKERAI_PROJECT_FILE_NAME);
+    const raw = yield* fileSystem.readFileString(filePath).pipe(
+      Effect.asSome,
+      Effect.catchTags({
+        PlatformError: (error) =>
+          error.reason._tag === "NotFound"
+            ? Effect.succeed(Option.none<string>())
+            : logHackerAIProjectFileLoadError(
+                new HackerAIProjectFileLoadError({
+                  operation: "read",
+                  workspaceRoot,
+                  filePath,
+                  cause: error,
+                }),
+              ).pipe(Effect.as(Option.none<string>())),
+      }),
+    );
+    if (Option.isNone(raw)) {
+      return Option.none<HackerAIProjectFile>();
+    }
+    return yield* decodeHackerAIProjectFileJson(raw.value).pipe(
+      Effect.asSome,
+      Effect.catchTags({
+        SchemaError: (error) =>
+          logHackerAIProjectFileLoadError(
+            new HackerAIProjectFileLoadError({
+              operation: "decode",
+              workspaceRoot,
+              filePath,
+              cause: error,
+            }),
+          ).pipe(Effect.as(Option.none<HackerAIProjectFile>())),
+      }),
+    );
+  });
 
   return HackerAIProjectFileLoader.of({ load });
 });

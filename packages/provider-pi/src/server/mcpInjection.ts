@@ -224,27 +224,27 @@ function piHackerAIMcpExtensionDestPath(cacheDir: string): string {
   return `${cacheDir.replace(/\\/g, "/")}/${PI_HACKERAI_MCP_EXTENSION_FILENAME}`;
 }
 
-export const materializePiHackerAIMcpExtension = Effect.fn("materializePiHackerAIMcpExtension")(function* (
-  cacheDir: string,
-) {
-  const fs = yield* FileSystem.FileSystem;
-  yield* fs.makeDirectory(cacheDir, { recursive: true });
-  const dest = piHackerAIMcpExtensionDestPath(cacheDir);
-  const existing = yield* fs.readFileString(dest).pipe(Effect.orElseSucceed(() => ""));
-  if (existing !== PI_HACKERAI_MCP_EXTENSION_SOURCE) {
-    // Concurrent pi launches read this file: stage it in a per-call directory
-    // and rename so readers and other writers never see a partial file.
-    yield* Effect.scoped(
-      Effect.gen(function* () {
-        const stagingDir = yield* fs.makeTempDirectoryScoped({ directory: cacheDir });
-        const staging = `${stagingDir.replace(/\\/g, "/")}/${PI_HACKERAI_MCP_EXTENSION_FILENAME}`;
-        yield* fs.writeFileString(staging, PI_HACKERAI_MCP_EXTENSION_SOURCE);
-        yield* fs.rename(staging, dest).pipe(Effect.retry({ times: 3 }));
-      }),
-    );
-  }
-  return dest;
-});
+export const materializePiHackerAIMcpExtension = Effect.fn("materializePiHackerAIMcpExtension")(
+  function* (cacheDir: string) {
+    const fs = yield* FileSystem.FileSystem;
+    yield* fs.makeDirectory(cacheDir, { recursive: true });
+    const dest = piHackerAIMcpExtensionDestPath(cacheDir);
+    const existing = yield* fs.readFileString(dest).pipe(Effect.orElseSucceed(() => ""));
+    if (existing !== PI_HACKERAI_MCP_EXTENSION_SOURCE) {
+      // Concurrent pi launches read this file: stage it in a per-call directory
+      // and rename so readers and other writers never see a partial file.
+      yield* Effect.scoped(
+        Effect.gen(function* () {
+          const stagingDir = yield* fs.makeTempDirectoryScoped({ directory: cacheDir });
+          const staging = `${stagingDir.replace(/\\/g, "/")}/${PI_HACKERAI_MCP_EXTENSION_FILENAME}`;
+          yield* fs.writeFileString(staging, PI_HACKERAI_MCP_EXTENSION_SOURCE);
+          yield* fs.rename(staging, dest).pipe(Effect.retry({ times: 3 }));
+        }),
+      );
+    }
+    return dest;
+  },
+);
 
 export function buildPiRpcLaunch(input: {
   readonly launchArgs: ReadonlyArray<string>;
@@ -263,7 +263,8 @@ export function buildPiRpcLaunch(input: {
   readonly args: ReadonlyArray<string>;
   readonly env: NodeJS.ProcessEnv;
 } {
-  const hasHackerAIExtension = input.disableExtensions !== true && input.extensionPath !== undefined;
+  const hasHackerAIExtension =
+    input.disableExtensions !== true && input.extensionPath !== undefined;
   const hasHackerAIMcp = hasHackerAIExtension && input.mcpSession !== undefined;
   const extensionSafeArgs =
     input.disableExtensions === true

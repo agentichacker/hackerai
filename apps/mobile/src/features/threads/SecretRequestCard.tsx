@@ -222,7 +222,9 @@ function PendingSecretRequestForm(props: {
           );
           return multiple ? (
             <View key={input.key} className="gap-1.5">
-              <Text className="font-hackerai-medium text-sm text-foreground-muted">{input.label}</Text>
+              <Text className="font-hackerai-medium text-sm text-foreground-muted">
+                {input.label}
+              </Text>
               {field}
             </View>
           ) : (

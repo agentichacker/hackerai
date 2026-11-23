@@ -87,12 +87,7 @@ const readLayerSource = Effect.fn("androidIcons.readLayerSource")(function* (
 // The Icon Composer text layer can be either a vector wordmark or an embedded
 // raster emblem. Raster sources need the black backing plate removed so the
 // adaptive foreground stays transparent.
-const renderRasterForeground = (
-  layer: string,
-  svg: string,
-  size: number,
-  fraction: number,
-) =>
+const renderRasterForeground = (layer: string, svg: string, size: number, fraction: number) =>
   Effect.tryPromise({
     try: async () => {
       const encoded = svg.match(/data:image\/png;base64,([^"]+)/)?.[1];
@@ -292,10 +287,7 @@ const exportAndroidIcons = Effect.gen(function* () {
       "android-icon-mark.png",
       yield* renderMonochrome(repositoryRoot, ADAPTIVE_CANVAS, EMBLEM_FRACTION),
     ],
-    [
-      "android-notification-icon.png",
-      yield* renderMonochrome(repositoryRoot, 96, 0.72),
-    ],
+    ["android-notification-icon.png", yield* renderMonochrome(repositoryRoot, 96, 0.72)],
     [
       "android-icon-background-dev.png",
       yield* renderDevelopmentBackground(repositoryRoot, ADAPTIVE_CANVAS),

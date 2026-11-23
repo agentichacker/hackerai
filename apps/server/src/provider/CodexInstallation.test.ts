@@ -47,7 +47,8 @@ const makeHarness = Effect.fn("test.makeCodexInstallation")(function* (
 ) {
   const fs = yield* FileSystem.FileSystem;
   const baseDir =
-    input.baseDir ?? (yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-codex-install-test-" }));
+    input.baseDir ??
+    (yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-codex-install-test-" }));
   const localDirectory = `${baseDir}/local`;
   const localBinaryPath = `${localDirectory}/codex${input.platform === "win32" ? ".exe" : ""}`;
   const probeLog = `${baseDir}/local-probes.txt`;
@@ -447,7 +448,9 @@ it.effect(
   () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
-      const directory = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-codex-install-test-" });
+      const directory = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-codex-install-test-",
+      });
       const baseDir = `${directory}/not-a-directory`;
       yield* fs.writeFileString(baseDir, "existing file");
       const h = yield* makeHarness({ baseDir });

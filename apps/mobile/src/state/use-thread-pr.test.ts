@@ -144,7 +144,11 @@ describe("knownPullRequestSummary", () => {
       updatedAt: "2026-09-09T00:00:00.000Z",
     };
     const lookup = (host: string, number: number, summaries = [listed]) =>
-      knownPullRequestSummary({ host, repository: "hackerai/hackerai", number }, threads, summaries);
+      knownPullRequestSummary(
+        { host, repository: "hackerai/hackerai", number },
+        threads,
+        summaries,
+      );
 
     expect(lookup("github.com", 7, [])?.title).toBe("Change 7");
     expect(lookup("github.com", 7)?.title).toBe("Listed title");

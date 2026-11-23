@@ -320,7 +320,9 @@ describe("pull request list answers across a reload", () => {
           detail: null,
         },
       ],
-      errors: [{ projectId: ProjectId.make("project-1"), projectTitle: "hackerai", message: "boom" }],
+      errors: [
+        { projectId: ProjectId.make("project-1"), projectTitle: "hackerai", message: "boom" },
+      ],
       truncated: true,
       nextCursors: { "your-org/hackerai": "cursor-1" },
     }) as PullRequestListResult;

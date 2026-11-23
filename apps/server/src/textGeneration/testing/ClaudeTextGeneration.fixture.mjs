@@ -68,7 +68,10 @@ if (stdinMustContain && !stdinContent.includes(stdinMustContain)) {
   fail("stdin missing expected content", 4);
 }
 
-if (process.env.HACKERAI_FAKE_CLAUDE_REJECTS_IMAGES === "1" && stdinContent.includes('"type":"image"')) {
+if (
+  process.env.HACKERAI_FAKE_CLAUDE_REJECTS_IMAGES === "1" &&
+  stdinContent.includes('"type":"image"')
+) {
   process.stdout.write(
     JSON.stringify({
       type: "result",

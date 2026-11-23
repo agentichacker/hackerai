@@ -1,4 +1,7 @@
-import { type DesktopEnvironmentBootstrap, PRIMARY_LOCAL_ENVIRONMENT_ID } from "@hackerai/contracts";
+import {
+  type DesktopEnvironmentBootstrap,
+  PRIMARY_LOCAL_ENVIRONMENT_ID,
+} from "@hackerai/contracts";
 import { describe, expect, it } from "vite-plus/test";
 
 import { createDesktopSecondaryBootstrapsReader } from "./desktopLocal";

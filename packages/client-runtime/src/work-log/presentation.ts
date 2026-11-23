@@ -307,7 +307,9 @@ export function resolveWorkEntryToolPresentation(
   const status = entry.toolLifecycleStatus ?? fallbackStatus;
   return resolveHackerAIMcpToolPresentation(
     definition,
-    definition && hackeraiToolResultIndicatesFailure(workEntryToolOutput(entry)) ? "failed" : status,
+    definition && hackeraiToolResultIndicatesFailure(workEntryToolOutput(entry))
+      ? "failed"
+      : status,
     entry.toolData,
     resolve,
   );
@@ -754,7 +756,11 @@ export function summarizeToolGroup(
     count: group.entries.length,
     priority: summaryActionPriority(action),
     ...(group.hackeraiAction
-      ? summarizeHackerAIToolCalls(group.hackeraiAction, group.entries.map(hackeraiToolSummaryCall), resolve)
+      ? summarizeHackerAIToolCalls(
+          group.hackeraiAction,
+          group.entries.map(hackeraiToolSummaryCall),
+          resolve,
+        )
       : {
           label: toolGroupActionLabel(
             group.action,

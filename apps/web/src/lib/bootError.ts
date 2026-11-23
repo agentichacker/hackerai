@@ -350,9 +350,7 @@ export function showBootError(error: unknown) {
 
   const repository = configuredGitHubRepository();
   const issue =
-    repository === undefined
-      ? undefined
-      : new URL(`https://github.com/${repository}/issues/new`);
+    repository === undefined ? undefined : new URL(`https://github.com/${repository}/issues/new`);
   if (issue !== undefined) {
     issue.searchParams.set("template", "bug_report.yml");
     issue.searchParams.set("title", "HackerAI failed to start");

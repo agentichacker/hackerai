@@ -200,7 +200,8 @@ describe("DesktopShellEnvironment", () => {
           "/tmp/.mount_HackerAI-Codold123/usr/bin:/launcher/bin:/opt/hackerai.AppDir/usr/bin";
         const cachedPath = "/cached/bin:/tmp/.mount_HackerAI-Codcache1/usr/bin";
         const discoveredPath = "/fresh/bin:/tmp/.mount_HackerAI-Codprobe1/usr/bin";
-        const retainedPath = "/tmp/tools:/tmp/.mount_Other123/usr/bin:/opt/hackerai.AppDir-backup/bin";
+        const retainedPath =
+          "/tmp/tools:/tmp/.mount_Other123/usr/bin:/opt/hackerai.AppDir-backup/bin";
         const cleanInherited = scrub
           ? `/launcher/bin${runtime.APPDIR ? "" : ":/opt/hackerai.AppDir/usr/bin"}`
           : inheritedPath;
@@ -270,7 +271,10 @@ describe("DesktopShellEnvironment", () => {
     { platform: "darwin" as const, env: { PATH: "/usr/bin" }, expectedPath: "/usr/bin" },
     {
       platform: "linux" as const,
-      env: { APPDIR: "/tmp/.mount_HackerAI-Codnew123", PATH: ":/tmp/.mount_HackerAI-Codold123/bin::/usr/bin:" },
+      env: {
+        APPDIR: "/tmp/.mount_HackerAI-Codnew123",
+        PATH: ":/tmp/.mount_HackerAI-Codold123/bin::/usr/bin:",
+      },
       expectedPath: "::/usr/bin:",
     },
     {

@@ -5,7 +5,11 @@ import {
   isRepositoryRootProject,
 } from "@hackerai/client-runtime/state/project-grouping";
 import type { EnvironmentProject } from "@hackerai/client-runtime/state/shell";
-import { repositoryGroupingKeyOf, type EnvironmentId, type ServerConfig } from "@hackerai/contracts";
+import {
+  repositoryGroupingKeyOf,
+  type EnvironmentId,
+  type ServerConfig,
+} from "@hackerai/contracts";
 
 import { scopedProjectKey } from "../../lib/scopedEntities";
 import type { HomeProjectScope } from "../home/homeThreadList";

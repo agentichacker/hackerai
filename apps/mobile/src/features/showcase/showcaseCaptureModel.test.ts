@@ -79,7 +79,10 @@ describe("showcaseReadinessKey", () => {
         renderSignal: { scene: "review", themeId: "material-you" },
       }),
     ).toBeNull();
-    const drawn = { ...review, renderSignal: { scene: "review", themeId: "hackerai-code" } } as const;
+    const drawn = {
+      ...review,
+      renderSignal: { scene: "review", themeId: "hackerai-code" },
+    } as const;
     const firstDraw = showcaseReadinessKey({ ...drawn, renderReports: 1 });
     expect(firstDraw).not.toBeNull();
     expect(showcaseReadinessKey({ ...drawn, renderReports: 2 })).not.toBe(firstDraw);

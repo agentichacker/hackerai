@@ -1,7 +1,11 @@
 import { errorDisplayMessage } from "@hackerai/client-runtime/errors";
 import { useAtomMount, useAtomSubscribe } from "@effect/atom-react";
 import { executeAtomQuery } from "@hackerai/client-runtime/state/runtime";
-import { ProjectListEntriesError, type EnvironmentId, type ProjectEntry } from "@hackerai/contracts";
+import {
+  ProjectListEntriesError,
+  type EnvironmentId,
+  type ProjectEntry,
+} from "@hackerai/contracts";
 import * as Cause from "effect/Cause";
 import * as Schema from "effect/Schema";
 import { useLayoutEffect, useRef, useState } from "react";

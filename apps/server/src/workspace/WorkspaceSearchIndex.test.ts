@@ -788,7 +788,9 @@ it.live.each([
   Effect.gen(function* () {
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-search-whole-word-" });
+    const cwd = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-search-whole-word-",
+    });
     yield* fileSystem.writeFileString(
       path.join(cwd, "words.ts"),
       "needleSuffix\nneedle, needle.\n\u00e9needle\n",

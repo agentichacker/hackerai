@@ -789,7 +789,10 @@ it("recognizes only a validation refusal of beforePosition", () => {
       ),
       true,
     ],
-    [refusedRead(`Invalid parameters for tool 'hackerai_thread_read': Unknown argument "limit".`), false],
+    [
+      refusedRead(`Invalid parameters for tool 'hackerai_thread_read': Unknown argument "limit".`),
+      false,
+    ],
     // A thread id can carry the same words; only the refusal's code and prefix count.
     [
       new OrchestratorMcpFailure({

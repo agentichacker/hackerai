@@ -40,7 +40,10 @@ describe("HackerAI device instructions", () => {
   });
 
   it("reach OpenCode and Cursor only when the session holds device access", () => {
-    assert.include(hackeraiOrchestrationSystemPrompt(true, true), HACKERAI_CODE_DEVICE_TOOL_INSTRUCTIONS);
+    assert.include(
+      hackeraiOrchestrationSystemPrompt(true, true),
+      HACKERAI_CODE_DEVICE_TOOL_INSTRUCTIONS,
+    );
     assert.notInclude(hackeraiOrchestrationSystemPrompt(true, false), "## HackerAI devices");
     assert.isUndefined(hackeraiOrchestrationSystemPrompt(false, true));
 
@@ -84,7 +87,11 @@ describe("HackerAI device instructions", () => {
   });
 
   it("reach ACP agents again when device access changes mid-thread", () => {
-    const state = { interactionMode: "default", hasHackerAIMcp: true, hasDeviceTools: false } as const;
+    const state = {
+      interactionMode: "default",
+      hasHackerAIMcp: true,
+      hasDeviceTools: false,
+    } as const;
     const withDevices = hackeraiAcpPromptWithInstructions({
       prompt: "Check the login screen.",
       state: { ...state, hasDeviceTools: true },
@@ -95,6 +102,9 @@ describe("HackerAI device instructions", () => {
       hackeraiAcpPromptWithInstructions({ prompt: "Again.", state, previousState: state }),
       "Again.",
     );
-    assert.notInclude(hackeraiAcpPromptWithInstructions({ prompt: "Hi.", state }), "## HackerAI devices");
+    assert.notInclude(
+      hackeraiAcpPromptWithInstructions({ prompt: "Hi.", state }),
+      "## HackerAI devices",
+    );
   });
 });

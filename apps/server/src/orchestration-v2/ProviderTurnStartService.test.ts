@@ -401,8 +401,16 @@ effectIt.effect("restores into a leftover worktree folder that cannot itself be 
 });
 
 it.each([
-  { label: "directly in the scratch root", folder: "/tmp/hackerai-home/scratch/notes", recreated: true },
-  { label: "below another folder", folder: "/tmp/hackerai-home/scratch/notes/deep", recreated: false },
+  {
+    label: "directly in the scratch root",
+    folder: "/tmp/hackerai-home/scratch/notes",
+    recreated: true,
+  },
+  {
+    label: "below another folder",
+    folder: "/tmp/hackerai-home/scratch/notes/deep",
+    recreated: false,
+  },
   {
     label: "in another project",
     folder: "/tmp/elsewhere/notes",
@@ -2060,7 +2068,9 @@ effectIt.effect("leaves a managed worktree folder without .git that holds user f
   Effect.gen(function* () {
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const worktreesDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-leftover-" });
+    const worktreesDir = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-leftover-",
+    });
     const worktreePath = path.join(worktreesDir, "project", "restore");
     yield* fileSystem.makeDirectory(path.join(worktreePath, "node_modules"), { recursive: true });
     yield* fileSystem.writeFileString(path.join(worktreePath, "notes.md"), "keep me");
@@ -2783,7 +2793,9 @@ effectIt.effect.each(["cleanup-first", "startup-first"])(
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const workspaceRoot = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-start-" });
+      const workspaceRoot = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-start-",
+      });
       const worktreePath = path.join(workspaceRoot, "project", "worktree");
       yield* fileSystem.makeDirectory(worktreePath, { recursive: true });
       const release = yield* Deferred.make<void>();

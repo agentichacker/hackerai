@@ -11,7 +11,9 @@ interface NativeKeyboardCommandsProps extends ViewProps {
   ) => void;
 }
 
-const NativeKeyboardCommands = requireNativeView<NativeKeyboardCommandsProps>("HackerAIKeyboardCommands");
+const NativeKeyboardCommands = requireNativeView<NativeKeyboardCommandsProps>(
+  "HackerAIKeyboardCommands",
+);
 
 export function HackerAIKeyboardCommands(
   props: PropsWithChildren<{

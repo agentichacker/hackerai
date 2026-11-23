@@ -698,8 +698,8 @@ function ApiKeySection({
               <p className="text-xs text-muted-foreground">
                 <T>
                   This computer's administrator locks the environment for{" "}
-                  <Var>{listFormat.format(lockedTools.map((entry) => entry.tool.displayName))}</Var>,
-                  so the key is not saved there.
+                  <Var>{listFormat.format(lockedTools.map((entry) => entry.tool.displayName))}</Var>
+                  , so the key is not saved there.
                 </T>{" "}
                 {lockedTools[0]?.reason}
               </p>

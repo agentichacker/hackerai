@@ -17,9 +17,9 @@ import * as Stream from "effect/Stream";
 import * as TestClock from "effect/testing/TestClock";
 import * as ChildProcess from "effect/process/ChildProcess";
 import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
-import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import * as NodeFS from "node:fs";
+import * as NodeOS from "node:os";
+import * as NodePath from "node:path";
 
 import * as DesktopEnvironment from "./DesktopEnvironment.ts";
 import * as DesktopAssets from "./DesktopAssets.ts";
@@ -27,12 +27,12 @@ import * as DesktopLinuxUrlHandler from "./DesktopLinuxUrlHandler.ts";
 
 // The two app id spellings differ only by case, so a case-folding volume keeps one file.
 const iconNamesAreDistinct = (() => {
-  const directory = mkdtempSync(join(tmpdir(), "hackerai-case-probe-"));
+  const directory = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "hackerai-case-probe-"));
   try {
-    writeFileSync(join(directory, "a"), "");
-    return !existsSync(join(directory, "A"));
+    NodeFS.writeFileSync(NodePath.join(directory, "a"), "");
+    return !NodeFS.existsSync(NodePath.join(directory, "A"));
   } finally {
-    rmSync(directory, { recursive: true, force: true });
+    NodeFS.rmSync(directory, { recursive: true, force: true });
   }
 })();
 
@@ -220,16 +220,28 @@ describe("DesktopLinuxUrlHandler", () => {
   });
 
   it.each([
-    { from: "HackerAI-Code-0.1.8-x86_64.AppImage", to: "HackerAI-Code-x86_64.AppImage", restored: true },
+    {
+      from: "HackerAI-Code-0.1.8-x86_64.AppImage",
+      to: "HackerAI-Code-x86_64.AppImage",
+      restored: true,
+    },
     {
       from: "HackerAI-Code-0.1.9-nightly.20261110.4449-arm64.AppImage",
       to: "HackerAI-Code-Nightly-arm64.AppImage",
       restored: true,
     },
-    { from: "HackerAI-Code-0.1.8-x86_64.AppImage", to: "HackerAI-Code-0.1.9-x86_64.AppImage", restored: false },
+    {
+      from: "HackerAI-Code-0.1.8-x86_64.AppImage",
+      to: "HackerAI-Code-0.1.9-x86_64.AppImage",
+      restored: false,
+    },
     { from: "hackerai.AppImage", to: "HackerAI-Code-x86_64.AppImage", restored: false },
     { from: "HackerAI-Code-x86_64.AppImage", to: "HackerAI-Code-x86_64.AppImage", restored: false },
-    { from: "../HackerAI-Code-0.1.8-x86_64.AppImage", to: "HackerAI-Code-x86_64.AppImage", restored: false },
+    {
+      from: "../HackerAI-Code-0.1.8-x86_64.AppImage",
+      to: "HackerAI-Code-x86_64.AppImage",
+      restored: false,
+    },
   ])("finds the launch path an update from $from to $to removed", ({ from, to, restored }) => {
     for (const dir of ["/home/alice/Applications", '/home/al ice/My "100%" $Apps\\x']) {
       const previous = dir + "/" + from;
@@ -623,66 +635,66 @@ it.layer(NodeServices.layer)("DesktopLinuxUrlHandler theme icons", (it) => {
   it.effect.skipIf(!iconNamesAreDistinct)(
     "installs both app id spellings without creating an icon cache",
     () =>
-    Effect.gen(function* () {
-      const fileSystem = yield* FileSystem.FileSystem;
-      const path = yield* Path.Path;
-      const icon = new Uint8Array([137, 80, 78, 71, 1, 2, 3]);
-      const fixture = yield* themeIconFixture(icon);
-      const run: ThemeIconRun = { root: fixture.root, commands: [] };
+      Effect.gen(function* () {
+        const fileSystem = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
+        const icon = new Uint8Array([137, 80, 78, 71, 1, 2, 3]);
+        const fixture = yield* themeIconFixture(icon);
+        const run: ThemeIconRun = { root: fixture.root, commands: [] };
 
-      yield* registerWithRealFileSystem(run);
-      assert.deepEqual([...(yield* fileSystem.readDirectory(fixture.appsDir))].sort(), [
-        "com.hackerai.HackerAI.png",
-        "com.hackerai.hackerai.png",
-      ]);
-      for (const name of ["com.hackerai.hackerai", "com.hackerai.HackerAI"]) {
-        const target = path.join(fixture.appsDir, `${name}.png`);
-        assert.deepEqual([...(yield* fileSystem.readFile(target))], [...icon]);
-        yield* fileSystem.utimes(target, fixture.pastSeconds, fixture.pastSeconds);
-      }
+        yield* registerWithRealFileSystem(run);
+        assert.deepEqual([...(yield* fileSystem.readDirectory(fixture.appsDir))].sort(), [
+          "com.hackerai.HackerAI.png",
+          "com.hackerai.hackerai.png",
+        ]);
+        for (const name of ["com.hackerai.hackerai", "com.hackerai.HackerAI"]) {
+          const target = path.join(fixture.appsDir, `${name}.png`);
+          assert.deepEqual([...(yield* fileSystem.readFile(target))], [...icon]);
+          yield* fileSystem.utimes(target, fixture.pastSeconds, fixture.pastSeconds);
+        }
 
-      yield* registerWithRealFileSystem(run);
-      for (const name of ["com.hackerai.hackerai", "com.hackerai.HackerAI"]) {
-        const info = yield* fileSystem.stat(path.join(fixture.appsDir, `${name}.png`));
-        assert.equal(Option.getOrThrow(info.mtime).getTime(), fixture.pastSeconds * 1000);
-      }
-      assert.isFalse(yield* fileSystem.exists(fixture.cachePath));
-      assert.equal(iconCacheRuns(run), 0);
-    }),
+        yield* registerWithRealFileSystem(run);
+        for (const name of ["com.hackerai.hackerai", "com.hackerai.HackerAI"]) {
+          const info = yield* fileSystem.stat(path.join(fixture.appsDir, `${name}.png`));
+          assert.equal(Option.getOrThrow(info.mtime).getTime(), fixture.pastSeconds * 1000);
+        }
+        assert.isFalse(yield* fileSystem.exists(fixture.cachePath));
+        assert.equal(iconCacheRuns(run), 0);
+      }),
   );
 
   it.effect.skipIf(!iconNamesAreDistinct)(
     "replaces same-length stale icons and refreshes an existing cache once",
     () =>
-    Effect.gen(function* () {
-      const fileSystem = yield* FileSystem.FileSystem;
-      const path = yield* Path.Path;
-      const fixture = yield* themeIconFixture(new Uint8Array([1, 2, 3]));
-      yield* fixture.seedCache;
-      const lower = path.join(fixture.appsDir, "com.hackerai.hackerai.png");
-      const upper = path.join(fixture.appsDir, "com.hackerai.HackerAI.png");
-      yield* fileSystem.writeFile(lower, new Uint8Array([3, 2, 1]));
-      yield* fileSystem.writeFile(upper, new Uint8Array([1, 2, 3]));
-      for (const target of [lower, upper]) {
-        yield* fileSystem.utimes(target, fixture.pastSeconds, fixture.pastSeconds);
-      }
-      const run: ThemeIconRun = {
-        root: fixture.root,
-        commands: [],
-        onIconCacheRefresh: fixture.rewriteCache,
-      };
+      Effect.gen(function* () {
+        const fileSystem = yield* FileSystem.FileSystem;
+        const path = yield* Path.Path;
+        const fixture = yield* themeIconFixture(new Uint8Array([1, 2, 3]));
+        yield* fixture.seedCache;
+        const lower = path.join(fixture.appsDir, "com.hackerai.hackerai.png");
+        const upper = path.join(fixture.appsDir, "com.hackerai.HackerAI.png");
+        yield* fileSystem.writeFile(lower, new Uint8Array([3, 2, 1]));
+        yield* fileSystem.writeFile(upper, new Uint8Array([1, 2, 3]));
+        for (const target of [lower, upper]) {
+          yield* fileSystem.utimes(target, fixture.pastSeconds, fixture.pastSeconds);
+        }
+        const run: ThemeIconRun = {
+          root: fixture.root,
+          commands: [],
+          onIconCacheRefresh: fixture.rewriteCache,
+        };
 
-      yield* registerWithRealFileSystem(run);
-      yield* registerWithRealFileSystem(run);
+        yield* registerWithRealFileSystem(run);
+        yield* registerWithRealFileSystem(run);
 
-      assert.deepEqual([...(yield* fileSystem.readFile(lower))], [1, 2, 3]);
-      const upperInfo = yield* fileSystem.stat(upper);
-      assert.equal(Option.getOrThrow(upperInfo.mtime).getTime(), fixture.pastSeconds * 1000);
-      assert.deepEqual(
-        run.commands.filter(({ command }) => command === "gtk-update-icon-cache"),
-        [{ command: "gtk-update-icon-cache", args: ["-f", "-t", fixture.hicolorDir] }],
-      );
-    }),
+        assert.deepEqual([...(yield* fileSystem.readFile(lower))], [1, 2, 3]);
+        const upperInfo = yield* fileSystem.stat(upper);
+        assert.equal(Option.getOrThrow(upperInfo.mtime).getTime(), fixture.pastSeconds * 1000);
+        assert.deepEqual(
+          run.commands.filter(({ command }) => command === "gtk-update-icon-cache"),
+          [{ command: "gtk-update-icon-cache", args: ["-f", "-t", fixture.hicolorDir] }],
+        );
+      }),
   );
 
   it.effect("refreshes when this launch changed an icon even if the cache looks newer", () =>
@@ -701,7 +713,9 @@ it.layer(NodeServices.layer)("DesktopLinuxUrlHandler theme icons", (it) => {
 
       yield* registerWithRealFileSystem(run);
 
-      assert.isTrue(yield* fileSystem.exists(path.join(fixture.appsDir, "com.hackerai.HackerAI.png")));
+      assert.isTrue(
+        yield* fileSystem.exists(path.join(fixture.appsDir, "com.hackerai.HackerAI.png")),
+      );
       assert.equal(iconCacheRuns(run), 1);
     }),
   );

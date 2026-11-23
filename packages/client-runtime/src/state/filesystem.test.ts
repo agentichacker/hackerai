@@ -108,7 +108,9 @@ describe("filesystem browse model", () => {
     });
     expect(getFilesystemBrowseTabCompletion([], "x")).toBeNull();
     // The list also shows substring and fuzzy matches; Tab completes only the typed name.
-    expect(getFilesystemBrowseTabCompletion([entry("hackerai"), entry("my-hackerai")], "hackerai")).toEqual({
+    expect(
+      getFilesystemBrowseTabCompletion([entry("hackerai"), entry("my-hackerai")], "hackerai"),
+    ).toEqual({
       name: "hackerai",
       isComplete: true,
     });
@@ -170,10 +172,12 @@ describe("browse navigation", () => {
 });
 
 describe("browse entry filtering", () => {
-  const entries = ["my-hackerai", "hackerai", "cotton", "HackerAI-old", ".hackerai", "docs"].map((name) => ({
-    name,
-    fullPath: `~/code/${name}`,
-  }));
+  const entries = ["my-hackerai", "hackerai", "cotton", "HackerAI-old", ".hackerai", "docs"].map(
+    (name) => ({
+      name,
+      fullPath: `~/code/${name}`,
+    }),
+  );
   const names = (query: string) =>
     filterFilesystemBrowseEntries(entries, query).visibleEntries.map((entry) => entry.name);
 

@@ -104,7 +104,10 @@ describe("Enriched link presentation", () => {
   });
 
   it("presents thread links as thread chips and leaves other links alone", () => {
-    for (const href of ["hackerai-thread://v1/thread%3Aproject%3A1", "hackerai-thread://v2/env/thread_1"]) {
+    for (const href of [
+      "hackerai-thread://v1/thread%3Aproject%3A1",
+      "hackerai-thread://v2/env/thread_1",
+    ]) {
       expect(enrichedThreadLinkPresentation(href), href).toEqual({
         accent: "#009c96",
         icon: { kind: "chip", name: "messages-square" },
@@ -139,8 +142,18 @@ describe("Enriched link presentation", () => {
         ],
       ),
     ).toEqual([
-      { href: "hackerai-thread://v1/thread_a", environmentId: here, threadId: "thread_a", link: true },
-      { href: "hackerai-thread://v1/thread_b", environmentId: here, threadId: "thread_b", link: true },
+      {
+        href: "hackerai-thread://v1/thread_a",
+        environmentId: here,
+        threadId: "thread_a",
+        link: true,
+      },
+      {
+        href: "hackerai-thread://v1/thread_b",
+        environmentId: here,
+        threadId: "thread_b",
+        link: true,
+      },
       {
         href: "hackerai-thread://v2/env-there/thread_d",
         environmentId: there,

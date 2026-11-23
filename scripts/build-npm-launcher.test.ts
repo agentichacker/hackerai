@@ -186,7 +186,10 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
           ["--version|", `serve a b|${launcher}`, `--version|${launcher}`],
         );
 
-        yield* fs.writeFileString(path.join(versionDir, "hackerai"), "#!/hackerai-test-missing-loader\n");
+        yield* fs.writeFileString(
+          path.join(versionDir, "hackerai"),
+          "#!/hackerai-test-missing-loader\n",
+        );
         for (const _attempt of [1, 2]) {
           const cached = yield* run(process.execPath, [launcher, "serve"], { cwd: root, env });
           assert.equal(cached.exitCode, 1, cached.stderr);
@@ -240,7 +243,10 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
         yield* fs.makeDirectory(staleDir, { recursive: true });
         yield* fs.writeFileString(path.join(staleDir, "hackerai"), "");
         yield* fs.makeDirectory(peerDir);
-        yield* fs.writeFileString(path.join(peerDir, "hackerai"), '#!/bin/sh\necho "peer $*"\nexit 7\n');
+        yield* fs.writeFileString(
+          path.join(peerDir, "hackerai"),
+          '#!/bin/sh\necho "peer $*"\nexit 7\n',
+        );
         yield* fs.chmod(path.join(peerDir, "hackerai"), 0o755);
         yield* fs.writeFileString(path.join(peerDir, ".install-complete"), `${VERSION}\n`);
         yield* fs.writeFileString(path.join(peerDir, "sidecar"), "peer sidecar");
@@ -365,7 +371,9 @@ fs.readFileSync = (file, ...rest) => {
           "#!/bin/sh\nkill -TERM $$\n",
           '#!/bin/sh\ntrap \'echo caught > "$HACKERAI_TEST_TERM"; exit 42\' TERM\necho ready > "$HACKERAI_TEST_READY"\nwhile :; do :; done\n',
         ]) {
-          const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-npm-validation-test-" });
+          const root = yield* fs.makeTempDirectoryScoped({
+            prefix: "hackerai-npm-validation-test-",
+          });
           const output = yield* buildNpmLauncher({
             version: VERSION,
             outputDir: path.join(root, "out"),

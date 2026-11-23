@@ -2485,7 +2485,10 @@ it.layer(
     "updates Volta installs only when Volta has the package",
     () =>
       Effect.gen(function* () {
-        const voltaHome = NodePath.join(yield* makeTempDir("hackerai-volta-capabilities"), ".volta");
+        const voltaHome = NodePath.join(
+          yield* makeTempDir("hackerai-volta-capabilities"),
+          ".volta",
+        );
         const shim = NodePath.join(voltaHome, "bin", "volta-shim");
         writeExecutable(shim);
         const link = NodePath.join(voltaHome, "bin", "package-tool");

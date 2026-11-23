@@ -30,13 +30,18 @@ export function tunnelUpgradeCopy(
       );
     case "pro":
       return resolve(
-        msg("Upgrade to HackerAI Chat Pro for up to {pro} tunnels, or Premier for up to {premier}.", {
-          pro,
-          premier,
-        }),
+        msg(
+          "Upgrade to HackerAI Chat Pro for up to {pro} tunnels, or Premier for up to {premier}.",
+          {
+            pro,
+            premier,
+          },
+        ),
       );
     case "premier":
-      return resolve(msg("Upgrade to HackerAI Chat Premier for up to {premier} tunnels.", { premier }));
+      return resolve(
+        msg("Upgrade to HackerAI Chat Premier for up to {premier} tunnels.", { premier }),
+      );
   }
 }
 
@@ -110,7 +115,9 @@ export function TunnelLimitAlert({
     ) : upgrade === "pro" || upgrade === "premier" ? (
       <Button
         size="sm"
-        render={<a href={HackerAICHAT_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer" />}
+        render={
+          <a href={HackerAICHAT_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer" />
+        }
       >
         <T>Upgrade on HackerAI Chat</T>
       </Button>
@@ -129,7 +136,9 @@ export function TunnelLimitAlert({
         {upgrade === "link"
           ? gt("Switch to Tailscale or get more tunnels by linking your HackerAI Chat sub (sorry!)")
           : upgrade
-            ? gt("Switch to Tailscale or get more tunnels by upgrading your HackerAI Chat sub (sorry!)")
+            ? gt(
+                "Switch to Tailscale or get more tunnels by upgrading your HackerAI Chat sub (sorry!)",
+              )
             : gt("Switch to Tailscale or deregister an environment you no longer use (sorry!)")}
       </AlertDescription>
       {action ? <AlertAction>{action}</AlertAction> : null}

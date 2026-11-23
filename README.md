@@ -38,14 +38,14 @@ It works with Claude Code, Codex, Cursor, OpenCode, Grok Build, Antigravity, Kir
 
 ## Why HackerAI
 
-| | |
-| --- | --- |
-| **Your subscriptions** | HackerAI does not resell tokens or add a markup. It drives the agents you are already signed in to. |
-| **Every agent in one place** | Change models in the middle of a thread. Let Claude hand a task to Codex. Keep one workflow when you switch harnesses. |
-| **Desktop, web, and phone** | One server, and every client shows the same threads. Start on your laptop and continue from a browser. |
-| **Remote by default** | Run agents on any machine. Connect over your local network, Tailscale, or [HackerAI Connect](./docs/user/remote-access.md). |
-| **Git built in** | Each thread can work in its own worktree. Review the diff, then commit, push, and open a pull request with one button. |
-| **Fast and open** | Performance is a feature here. HackerAI is MIT licensed, self-hostable, and yours to fork. |
+|                              |                                                                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Your subscriptions**       | HackerAI does not resell tokens or add a markup. It drives the agents you are already signed in to.                         |
+| **Every agent in one place** | Change models in the middle of a thread. Let Claude hand a task to Codex. Keep one workflow when you switch harnesses.      |
+| **Desktop, web, and phone**  | One server, and every client shows the same threads. Start on your laptop and continue from a browser.                      |
+| **Remote by default**        | Run agents on any machine. Connect over your local network, Tailscale, or [HackerAI Connect](./docs/user/remote-access.md). |
+| **Git built in**             | Each thread can work in its own worktree. Review the diff, then commit, push, and open a pull request with one button.      |
+| **Fast and open**            | Performance is a feature here. HackerAI is MIT licensed, self-hostable, and yours to fork.                                  |
 
 ## Install
 

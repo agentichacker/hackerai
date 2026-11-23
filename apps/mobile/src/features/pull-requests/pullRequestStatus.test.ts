@@ -1,4 +1,8 @@
-import type { PullRequestActivity, PullRequestCheck, PullRequestComment } from "@hackerai/contracts";
+import type {
+  PullRequestActivity,
+  PullRequestCheck,
+  PullRequestComment,
+} from "@hackerai/contracts";
 import { describe, expect, it } from "vite-plus/test";
 import {
   normalizedReviewState,

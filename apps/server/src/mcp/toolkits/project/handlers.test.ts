@@ -739,7 +739,9 @@ it.effect("a launch that omits its workspace follows the new-threads-in-a-worktr
   Effect.gen(function* () {
     const fileSystem = yield* FileSystem.FileSystem;
     for (const source of ["setting", "hackerai.json"] as const) {
-      const repo = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-launch-env-mode-" });
+      const repo = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-launch-env-mode-",
+      });
       const launched: Array<ThreadLaunch.ThreadLaunchInput> = [];
       const { projectId, dependencies } = clientLaunchHarness({
         runtimeModeCeiling: "auto",
@@ -1098,7 +1100,10 @@ it.effect("an agent's clone is not cut off while git is still transferring", () 
     );
 
     const clone = yield* toolkit
-      .handle("hackerai_project_clone", { remoteUrl: "https://example.test/repo.git", destinationPath })
+      .handle("hackerai_project_clone", {
+        remoteUrl: "https://example.test/repo.git",
+        destinationPath,
+      })
       .pipe(Stream.unwrap, Stream.runCollect, Effect.provide(repositories), Effect.forkChild);
     yield* Deferred.await(started);
     // A large repository over a slow link; agents' MCP calls get a far longer budget.

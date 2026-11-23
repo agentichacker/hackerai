@@ -15,7 +15,11 @@ test(
   WEB,
   async ({ hackerai, app, screen, browser }) => {
     const project = await hackerai.project("demo", { "contacts.rtf": JDK_RTF });
-    const thread = await hackerai.thread({ project, title: "Review contacts", messages: ["Start"] });
+    const thread = await hackerai.thread({
+      project,
+      title: "Review contacts",
+      messages: ["Start"],
+    });
     await hackerai.open(thread);
     await expect(screen.getByText("fixture turn complete", { exact: false })).toBeVisible();
 

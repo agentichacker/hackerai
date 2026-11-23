@@ -36,7 +36,12 @@ export const HACKERAI_CODE_BROWSER_TOOL_INSTRUCTIONS = `
 When browser work was asked, \`preview_*\` is the browser you share with the user: \`preview_status\` first, then \`preview_open\` if no tab can be automated. Prefer snapshot locators over coordinates. Switch browsers only if the tools are absent or \`preview_open\` says unsupported, the user asks, or two preview calls fail on one step. Then quote the error and switch.
 `;
 
-const HACKERAI_CODE_DEVICE_TOOLS = ["device_list", "device_open", "device_screenshot", "device_close"];
+const HACKERAI_CODE_DEVICE_TOOLS = [
+  "device_list",
+  "device_open",
+  "device_screenshot",
+  "device_close",
+];
 
 const deviceToolInstructions = (loadTools: string) => `## HackerAI devices
 

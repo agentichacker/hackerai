@@ -3215,42 +3215,44 @@ it.layer(McpProviderSessions.layer)("OpenCode2 adapter", (it) => {
     }),
   );
 
-  it.effect("declines a form HackerAI cannot show with the reason, instead of leaving it open", () =>
-    Effect.gen(function* () {
-      const { runtime, thread } = yield* resumed([
-        out("session.prompt", { sessionID: SESSION, text: "<any>" }),
-        promptAccepted,
-        event("form.created", {
-          form: {
-            id: "frm_0eb79ab35001fkvFECSh3wYNVD",
+  it.effect(
+    "declines a form HackerAI cannot show with the reason, instead of leaving it open",
+    () =>
+      Effect.gen(function* () {
+        const { runtime, thread } = yield* resumed([
+          out("session.prompt", { sessionID: SESSION, text: "<any>" }),
+          promptAccepted,
+          event("form.created", {
+            form: {
+              id: "frm_0eb79ab35001fkvFECSh3wYNVD",
+              sessionID: SESSION,
+              title: "MCP authorization",
+              metadata: { kind: "mcp" },
+              fields: [
+                {
+                  key: "authorization",
+                  type: "external",
+                  url: "https://example.com/authorize",
+                  title: "Authorize",
+                },
+              ],
+            },
+          }),
+          out("session.form.cancel", {
             sessionID: SESSION,
-            title: "MCP authorization",
-            metadata: { kind: "mcp" },
-            fields: [
-              {
-                key: "authorization",
-                type: "external",
-                url: "https://example.com/authorize",
-                title: "Authorize",
-              },
-            ],
-          },
-        }),
-        out("session.form.cancel", {
-          sessionID: SESSION,
-          formID: "frm_0eb79ab35001fkvFECSh3wYNVD",
-        }),
-        reply("session.form.cancel", null),
-      ]);
-      const terminal = yield* terminalOf(runtime).pipe(Effect.forkScoped);
-      yield* runtime.startTurn(turnInput(thread));
-      const ended = yield* Fiber.join(terminal);
-      assert.equal(ended?.status, "failed");
-      assert.include(
-        ended?.status === "failed" ? ended.failure.message : "",
-        "asked for a link to open",
-      );
-    }),
+            formID: "frm_0eb79ab35001fkvFECSh3wYNVD",
+          }),
+          reply("session.form.cancel", null),
+        ]);
+        const terminal = yield* terminalOf(runtime).pipe(Effect.forkScoped);
+        yield* runtime.startTurn(turnInput(thread));
+        const ended = yield* Fiber.join(terminal);
+        assert.equal(ended?.status, "failed");
+        assert.include(
+          ended?.status === "failed" ? ended.failure.message : "",
+          "asked for a link to open",
+        );
+      }),
   );
 
   it.effect("asks a subagent's permission request on the parent thread's turn", () =>
@@ -5186,7 +5188,11 @@ it.layer(McpProviderSessions.layer)("OpenCode2 adapter", (it) => {
                   input: { html: pages[0]!.html, width: 728 },
                 },
                 { tool: `${server}.html_render`, status: "completed", input: pages[0] },
-                { tool: "hackerai-code-thread_other.html_render", status: "completed", input: pages[1] },
+                {
+                  tool: "hackerai-code-thread_other.html_render",
+                  status: "completed",
+                  input: pages[1],
+                },
                 { tool: `${server}.html_render`, status: "completed", input: pages[1] },
               ],
               truncated: false,
@@ -5392,69 +5398,75 @@ it.layer(McpProviderSessions.layer)("OpenCode2 adapter", (it) => {
     }),
   );
 
-  it.effect("re-registers HackerAI MCP each turn and drops its instructions when adding fails", () =>
-    Effect.gen(function* () {
-      const mcpSessions = yield* McpProviderSessions.McpProviderSessions;
-      yield* mcpSessions.set({
-        environmentId: EnvironmentId.make("environment:opencode2-adapter"),
-        threadId,
-        providerSessionId: "mcp:opencode2-adapter",
-        providerInstanceId: instanceId,
-        endpoint: "http://127.0.0.1:3773/mcp",
-        authorizationHeader: "Bearer thread-credential",
-        browserToolsAvailable: false,
-      });
-      yield* Effect.addFinalizer(() => mcpSessions.clear(threadId));
-      const server = "hackerai-code-thread_opencode2-adapter";
-      const add = out("mcp.add", {
-        server,
-        "location[directory]": WORK,
-        config: {
-          type: "remote",
-          url: "http://127.0.0.1:3773/mcp",
-          headers: { Authorization: "Bearer thread-credential" },
-          oauth: false,
-        },
-      });
-      const turn = [
-        out("session.prompt", { sessionID: SESSION, text: "<any>" }),
-        promptAccepted,
-        event("session.execution.succeeded", { sessionID: SESSION }),
-      ];
-      const prompts: Array<unknown> = [];
-      // Idle Location eviction drops OpenCode's runtime MCP servers without a reconnect.
-      const { runtime, thread } = yield* resumed(
-        [
-          add,
-          reply("mcp.add", null),
-          ...turn,
-          add,
-          reply("mcp.add", { status: 500, body: { message: "MCP unavailable" } }),
-          out("session.instructions.entry.put", {
-            sessionID: SESSION,
-            key: "hackerai-code",
-            value: buildRuntimeInstructions({ harness: "OpenCode", model: bigPickle.model }),
-          }),
-          reply("session.instructions.entry.put", null),
-          ...turn,
-          out("mcp.remove", { server, "location[directory]": WORK }),
-          reply("mcp.remove", null),
-        ],
-        { onPrompt: (input) => prompts.push(input) },
-      );
-      for (let index = 0; index < 2; index++) {
-        const terminal = yield* terminalOf(runtime).pipe(Effect.forkScoped);
-        const started = yield* runtime.startTurn(turnInput(thread)).pipe(Effect.forkScoped);
-        // OpenCode before 2.2.6 loads a newly added server's tools after a debounce.
-        if (index === 0) {
-          yield* TestClock.adjust("249 millis");
-          assert.lengthOf(prompts, 0, "prompted before OpenCode loaded the new MCP server's tools");
-          yield* TestClock.adjust("1 millis");
+  it.effect(
+    "re-registers HackerAI MCP each turn and drops its instructions when adding fails",
+    () =>
+      Effect.gen(function* () {
+        const mcpSessions = yield* McpProviderSessions.McpProviderSessions;
+        yield* mcpSessions.set({
+          environmentId: EnvironmentId.make("environment:opencode2-adapter"),
+          threadId,
+          providerSessionId: "mcp:opencode2-adapter",
+          providerInstanceId: instanceId,
+          endpoint: "http://127.0.0.1:3773/mcp",
+          authorizationHeader: "Bearer thread-credential",
+          browserToolsAvailable: false,
+        });
+        yield* Effect.addFinalizer(() => mcpSessions.clear(threadId));
+        const server = "hackerai-code-thread_opencode2-adapter";
+        const add = out("mcp.add", {
+          server,
+          "location[directory]": WORK,
+          config: {
+            type: "remote",
+            url: "http://127.0.0.1:3773/mcp",
+            headers: { Authorization: "Bearer thread-credential" },
+            oauth: false,
+          },
+        });
+        const turn = [
+          out("session.prompt", { sessionID: SESSION, text: "<any>" }),
+          promptAccepted,
+          event("session.execution.succeeded", { sessionID: SESSION }),
+        ];
+        const prompts: Array<unknown> = [];
+        // Idle Location eviction drops OpenCode's runtime MCP servers without a reconnect.
+        const { runtime, thread } = yield* resumed(
+          [
+            add,
+            reply("mcp.add", null),
+            ...turn,
+            add,
+            reply("mcp.add", { status: 500, body: { message: "MCP unavailable" } }),
+            out("session.instructions.entry.put", {
+              sessionID: SESSION,
+              key: "hackerai-code",
+              value: buildRuntimeInstructions({ harness: "OpenCode", model: bigPickle.model }),
+            }),
+            reply("session.instructions.entry.put", null),
+            ...turn,
+            out("mcp.remove", { server, "location[directory]": WORK }),
+            reply("mcp.remove", null),
+          ],
+          { onPrompt: (input) => prompts.push(input) },
+        );
+        for (let index = 0; index < 2; index++) {
+          const terminal = yield* terminalOf(runtime).pipe(Effect.forkScoped);
+          const started = yield* runtime.startTurn(turnInput(thread)).pipe(Effect.forkScoped);
+          // OpenCode before 2.2.6 loads a newly added server's tools after a debounce.
+          if (index === 0) {
+            yield* TestClock.adjust("249 millis");
+            assert.lengthOf(
+              prompts,
+              0,
+              "prompted before OpenCode loaded the new MCP server's tools",
+            );
+            yield* TestClock.adjust("1 millis");
+          }
+          yield* Fiber.join(started);
+          assert.equal((yield* Fiber.join(terminal))?.status, "completed");
         }
-        yield* Fiber.join(started);
-        assert.equal((yield* Fiber.join(terminal))?.status, "completed");
-      }
-    }),
+      }),
   );
 
   it.effect("registers a long thread id's MCP server under a name OpenCode accepts", () =>
@@ -5537,7 +5549,10 @@ it.layer(McpProviderSessions.layer)("OpenCode2 adapter", (it) => {
       assert.equal(new Set(names).size, ids.length);
       assert.deepEqual(yield* Effect.forEach(ids, hackeraiMcpServerName), names);
       assert.equal(names[0], "hackerai-code-63abb5df2b188bdd");
-      assert.equal(yield* hackeraiMcpServerName(threadId), "hackerai-code-thread_opencode2-adapter");
+      assert.equal(
+        yield* hackeraiMcpServerName(threadId),
+        "hackerai-code-thread_opencode2-adapter",
+      );
     }).pipe(Effect.provide(NodeCrypto.layer)),
   );
 
@@ -6495,7 +6510,11 @@ it.layer(McpProviderSessions.layer)("OpenCode2 adapter", (it) => {
         replyData("session.form.list", []),
         ...promptInto(SESSION, "msg_recorded_turn_a"),
         ...steerInto(SESSION, "msg_recorded_steer_a"),
-        out("session.instructions.entry.put", { sessionID: OTHER, key: "hackerai-code", value: "<any>" }),
+        out("session.instructions.entry.put", {
+          sessionID: OTHER,
+          key: "hackerai-code",
+          value: "<any>",
+        }),
         reply("session.instructions.entry.put", null),
         ...promptInto(OTHER, "msg_recorded_turn_b"),
         ...steerInto(OTHER, "msg_recorded_steer_b"),
@@ -6568,7 +6587,11 @@ it.layer(McpProviderSessions.layer)("OpenCode2 adapter", (it) => {
         out("session.form.list", { sessionID: OTHER }),
         replyData("session.form.list", []),
         ...promptInto(SESSION, "msg_recorded_turn_a"),
-        out("session.instructions.entry.put", { sessionID: OTHER, key: "hackerai-code", value: "<any>" }),
+        out("session.instructions.entry.put", {
+          sessionID: OTHER,
+          key: "hackerai-code",
+          value: "<any>",
+        }),
         reply("session.instructions.entry.put", null),
         ...promptInto(OTHER, "msg_recorded_turn_b"),
         event("session.execution.succeeded", { sessionID: SESSION }),
@@ -7075,7 +7098,11 @@ it.layer(McpProviderSessions.layer)("OpenCode2 adapter", (it) => {
           permissions: [
             { action: "*", resource: "*", effect: "allow" },
             { action: "hackerai-code-*", resource: "*", effect: "deny" },
-            { action: "hackerai-code-thread_opencode2-adapter_fork_*", resource: "*", effect: "allow" },
+            {
+              action: "hackerai-code-thread_opencode2-adapter_fork_*",
+              resource: "*",
+              effect: "allow",
+            },
           ],
         }),
         reply("session.update", null),

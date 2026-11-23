@@ -4,9 +4,7 @@ export function parseGitHubRepository(value: string | undefined): string | undef
   const match = repository === undefined ? null : /^([\w.-]+)\/([\w.-]+)$/.exec(repository);
   if (match === null) return undefined;
   const [, owner, name] = match;
-  return owner === "." || owner === ".." || name === "." || name === ".."
-    ? undefined
-    : repository;
+  return owner === "." || owner === ".." || name === "." || name === ".." ? undefined : repository;
 }
 
 export function configuredGitHubRepository(): string | undefined {

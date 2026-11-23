@@ -168,7 +168,10 @@ describe("renderCliShim", () => {
     });
     expect(run(shim, []).stdout).toContain(`home=${root}/home`);
     expect(run(shim, [], { HACKERAI_HOME: "/elsewhere" }).stdout).toContain("home=/elsewhere");
-    const relative = NodeChildProcess.spawnSync("./bin/hackerai", [], { cwd: root, encoding: "utf8" });
+    const relative = NodeChildProcess.spawnSync("./bin/hackerai", [], {
+      cwd: root,
+      encoding: "utf8",
+    });
     expect(relative.stdout).toContain(`cli=${shim}`);
   });
 
@@ -206,6 +209,8 @@ describe("renderCliShim", () => {
       (line) => line.includes("whoami") && !/"[^"]*whoami[^"]*"/.test(line),
     );
     expect(bare).toEqual([]);
-    expect(lines).toContain('set "HACKERAI_CLI_PATH=C:\\Users\\José\\.hackerai\\bin\\hackerai.cmd"');
+    expect(lines).toContain(
+      'set "HACKERAI_CLI_PATH=C:\\Users\\José\\.hackerai\\bin\\hackerai.cmd"',
+    );
   });
 });

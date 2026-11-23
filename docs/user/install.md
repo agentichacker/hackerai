@@ -28,8 +28,8 @@ installer or the desktop app did not create is already there, it leaves that
 one alone and stops. Set `HACKERAI_CHANNEL=nightly` to install the nightly train, or
 `HACKERAI_VERSION` to pin an exact version.
 
-| Task                                  | Command                                                                 |
-| ------------------------------------- | ----------------------------------------------------------------------- |
+| Task                                  | Command                                                                       |
+| ------------------------------------- | ----------------------------------------------------------------------------- |
 | Start the server and open the web app | `hackerai`                                                                    |
 | Start the server without a browser    | `hackerai serve`                                                              |
 | Use it from your other devices        | `hackerai up` ([details](./remote-access.md))                                 |
@@ -156,7 +156,7 @@ computer.
 | Grok Build  | Install [Grok Build CLI](https://x.ai/cli), then run `grok login`.                                                                                        |
 | Kiro        | Install [Kiro CLI](https://kiro.dev/docs/cli/), then run `kiro-cli login`.                                                                                |
 | OpenCode    | Install [OpenCode](https://opencode.ai), then run `opencode auth login`.                                                                                  |
-| Antigravity | Install and sign in with Google from HackerAI's provider settings.                                                                                         |
+| Antigravity | Install and sign in with Google from HackerAI's provider settings.                                                                                        |
 | Pi          | Install [Pi](./providers-pi.md#set-up-pi) with Node.js 22.19 or newer, then run `pi` and `/login`.                                                        |
 | Muse Code   | Install [Muse Code](https://dev.meta.ai/docs/muse-code) on the server, run `muse login`, then enable it in Settings → Providers.                          |
 | fx          | Install [fx](https://fx.sh) with `curl -fsSL https://fx.sh/setup.sh \| bash`, then run `fx login`.                                                        |
@@ -223,8 +223,8 @@ default is already longer keeps its default. Providers with several phases can
 take longer than one deadline in total. Values must be whole milliseconds no
 greater than 2147483647; unset or invalid values keep the defaults.
 
-| Provider            | Environment variable                   |
-| ------------------- | -------------------------------------- |
+| Provider            | Environment variable                     |
+| ------------------- | ---------------------------------------- |
 | Codex               | `HACKERAI_CODEX_PROBE_TIMEOUT_MS`        |
 | Claude              | `HACKERAI_CLAUDE_PROBE_TIMEOUT_MS`       |
 | Cursor              | `HACKERAI_CURSOR_PROBE_TIMEOUT_MS`       |

@@ -39,7 +39,9 @@ export function useHackerAIChatLink() {
   const createLinkRequest = useAtomCommand(createManagedRelayHackerAIChatLinkRequestCommand, {
     reportFailure: false,
   });
-  const unlinkCommand = useAtomCommand(unlinkManagedRelayHackerAIChatCommand, { reportFailure: false });
+  const unlinkCommand = useAtomCommand(unlinkManagedRelayHackerAIChatCommand, {
+    reportFailure: false,
+  });
   const [pending, setPending] = useState<"link" | "unlink" | null>(null);
   // Kept so a blocked popup still leaves the user a link to open.
   const [linkUrl, setLinkUrl] = useState<string | null>(null);

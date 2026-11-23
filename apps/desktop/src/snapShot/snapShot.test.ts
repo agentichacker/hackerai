@@ -495,9 +495,9 @@ describe("isWaylandSession", () => {
                 XDG_SESSION_TYPE: "x11",
               }),
             ).toBe(false);
-            expect(isWaylandSession("linux", { XDG_RUNTIME_DIR: "/nonexistent-hackerai-test" })).toBe(
-              false,
-            );
+            expect(
+              isWaylandSession("linux", { XDG_RUNTIME_DIR: "/nonexistent-hackerai-test" }),
+            ).toBe(false);
           } finally {
             if (server.listening) {
               await new Promise<void>((resolve, reject) => {

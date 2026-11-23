@@ -214,7 +214,16 @@ const startApp = Effect.fn("startApp")(function* (input: {
   const metro = yield* start({
     cwd: path.join(checkout, "apps/mobile"),
     command: "npx",
-    args: ["expo", "start", "--dev-client", "--scheme", "hackerai-dev", "--lan", "--port", metroPort],
+    args: [
+      "expo",
+      "start",
+      "--dev-client",
+      "--scheme",
+      "hackerai-dev",
+      "--lan",
+      "--port",
+      metroPort,
+    ],
     env: {
       ...env,
       APP_VARIANT: "development",
@@ -236,7 +245,9 @@ const command = Command.make(
         "web: server and Vite. mobile: server on every interface and Metro.",
       ),
     ),
-    home: Argument.String("hackerai-home").pipe(Argument.withDescription("HackerAI home to recreate.")),
+    home: Argument.String("hackerai-home").pipe(
+      Argument.withDescription("HackerAI home to recreate."),
+    ),
     ports: Argument.String("port").pipe(
       Argument.withDescription(
         "web: <host> <web-port>. mobile: <server-port> <metro-port> <host>.",

@@ -5,9 +5,12 @@ import * as NodeDns from "node:dns";
 import * as NodeOS from "node:os";
 import * as NodeSea from "node:sea";
 
-export const Platform = Context.Reference<NodeJS.Platform>("@hackerai/shared/HostProcess/Platform", {
-  defaultValue: () => process.platform,
-});
+export const Platform = Context.Reference<NodeJS.Platform>(
+  "@hackerai/shared/HostProcess/Platform",
+  {
+    defaultValue: () => process.platform,
+  },
+);
 
 export const Architecture = Context.Reference<NodeJS.Architecture>(
   "@hackerai/shared/HostProcess/Architecture",
@@ -93,9 +96,12 @@ export const InvokedAs = Context.Reference<string>("@hackerai/shared/HostProcess
   defaultValue: () => process.argv0,
 });
 
-export const IsExecutable = Context.Reference<boolean>("@hackerai/shared/HostProcess/IsExecutable", {
-  defaultValue: () => NodeSea.isSea(),
-});
+export const IsExecutable = Context.Reference<boolean>(
+  "@hackerai/shared/HostProcess/IsExecutable",
+  {
+    defaultValue: () => NodeSea.isSea(),
+  },
+);
 
 export class HostnameLookupError extends Schema.TaggedError<HostnameLookupError>()(
   "HostnameLookupError",

@@ -107,8 +107,8 @@ function EmptyMobileClients() {
         </EmptyTitle>
         <EmptyDescription>
           <T>
-            Install HackerAI on your phone and sign in to HackerAI Connect to get push notifications and
-            Live Activities.
+            Install HackerAI on your phone and sign in to HackerAI Connect to get push notifications
+            and Live Activities.
           </T>
         </EmptyDescription>
       </EmptyHeader>

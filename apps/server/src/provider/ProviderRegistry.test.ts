@@ -232,7 +232,9 @@ const makeWorkspaceRescanHarness = Effect.gen(function* () {
           subscribeChanges: PubSub.subscribe(changes),
         }),
       ),
-      Layer.provideMerge(ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-workspace-rescan-" })),
+      Layer.provideMerge(
+        ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-workspace-rescan-" }),
+      ),
       Layer.provideMerge(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)),
     ),
   ).pipe(Scope.provide(scope));
@@ -543,7 +545,9 @@ const buildRegistryOverSnapshot = Effect.fn("buildRegistryOverSnapshot")(functio
       Layer.provide(layerUnusedMutator),
       Layer.provideMerge(layerInstanceRegistry),
       Layer.provideMerge(
-        ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-provider-registry-update-state-" }),
+        ServerConfig.layerTest(process.cwd(), {
+          prefix: "hackerai-provider-registry-update-state-",
+        }),
       ),
       Layer.provideMerge(layerBackgroundPolicyAlwaysRun),
       Layer.provideMerge(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)),
@@ -2627,7 +2631,9 @@ it.layer(
                   }),
                 ),
                 Layer.provideMerge(
-                  ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-provider-registry-path-" }),
+                  ServerConfig.layerTest(process.cwd(), {
+                    prefix: "hackerai-provider-registry-path-",
+                  }),
                 ),
                 Layer.provideMerge(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)),
               ),
@@ -4483,7 +4489,9 @@ it.layer(
         if ((yield* HostProcess.Platform) === "win32") return;
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const directory = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-fake-mise-claude-" });
+        const directory = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-fake-mise-claude-",
+        });
         const installMarker = path.join(directory, "installed");
         const binaryPath = path.join(directory, "claude");
         // A `lazy = true` mise shim downloads and installs the tool unless MISE_OFFLINE is set.

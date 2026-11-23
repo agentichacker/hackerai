@@ -146,7 +146,9 @@ it("waits for the restored HackerAI window to map instead of polling", async () 
     await original(request, socket);
     if (request === "EventStream")
       send(socket, {
-        WindowOpenedOrChanged: { window: { ...window, id: 4, pid: process.pid, title: "HackerAI" } },
+        WindowOpenedOrChanged: {
+          window: { ...window, id: 4, pid: process.pid, title: "HackerAI" },
+        },
       });
   };
   await snapshot.feedback!.activate("HackerAI");

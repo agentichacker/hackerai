@@ -36,7 +36,14 @@ import { applyThemeBackground } from "./themeBackground";
 import { applyThemeCss } from "./themeCss";
 import { themeServerEnvironmentThemesAtom } from "./state/server";
 
-export { EMBER_THEME, GROVE_THEME, IRIS_THEME, OCEAN_THEME, HACKERAI_CHAT_THEME, THEME_COLOR_ROLES };
+export {
+  EMBER_THEME,
+  GROVE_THEME,
+  IRIS_THEME,
+  OCEAN_THEME,
+  HACKERAI_CHAT_THEME,
+  THEME_COLOR_ROLES,
+};
 export type { ThemeAppearance, ThemeColorRole, ThemeColors, ThemeDefinition, ThemeVariants };
 
 const HACKERAI_CHAT_THEME_ID = "hackerai-chat" as const;

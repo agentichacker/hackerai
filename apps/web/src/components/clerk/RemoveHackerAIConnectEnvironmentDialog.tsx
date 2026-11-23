@@ -75,8 +75,8 @@ export function RemoveHackerAIConnectEnvironmentDialog({
             <AlertDialogDescription>
               {shown.registration === "registered" ? (
                 <T>
-                  It stays on your HackerAI Connect account and keeps its host space. Deregister it in{" "}
-                  <Var>{accountPageLink}</Var> to free it.
+                  It stays on your HackerAI Connect account and keeps its host space. Deregister it
+                  in <Var>{accountPageLink}</Var> to free it.
                 </T>
               ) : shown.registration === "unregistered" ? (
                 gt("It's no longer on your HackerAI Connect account.")

@@ -50,7 +50,12 @@ export function SourceText({ style, children, nativeTextRef, ...props }: SourceT
   }
   return (
     <TextAncestorContext.Provider value={contextValue}>
-      <HackerAISourceTextNativeComponent allowFontScaling selectable {...props} style={flattenedStyle}>
+      <HackerAISourceTextNativeComponent
+        allowFontScaling
+        selectable
+        {...props}
+        style={flattenedStyle}
+      >
         {runs}
       </HackerAISourceTextNativeComponent>
     </TextAncestorContext.Provider>

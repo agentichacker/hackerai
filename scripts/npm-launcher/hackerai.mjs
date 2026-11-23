@@ -79,13 +79,12 @@ function releaseBaseUrl() {
   const configured = (process.env.HACKERAI_RELEASE_BASE_URL || "").trim().replace(/\/+$/, "");
   if (configured !== "") return configured;
   const repository = (
-    process.env.HACKERAI_RELEASE_REPOSITORY || process.env.HACKERAI_REPOSITORY || ""
+    process.env.HACKERAI_RELEASE_REPOSITORY ||
+    process.env.HACKERAI_REPOSITORY ||
+    ""
   ).trim();
   const match = /^([\w.-]+)\/([\w.-]+)$/.exec(repository);
-  if (
-    match === null ||
-    [match[1], match[2]].some((part) => part === "." || part === "..")
-  ) {
+  if (match === null || [match[1], match[2]].some((part) => part === "." || part === "..")) {
     throw new Error(
       "This build has no HackerAI release download source configured. " +
         "Set HACKERAI_RELEASE_REPOSITORY or HACKERAI_REPOSITORY to the GitHub owner/repo that publishes HackerAI releases, " +

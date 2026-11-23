@@ -635,7 +635,9 @@ export const migrateDevDbCommand = Command.make(
     ),
     baseDir: Flag.String("base-dir").pipe(
       Flag.optional,
-      Flag.withDescription("Isolated .hackerai directory. Defaults to the current worktree's .hackerai."),
+      Flag.withDescription(
+        "Isolated .hackerai directory. Defaults to the current worktree's .hackerai.",
+      ),
     ),
     source: Flag.String("source").pipe(
       Flag.optional,

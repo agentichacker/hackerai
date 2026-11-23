@@ -17,7 +17,11 @@ import {
   threadSearchSubject,
   type ThreadSearchShell,
 } from "@hackerai/client-runtime/state/thread-search";
-import { foldSearchQuery, rankSearchItems, scoreThreadSearch } from "@hackerai/shared/paletteSearch";
+import {
+  foldSearchQuery,
+  rankSearchItems,
+  scoreThreadSearch,
+} from "@hackerai/shared/paletteSearch";
 import {
   type ContextMenuItem,
   type EnvironmentId,

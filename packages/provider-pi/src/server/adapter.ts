@@ -928,7 +928,10 @@ export const makePiAdapterV2 = Effect.fn("makePiAdapterV2")(function* (
           return yield* Effect.gen(function* () {
             // RPC responses bypass the pump. Reset after all earlier native notifications.
             if (
-              !(yield* Queue.offer(connection.events, { type: "hackerai.extension_status_reset", reset }))
+              !(yield* Queue.offer(connection.events, {
+                type: "hackerai.extension_status_reset",
+                reset,
+              }))
             )
               return yield* protocolError("Pi transport closed during status reset");
             yield* Deferred.await(reset.ready);
@@ -3553,7 +3556,9 @@ export const makePiAdapterV2 = Effect.fn("makePiAdapterV2")(function* (
                   yield* finalizeTurn(state);
                 }
                 if (outOfTurnExtensionErrors.length > 0) {
-                  yield* Queue.offer(connection.events, { type: "hackerai.flush_extension_errors" });
+                  yield* Queue.offer(connection.events, {
+                    type: "hackerai.flush_extension_errors",
+                  });
                 }
                 return null;
               }).pipe(

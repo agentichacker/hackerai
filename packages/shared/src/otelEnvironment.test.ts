@@ -26,7 +26,12 @@ describe("OtelEnvironment", () => {
       disabled: false,
       warnings: [specIgnored("1")],
     },
-    { name: "hackerai 1", env: { HACKERAI_OTEL_SDK_DISABLED: "1" }, disabled: true, warnings: [HACKERAI_OFF] },
+    {
+      name: "hackerai 1",
+      env: { HACKERAI_OTEL_SDK_DISABLED: "1" },
+      disabled: true,
+      warnings: [HACKERAI_OFF],
+    },
     {
       name: "hackerai false overrides spec true",
       env: { HACKERAI_OTEL_SDK_DISABLED: "false", OTEL_SDK_DISABLED: "true" },

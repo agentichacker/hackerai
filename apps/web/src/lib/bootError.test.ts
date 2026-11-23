@@ -1,4 +1,8 @@
-import type { DesktopBridge, DesktopCliCommandState, DesktopUpdateState } from "@hackerai/contracts";
+import type {
+  DesktopBridge,
+  DesktopCliCommandState,
+  DesktopUpdateState,
+} from "@hackerai/contracts";
 import { describe, expect, it, vi } from "vite-plus/test";
 
 import {
@@ -21,7 +25,9 @@ const notOnPath = (launcherPath: string | null): DesktopCliCommandState => ({
 describe("resolveTriageCommand", () => {
   it("prefers hackerai on PATH, then the desktop launcher", async () => {
     const onPath = { ...notOnPath("/home/me/.hackerai/bin/hackerai"), onPath: true };
-    await expect(resolveTriageCommand(desktopWith(async () => onPath))).resolves.toBe("hackerai triage");
+    await expect(resolveTriageCommand(desktopWith(async () => onPath))).resolves.toBe(
+      "hackerai triage",
+    );
     await expect(
       resolveTriageCommand(desktopWith(async () => notOnPath("/home/me/.hackerai/bin/hackerai"))),
     ).resolves.toBe("/home/me/.hackerai/bin/hackerai triage");
@@ -29,10 +35,14 @@ describe("resolveTriageCommand", () => {
 
   it("quotes launcher paths for the shell that runs them", async () => {
     await expect(
-      resolveTriageCommand(desktopWith(async () => notOnPath("/Users/O'Neil/.hackerai/bin/hackerai"))),
+      resolveTriageCommand(
+        desktopWith(async () => notOnPath("/Users/O'Neil/.hackerai/bin/hackerai")),
+      ),
     ).resolves.toBe(`'/Users/O'"'"'Neil/.hackerai/bin/hackerai' triage`);
     await expect(
-      resolveTriageCommand(desktopWith(async () => notOnPath("C:\\Users\\Me\\.hackerai\\bin\\hackerai.cmd"))),
+      resolveTriageCommand(
+        desktopWith(async () => notOnPath("C:\\Users\\Me\\.hackerai\\bin\\hackerai.cmd")),
+      ),
     ).resolves.toBe("C:\\Users\\Me\\.hackerai\\bin\\hackerai.cmd triage");
     await expect(
       resolveTriageCommand(
@@ -44,7 +54,9 @@ describe("resolveTriageCommand", () => {
   it("falls back to npx without a usable desktop launcher", async () => {
     using _warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     await expect(resolveTriageCommand(undefined)).resolves.toBe("npx @hackerai/cli triage");
-    await expect(resolveTriageCommand({} as DesktopBridge)).resolves.toBe("npx @hackerai/cli triage");
+    await expect(resolveTriageCommand({} as DesktopBridge)).resolves.toBe(
+      "npx @hackerai/cli triage",
+    );
     await expect(resolveTriageCommand(desktopWith(async () => notOnPath(null)))).resolves.toBe(
       "npx @hackerai/cli triage",
     );

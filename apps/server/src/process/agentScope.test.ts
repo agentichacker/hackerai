@@ -342,7 +342,8 @@ describe("AgentScope service", () => {
         const memoryLimits = () =>
           calls
             .filter(
-              ([, verb, , slice]) => verb === "set-property" && slice === "app-hackerai-agents.slice",
+              ([, verb, , slice]) =>
+                verb === "set-property" && slice === "app-hackerai-agents.slice",
             )
             .map((args) => args.slice(4));
         yield* launch;

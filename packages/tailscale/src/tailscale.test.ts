@@ -197,7 +197,9 @@ describe("tailscale", () => {
       Services: {
         "svc:hackerai": {
           Web: {
-            "hackerai.tailnet.ts.net:443": { Handlers: { "/": { Proxy: "http://127.0.0.1:3773" } } },
+            "hackerai.tailnet.ts.net:443": {
+              Handlers: { "/": { Proxy: "http://127.0.0.1:3773" } },
+            },
           },
         },
       },

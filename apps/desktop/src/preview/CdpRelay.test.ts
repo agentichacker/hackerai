@@ -61,7 +61,11 @@ describe("CDP relay", () => {
     const written: Array<Record<string, unknown>> = [];
     const relay = makeRelay(makeTarget(send), (raw) => written.push(JSON.parse(raw)));
     relay.receive(
-      JSON.stringify({ id: 5, method: "Page.captureScreenshot", sessionId: "hackerai-preview-page" }),
+      JSON.stringify({
+        id: 5,
+        method: "Page.captureScreenshot",
+        sessionId: "hackerai-preview-page",
+      }),
     );
     relay.receive(JSON.stringify({ id: 6, method: "DOM.enable", sessionId: "iframe-session" }));
     pending[1]!();
@@ -132,7 +136,11 @@ describe("CDP relay", () => {
     relay.event("Page.loadEventFired", { timestamp: 1 }, "");
     relay.event("Runtime.consoleAPICalled", {}, "iframe-session");
     expect(written.slice(-2)).toEqual([
-      { method: "Page.loadEventFired", params: { timestamp: 1 }, sessionId: "hackerai-preview-page" },
+      {
+        method: "Page.loadEventFired",
+        params: { timestamp: 1 },
+        sessionId: "hackerai-preview-page",
+      },
       { method: "Runtime.consoleAPICalled", params: {}, sessionId: "iframe-session" },
     ]);
   });
@@ -381,7 +389,11 @@ describe("CDP relay payload budget", () => {
       JSON.stringify({ id: 1, method: "DOM.getDocument", sessionId: "hackerai-preview-page" }),
     );
     relay.receive(
-      JSON.stringify({ id: 2, method: "Page.captureScreenshot", sessionId: "hackerai-preview-page" }),
+      JSON.stringify({
+        id: 2,
+        method: "Page.captureScreenshot",
+        sessionId: "hackerai-preview-page",
+      }),
     );
     await settle();
 

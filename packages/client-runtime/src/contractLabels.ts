@@ -145,7 +145,9 @@ function managedCapabilityDeniedMessage(
         }),
       );
     case "connect":
-      return resolve(msg("{organization}'s policy does not allow HackerAI Connect.", { organization }));
+      return resolve(
+        msg("{organization}'s policy does not allow HackerAI Connect.", { organization }),
+      );
     case "webhookTasks":
       return resolve(
         msg("{organization}'s policy does not allow webhook tasks.", { organization }),

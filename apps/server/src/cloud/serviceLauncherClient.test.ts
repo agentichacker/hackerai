@@ -217,7 +217,8 @@ it.layer(NodeServices.layer)("self-update launchers", (it) => {
         const path = yield* Path.Path;
         const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-update-" });
         const baseDir = path.join(root, ".hackerai");
-        const exe = (version: string) => path.join(baseDir, "runtime/versions", version, "hackerai");
+        const exe = (version: string) =>
+          path.join(baseDir, "runtime/versions", version, "hackerai");
         const installed = path.join(root, "custom/bin/hackerai");
         const onPath = path.join(root, "bin/hackerai");
         for (const file of [exe("1.0.0"), exe("1.5.0"), exe("2.0.0")]) {

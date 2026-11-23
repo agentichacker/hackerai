@@ -5,7 +5,10 @@ import {
   Connectivity,
   Wakeups,
 } from "@hackerai/client-runtime/connection";
-import { managedRelayAccountChanges, managedRelaySessionAtom } from "@hackerai/client-runtime/relay";
+import {
+  managedRelayAccountChanges,
+  managedRelaySessionAtom,
+} from "@hackerai/client-runtime/relay";
 import * as Clock from "effect/Clock";
 import { msg } from "gt-react-native";
 import { m } from "../i18n/messages";
@@ -161,7 +164,9 @@ const layerCapabilities = Layer.effectContext(
             return yield* new ConnectionBlockedError({
               reason: "authentication",
               detail: m(
-                msg("Sign in to {product} to connect this environment.", { product: "HackerAI Connect" }),
+                msg("Sign in to {product} to connect this environment.", {
+                  product: "HackerAI Connect",
+                }),
               ),
             });
           }
@@ -177,7 +182,9 @@ const layerCapabilities = Layer.effectContext(
           if (token === null) {
             return yield* new ConnectionBlockedError({
               reason: "authentication",
-              detail: m(msg("The {product} session is unavailable.", { product: "HackerAI Connect" })),
+              detail: m(
+                msg("The {product} session is unavailable.", { product: "HackerAI Connect" }),
+              ),
             });
           }
           return token;

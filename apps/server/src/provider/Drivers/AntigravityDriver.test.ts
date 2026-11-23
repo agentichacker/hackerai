@@ -491,7 +491,9 @@ it.layer(layerTest)("AntigravityDriver", (it) => {
         const entrypoint = h.path.resolve(process.argv[1]!);
         yield* Effect.scoped(
           Effect.gen(function* () {
-            const workspace = yield* h.fs.makeTempDirectoryScoped({ prefix: "hackerai-ag-environment-" });
+            const workspace = yield* h.fs.makeTempDirectoryScoped({
+              prefix: "hackerai-ag-environment-",
+            });
             const runtimePolicy = ProviderAdapter.ProviderAdapterV2RuntimePolicy.make({
               runtimeMode: "approval-required",
               interactionMode: "default",
@@ -546,7 +548,9 @@ it.layer(layerTest)("AntigravityDriver", (it) => {
         const modelSelection = { instanceId: h.instance.instanceId, model: "gemini-test-low" };
         const error = yield* Effect.scoped(
           Effect.gen(function* () {
-            const workspace = yield* h.fs.makeTempDirectoryScoped({ prefix: "hackerai-ag-old-runtime-" });
+            const workspace = yield* h.fs.makeTempDirectoryScoped({
+              prefix: "hackerai-ag-old-runtime-",
+            });
             const runtimePolicy = ProviderAdapter.ProviderAdapterV2RuntimePolicy.make({
               runtimeMode: "approval-required",
               interactionMode: "default",

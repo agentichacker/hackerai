@@ -58,10 +58,7 @@ describe("codexResponsesBridgeUpstream", () => {
       codexResponsesBridgeUpstream({ OPENAI_BASE_URL: "https://api.openai.com/v1" }),
       undefined,
     );
-    NodeAssert.equal(
-      codexResponsesBridgeUpstream({ OPENAI_BASE_URL: "not a url" }),
-      undefined,
-    );
+    NodeAssert.equal(codexResponsesBridgeUpstream({ OPENAI_BASE_URL: "not a url" }), undefined);
   });
 });
 

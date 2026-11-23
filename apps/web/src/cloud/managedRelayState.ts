@@ -189,7 +189,10 @@ export function useManagedTunnelUsage() {
       : (environments.data?.filter(
           (environment) => environment.endpoint.providerKind === "cloudflare_tunnel",
         ).length ?? null);
-  const cap = hackeraiChat.accountId !== null && hackeraiChat.data ? managedTunnelCap(hackeraiChat.data) : null;
+  const cap =
+    hackeraiChat.accountId !== null && hackeraiChat.data
+      ? managedTunnelCap(hackeraiChat.data)
+      : null;
   return {
     used,
     limit: cap?.limit ?? null,

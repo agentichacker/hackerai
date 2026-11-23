@@ -308,7 +308,9 @@ function ModeCard(props: {
 }
 
 function SectionLabel({ children }: { readonly children: string }) {
-  return <Text className="px-2 text-sm font-hackerai-medium text-foreground-muted">{children}</Text>;
+  return (
+    <Text className="px-2 text-sm font-hackerai-medium text-foreground-muted">{children}</Text>
+  );
 }
 
 export function ThemeAppearanceSection() {

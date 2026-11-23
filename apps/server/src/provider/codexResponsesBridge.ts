@@ -92,8 +92,7 @@ const withoutProviderSecrets = (response: JsonRecord): JsonRecord => {
   return rest;
 };
 
-const itemId = (item: JsonRecord, index: number): string =>
-  readString(item.id) ?? `item_${index}`;
+const itemId = (item: JsonRecord, index: number): string => readString(item.id) ?? `item_${index}`;
 
 const outputTextPart = (
   item: JsonRecord,
@@ -230,11 +229,7 @@ const readRequestBody = async (request: NodeHttp.IncomingMessage): Promise<strin
   return Buffer.concat(chunks).toString("utf8");
 };
 
-const writeJson = (
-  response: NodeHttp.ServerResponse,
-  status: number,
-  body: unknown,
-): void => {
+const writeJson = (response: NodeHttp.ServerResponse, status: number, body: unknown): void => {
   const text = JSON.stringify(body);
   response.writeHead(status, {
     "content-type": "application/json",
@@ -334,7 +329,9 @@ const proxyResponses = async (
     }
     const timedOut = controller.signal.aborted;
     writeJson(response, timedOut ? 504 : 502, {
-      error: { message: timedOut ? "HackerAI took too long to answer." : "Could not reach HackerAI." },
+      error: {
+        message: timedOut ? "HackerAI took too long to answer." : "Could not reach HackerAI.",
+      },
     });
   } finally {
     clearTimeout(timeout);

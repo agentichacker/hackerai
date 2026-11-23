@@ -27,8 +27,8 @@ export function InstallHackerAICommands({
       <p className="text-xs text-muted-foreground">
         <T>
           Skip the install if you already have <code className="font-mono">hackerai</code>. If{" "}
-          <code className="font-mono">hackerai</code> is not found after installing, add the folder the
-          installer names to your PATH.
+          <code className="font-mono">hackerai</code> is not found after installing, add the folder
+          the installer names to your PATH.
         </T>
       </p>
     </div>

@@ -361,7 +361,10 @@ it.effect("returns an HTML render reference that Codex and Claude tool rows both
     });
     expect(reference).toMatchObject({ title: "Revenue", height: 240 });
     expect(
-      htmlRenderFromToolItem({ toolName: "mcp__hackerai-code__html_render", output: result.content }),
+      htmlRenderFromToolItem({
+        toolName: "mcp__hackerai-code__html_render",
+        output: result.content,
+      }),
     ).toEqual(reference);
     // Only a full-access thread may have the server read a file for it.
     const byPath = (name: string, caller: McpInvocationContext.McpInvocationScope) =>
@@ -390,7 +393,9 @@ it.effect("returns an HTML render reference that Codex and Claude tool rows both
         Layer.provideMerge(McpHttpServer.layerInProcessMcpServer),
         Layer.provide(McpProviderSessions.layer),
         Layer.provide(PreviewBrowser.layer),
-        Layer.provide(ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-mcp-html-render-" })),
+        Layer.provide(
+          ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-mcp-html-render-" }),
+        ),
         Layer.provide(
           DocumentText.layer.pipe(
             Layer.provideMerge(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)),
@@ -744,7 +749,11 @@ it.effect("a client caller targets any thread within its ceiling and cannot act 
           Effect.provideService(McpSchema.McpServerClient, client),
         );
 
-    const untargeted = yield* call("hackerai_thread_organize", { action: "pin" }, clientScope("auto"));
+    const untargeted = yield* call(
+      "hackerai_thread_organize",
+      { action: "pin" },
+      clientScope("auto"),
+    );
     expect(declaredFailure(untargeted)).toMatchObject({ code: "target_required" });
 
     const pinned = yield* call(
@@ -1239,7 +1248,9 @@ it.effect.each(["hackerai_thread_interrupt", "hackerai_workflow_stop"])(
           name: toolName,
           arguments: {
             threadId: "full-access-thread",
-            ...(toolName === "hackerai_workflow_stop" ? { subagentId: "workflow-coordinator" } : {}),
+            ...(toolName === "hackerai_workflow_stop"
+              ? { subagentId: "workflow-coordinator" }
+              : {}),
           },
         })
         .pipe(
@@ -1483,7 +1494,9 @@ it.effect("only the caller that prepared a pending upload can discard it", () =>
         Layer.provideMerge(McpHttpServer.layerInProcessMcpServer),
         Layer.provide(McpToolAccessTestkit.liveThreadsLayer),
         Layer.provide(AssetSigner.layer.pipe(Layer.provideMerge(ServerSecretStore.layer))),
-        Layer.provide(ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-mcp-attachment-" })),
+        Layer.provide(
+          ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-mcp-attachment-" }),
+        ),
         Layer.provide(
           DocumentText.layer.pipe(
             Layer.provideMerge(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)),
@@ -1577,7 +1590,9 @@ it.effect.each([
           }),
         ),
         Layer.provide(AssetSigner.layer.pipe(Layer.provideMerge(ServerSecretStore.layer))),
-        Layer.provide(ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-mcp-attachment-" })),
+        Layer.provide(
+          ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-mcp-attachment-" }),
+        ),
         Layer.provide(
           DocumentText.layer.pipe(
             Layer.provideMerge(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)),

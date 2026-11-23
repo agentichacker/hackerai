@@ -1,4 +1,7 @@
-import type { PullRequestReviewGuideExcerpt, PullRequestReviewGuideStop } from "@hackerai/contracts";
+import type {
+  PullRequestReviewGuideExcerpt,
+  PullRequestReviewGuideStop,
+} from "@hackerai/contracts";
 import type { ReviewGuideGenerationResult } from "@hackerai/provider-core/server/textGeneration";
 import { unquoteGitPatchPath } from "@hackerai/shared/gitPatchPath";
 

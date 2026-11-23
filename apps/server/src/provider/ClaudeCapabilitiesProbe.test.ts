@@ -46,7 +46,10 @@ it.live.skipIf(HostProcess.Platform.defaultValue() !== "linux")(
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const workspace = yield* fileSystem.realPath(yield* fileSystem.makeTempDirectoryScoped());
-      yield* fileSystem.writeFileString(`${workspace}/claude`, '#!/bin/bash\nhackerai_launch "$@"\n');
+      yield* fileSystem.writeFileString(
+        `${workspace}/claude`,
+        '#!/bin/bash\nhackerai_launch "$@"\n',
+      );
       yield* fileSystem.chmod(`${workspace}/claude`, 0o755);
       const child = spawnClaudeProbeThroughEnv({
         command: "claude",

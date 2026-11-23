@@ -58,9 +58,7 @@ export const softwareJsonLd = (description: string): JsonLd => ({
   sameAs: OFFICIAL_PROFILES,
 });
 
-export const faqJsonLd = (
-  items: ReadonlyArray<{ question: string; answer: string }>,
-): JsonLd => ({
+export const faqJsonLd = (items: ReadonlyArray<{ question: string; answer: string }>): JsonLd => ({
   "@type": "FAQPage",
   mainEntity: items.map((item) => ({
     "@type": "Question",

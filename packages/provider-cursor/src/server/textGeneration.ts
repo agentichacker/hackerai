@@ -245,7 +245,9 @@ export const makeCursorTextGeneration = Effect.fn("makeCursorTextGeneration")(fu
       }
       const cwd = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-cursor-text-" });
       // Only store disposal releases SDK SQLite handles; keep state outside the empty workspace.
-      const stateRoot = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-cursor-text-state-" });
+      const stateRoot = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-cursor-text-state-",
+      });
       const resolvedModel = cursorSdkModelSelection(
         modelSelection,
         getModels?.() ?? [],

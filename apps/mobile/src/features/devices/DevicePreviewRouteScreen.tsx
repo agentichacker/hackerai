@@ -340,7 +340,10 @@ export function DevicePreviewScreen({
           <View className="px-3" style={{ paddingTop: Math.max(insets.top, 12) }}>
             <GlassSurface className="flex-row items-center gap-1 p-1">
               <SheetCloseButton accessibilityLabel={gt("Close device preview")} onClose={onClose} />
-              <AppText numberOfLines={1} className="flex-1 text-center font-hackerai-medium text-base">
+              <AppText
+                numberOfLines={1}
+                className="flex-1 text-center font-hackerai-medium text-base"
+              >
                 {preview?.name ?? gt("Devices", { $context: "screen title" })}
               </AppText>
               <ControlPill

@@ -1,4 +1,6 @@
 {
   "platforms": ["android"],
-  "android": { "modules": ["expo.modules.hackeraiagentnotifications.HackerAIAgentNotificationsModule"] }
+  "android": {
+    "modules": ["expo.modules.hackeraiagentnotifications.HackerAIAgentNotificationsModule"]
+  }
 }

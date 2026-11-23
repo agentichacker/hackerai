@@ -733,10 +733,14 @@ function ConfiguredCloudLinkRow({
                     "Sign in to make this environment available to your other devices through HackerAI Connect.",
                   )
                 : linkRevoked
-                  ? gt("This environment was removed from HackerAI Connect. Turn it on to link it again.")
+                  ? gt(
+                      "This environment was removed from HackerAI Connect. Turn it on to link it again.",
+                    )
                   : managedTunnelActive
                     ? reachability?.status === "unreachable"
-                      ? gt("HackerAI Connect is on, but other devices cannot reach this environment.")
+                      ? gt(
+                          "HackerAI Connect is on, but other devices cannot reach this environment.",
+                        )
                       : reachability?.status === "reachable"
                         ? gt(
                             "This environment is available to your other devices through HackerAI Connect.",
@@ -788,7 +792,9 @@ function ConfiguredCloudLinkRow({
           description={
             signedOut
               ? gt("Sign in to send activity to mobile notifications and Live Activities.")
-              : gt("Send activity to mobile notifications and Live Activities without HackerAI Connect.")
+              : gt(
+                  "Send activity to mobile notifications and Live Activities without HackerAI Connect.",
+                )
           }
           managed={connectDenial}
           control={

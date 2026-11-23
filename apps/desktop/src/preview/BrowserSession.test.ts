@@ -196,7 +196,10 @@ describe("BrowserSession", () => {
       const nondefaultProfile = yield* browserSessions.getPartition("a::b", true, "profile");
 
       assert.strictEqual(legacyDefault, "persist:hackerai-preview-78f0be89237d77f7a70e");
-      assert.strictEqual(nondefaultProfile, "persist:hackerai-preview-profile-78f0be89237d77f7a70e");
+      assert.strictEqual(
+        nondefaultProfile,
+        "persist:hackerai-preview-profile-78f0be89237d77f7a70e",
+      );
       assert.notStrictEqual(nondefaultProfile, legacyDefault);
       assert.isTrue(browserSessions.isPartition(legacyDefault));
       assert.isTrue(browserSessions.isPartition(nondefaultProfile));

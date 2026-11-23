@@ -742,7 +742,9 @@ describe("ClaudeAdapterV2 MCP query overrides", () => {
       ],
       mcpServers: HACKERAI_MCP_SERVERS,
     });
-    assert.isFalse(overrides.allowedTools?.includes(ClaudeAdapterV2.CLAUDE_HACKERAI_MCP_TOOL_WILDCARD));
+    assert.isFalse(
+      overrides.allowedTools?.includes(ClaudeAdapterV2.CLAUDE_HACKERAI_MCP_TOOL_WILDCARD),
+    );
   });
 
   it("invalidates live-query reuse when MCP credentials rotate", () => {
@@ -799,7 +801,10 @@ describe("ClaudeAdapterV2 SDK warnings", () => {
   it("drops only the SDK's canUseTool shadowing warning while opening a query", async () => {
     using emitWarning = vi.spyOn(process, "emitWarning").mockImplementation(() => {});
     for (const options of [
-      { permissionMode: "default", allowedTools: [ClaudeAdapterV2.CLAUDE_HACKERAI_MCP_TOOL_WILDCARD] },
+      {
+        permissionMode: "default",
+        allowedTools: [ClaudeAdapterV2.CLAUDE_HACKERAI_MCP_TOOL_WILDCARD],
+      },
       { permissionMode: "bypassPermissions", allowDangerouslySkipPermissions: true },
     ] satisfies ReadonlyArray<ClaudeSdk.Options>) {
       const query = ClaudeAdapterV2.withoutClaudeCanUseToolShadowedWarning(() =>
@@ -913,7 +918,9 @@ describe("ClaudeAdapterV2 device instructions", () => {
       resume: false,
       cwd: "/workspace",
       ...(input.mcp
-        ? { mcpServers: { "hackerai-code": { type: "http" as const, url: "http://127.0.0.1/mcp" } } }
+        ? {
+            mcpServers: { "hackerai-code": { type: "http" as const, url: "http://127.0.0.1/mcp" } },
+          }
         : {}),
       deviceToolsAvailable: input.deviceToolsAvailable,
       environment: {},
@@ -1277,7 +1284,9 @@ describe("ClaudeAdapterV2 append-system-prompt-file launch argument", () => {
       instanceId: ClaudeAdapterV2.CLAUDE_DEFAULT_INSTANCE_ID,
       settings: { ...DEFAULT_CLAUDE_SETTINGS, launchArgs },
       environment: {},
-      attachmentsDir: yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-append-" }),
+      attachmentsDir: yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-claude-append-",
+      }),
       fileSystem,
       path: yield* Path.Path,
       random: yield* SecureRandom.SecureRandom,
@@ -1354,7 +1363,9 @@ describe("ClaudeAdapterV2 append-system-prompt-file launch argument", () => {
     Effect.scoped(
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
-        const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-append-cwd-" });
+        const cwd = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-append-cwd-",
+        });
         const plain = yield* startTurnWithLaunchArgs("", cwd);
         const { exit, opened } = yield* startTurnWithLaunchArgs(
           '--append-system-prompt "-- Always answer in English"',
@@ -1382,7 +1393,9 @@ describe("ClaudeAdapterV2 append-system-prompt-file launch argument", () => {
   it.effect("sends append launch arguments to Claude after the HackerAI instructions", () =>
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
-      const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-append-cwd-" });
+      const cwd = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-claude-append-cwd-",
+      });
       yield* fileSystem.writeFileString(NodePath.join(cwd, "rules.md"), "File sentinel\n");
       const plain = yield* startTurnWithLaunchArgs("", cwd);
       const { exit, opened } = yield* startTurnWithLaunchArgs(
@@ -1417,7 +1430,9 @@ describe("ClaudeAdapterV2 append-system-prompt-file launch argument", () => {
   ])("merges %s beneath HackerAI's settings", (launchArgs) =>
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
-      const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-settings-" });
+      const cwd = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-claude-settings-",
+      });
       yield* fileSystem.writeFileString(
         NodePath.join(cwd, "user-settings.json"),
         '{"skillOverrides":{"lint":"off"},"showThinkingSummaries":false}',
@@ -1457,7 +1472,9 @@ describe("ClaudeAdapterV2 append-system-prompt-file launch argument", () => {
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const home = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-home-" });
-      const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-home-cwd-" });
+      const cwd = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-claude-home-cwd-",
+      });
       yield* fileSystem.makeDirectory(NodePath.join(home, ".claude"));
       yield* fileSystem.writeFileString(
         NodePath.join(home, ".claude", "settings.json"),
@@ -1529,7 +1546,9 @@ describe("ClaudeAdapterV2 append-system-prompt-file launch argument", () => {
   ] as const)("fails the turn before opening Claude for %s", ([launchArgs, expectedMessage]) =>
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
-      const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-append-cwd-" });
+      const cwd = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-claude-append-cwd-",
+      });
       const { exit, opened } = yield* startTurnWithLaunchArgs(launchArgs, cwd);
       assert.lengthOf(opened, 0);
       assert.isTrue(Exit.isFailure(exit));
@@ -1561,7 +1580,9 @@ describe("ClaudeAdapterV2 provider installation gate", () => {
         instanceId,
         settings: DEFAULT_CLAUDE_SETTINGS,
         environment: {},
-        attachmentsDir: yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-gate-" }),
+        attachmentsDir: yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-gate-",
+        }),
         fileSystem,
         path: yield* Path.Path,
         random: yield* SecureRandom.SecureRandom,
@@ -4799,8 +4820,12 @@ describe("ClaudeAdapterV2 background wake turns", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const home = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-remote-" });
-        const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-remote-cwd-" });
+        const home = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-remote-",
+        });
+        const cwd = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-remote-cwd-",
+        });
         const remoteFile = path.join(home, "remote-settings.json");
         const sdk = yield* Effect.promise(() =>
           vi.importActual<typeof ClaudeSdk>("@anthropic-ai/claude-agent-sdk"),
@@ -4895,8 +4920,12 @@ describe("ClaudeAdapterV2 background wake turns", () => {
     it.effect("drops false bypass switches from --settings before they reach the SDK", () =>
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
-        const home = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-launch-" });
-        const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-launch-cwd-" });
+        const home = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-launch-",
+        });
+        const cwd = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-launch-cwd-",
+        });
         const sdk = yield* Effect.promise(() =>
           vi.importActual<typeof ClaudeSdk>("@anthropic-ai/claude-agent-sdk"),
         );
@@ -5461,7 +5490,9 @@ describe("ClaudeAdapterV2 background wake turns", () => {
         // POSIX resolves local settings at the repository root; Windows uses cwd.
         // Local settings beat user settings wherever they are found.
         const repo = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-repo-" });
-        const worktree = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-wt-" });
+        const worktree = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-wt-",
+        });
         const worktreeGitDir = path.join(repo, ".git", "worktrees", "wt");
         yield* fileSystem.makeDirectory(worktreeGitDir, { recursive: true });
         yield* fileSystem.writeFileString(path.join(worktreeGitDir, "commondir"), "../..\n");
@@ -5496,7 +5527,9 @@ describe("ClaudeAdapterV2 background wake turns", () => {
         );
 
         // Project settings beat user settings, and the process env applies only when no file sets it.
-        const project = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-project-" });
+        const project = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-project-",
+        });
         yield* fileSystem.makeDirectory(path.join(project, ".claude"));
         yield* fileSystem.writeFileString(
           path.join(project, ".claude", "settings.json"),
@@ -5754,7 +5787,9 @@ describe("ClaudeAdapterV2 background wake turns", () => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const homePath = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-claude-skill-dispatch-" });
+        const homePath = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-skill-dispatch-",
+        });
         for (const [name, userOnly] of [
           ["interrogate", true],
           ["implement", true],
@@ -6373,7 +6408,9 @@ describe("ClaudeAdapterV2 background wake turns", () => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const homePath = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-claude-skill-handoff-" });
+      const homePath = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-claude-skill-handoff-",
+      });
       const directory = path.join(homePath, "skills", "review");
       yield* fs.makeDirectory(directory, { recursive: true });
       yield* fs.writeFileString(
@@ -7533,8 +7570,12 @@ describe("ClaudeAdapterV2 background wake turns", () => {
           vi.importActual<typeof ClaudeSdk>("@anthropic-ai/claude-agent-sdk"),
         );
         vi.mocked(ClaudeSdk.resolveSettings).mockImplementation(sdk.resolveSettings);
-        const probeCwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-probe-" });
-        const project = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-project-" });
+        const probeCwd = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-probe-",
+        });
+        const project = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-project-",
+        });
         const overridden = yield* fileSystem.makeTempDirectoryScoped({
           prefix: "hackerai-claude-local-",
         });
@@ -7606,7 +7647,9 @@ describe("ClaudeAdapterV2 background wake turns", () => {
 
         // A linked worktree and a repository subdirectory read the main checkout's local file.
         const repo = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-repo-" });
-        const worktree = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-wt-" });
+        const worktree = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-wt-",
+        });
         const worktreeGitDir = path.join(repo, ".git", "worktrees", "wt");
         yield* fileSystem.makeDirectory(worktreeGitDir, { recursive: true });
         yield* fileSystem.writeFileString(path.join(worktreeGitDir, "commondir"), "../..\n");
@@ -10558,8 +10601,12 @@ describe("ClaudeAdapterV2 background wake turns", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const home = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-compact-" });
-        const project = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-compact-" });
+        const home = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-compact-",
+        });
+        const project = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-claude-compact-",
+        });
         if (userSettings !== undefined) {
           yield* fileSystem.writeFileString(path.join(home, "settings.json"), userSettings);
         }
@@ -10730,7 +10777,9 @@ describe("ClaudeAdapterV2 background wake turns", () => {
       const path = yield* Path.Path;
       const home = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-home-" });
       const first = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-first-" });
-      const second = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-second-" });
+      const second = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-claude-second-",
+      });
       for (const [directory, window] of [
         [first, 150_000],
         [second, 180_000],
@@ -22688,7 +22737,9 @@ describe("ClaudeAdapterV2 background wake turns", () => {
   ) =>
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
-      const configDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-claude-wf-" });
+      const configDir = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-claude-wf-",
+      });
       const transcriptDir = NodePath.join(configDir, "projects", "workflow");
       yield* fileSystem.makeDirectory(transcriptDir, { recursive: true });
       yield* fileSystem.writeFileString(
@@ -24909,77 +24960,79 @@ describe("ClaudeAdapterV2 background wake turns", () => {
       ),
     );
 
-    it.effect("ends a goal check without re-prompting while HackerAI work will wake the thread", () =>
-      Effect.gen(function* () {
-        const harness = yield* makeWakeHarness;
-        const mcpSessions = yield* McpProviderSessions.McpProviderSessions;
-        yield* mcpSessions.set({
-          environmentId: EnvironmentId.make("environment-goal-wake"),
-          threadId: harness.threadId,
-          providerSessionId: "mcp-session-goal-wake",
-          providerInstanceId: ProviderInstanceId.make("claudeAgent"),
-          endpoint: "http://127.0.0.1:43123/mcp",
-          authorizationHeader: "Bearer secret-claude-token",
-          browserToolsAvailable: true,
-          hasPendingWake: Effect.succeed(true),
-        });
-        const stop = Effect.promise(() =>
-          Promise.all(
-            (harness.getOpenedOptions()?.hooks?.Stop ?? []).flatMap((matcher) =>
-              matcher.hooks.map((hook) =>
-                hook(
-                  {
-                    hook_event_name: "Stop",
-                    stop_hook_active: true,
-                    session_id: WAKE_NATIVE_SESSION,
-                    transcript_path: "/transcript.jsonl",
-                    cwd: "/workspace",
-                  },
-                  undefined,
-                  { signal: new AbortController().signal },
+    it.effect(
+      "ends a goal check without re-prompting while HackerAI work will wake the thread",
+      () =>
+        Effect.gen(function* () {
+          const harness = yield* makeWakeHarness;
+          const mcpSessions = yield* McpProviderSessions.McpProviderSessions;
+          yield* mcpSessions.set({
+            environmentId: EnvironmentId.make("environment-goal-wake"),
+            threadId: harness.threadId,
+            providerSessionId: "mcp-session-goal-wake",
+            providerInstanceId: ProviderInstanceId.make("claudeAgent"),
+            endpoint: "http://127.0.0.1:43123/mcp",
+            authorizationHeader: "Bearer secret-claude-token",
+            browserToolsAvailable: true,
+            hasPendingWake: Effect.succeed(true),
+          });
+          const stop = Effect.promise(() =>
+            Promise.all(
+              (harness.getOpenedOptions()?.hooks?.Stop ?? []).flatMap((matcher) =>
+                matcher.hooks.map((hook) =>
+                  hook(
+                    {
+                      hook_event_name: "Stop",
+                      stop_hook_active: true,
+                      session_id: WAKE_NATIVE_SESSION,
+                      transcript_path: "/transcript.jsonl",
+                      cwd: "/workspace",
+                    },
+                    undefined,
+                    { signal: new AbortController().signal },
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-        const condition = "the delegated review is addressed";
-        yield* harness.runtime.startTurn(
-          makeClaudeTestTurnInput({
-            threadId: harness.threadId,
-            providerThread: harness.providerThread,
-            now: yield* DateTime.now,
-            attemptId: RunAttemptId.make("goal-wake-attempt"),
-            text: `/goal ${condition}`,
-            attachments: [],
-          }),
-        );
-        // Without a goal, Stop keeps Claude Code's own behavior.
-        assert.deepEqual(yield* stop, [{}]);
-        yield* harness.offerAndWait(syntheticFrame("goal-wake-set", `Goal set: ${condition}`));
-        assert.deepEqual(yield* stop, [{ continue: false }]);
-        // The turn ends without an error and the goal waits for the wake.
-        yield* Queue.offer(
-          harness.sdkMessages,
-          makeResultFrame({
-            uuid: "goal-wake-result",
-            result: "Waiting for the review.",
-            terminalReason: "stop_hook_prevented",
-          }),
-        );
-        const terminal = yield* Queue.take(harness.terminalReceipts);
-        assert.equal(terminal.status, "completed");
-        assert.equal(goalStatuses(harness.events).at(-1)?.status, "active");
-      }).pipe(
-        Effect.scoped,
-        Effect.provide(
-          Layer.mergeAll(
-            IdAllocator.layer,
-            McpProviderSessions.layer,
-            NodeServices.layer,
-            NodeCrypto.layer,
+          );
+          const condition = "the delegated review is addressed";
+          yield* harness.runtime.startTurn(
+            makeClaudeTestTurnInput({
+              threadId: harness.threadId,
+              providerThread: harness.providerThread,
+              now: yield* DateTime.now,
+              attemptId: RunAttemptId.make("goal-wake-attempt"),
+              text: `/goal ${condition}`,
+              attachments: [],
+            }),
+          );
+          // Without a goal, Stop keeps Claude Code's own behavior.
+          assert.deepEqual(yield* stop, [{}]);
+          yield* harness.offerAndWait(syntheticFrame("goal-wake-set", `Goal set: ${condition}`));
+          assert.deepEqual(yield* stop, [{ continue: false }]);
+          // The turn ends without an error and the goal waits for the wake.
+          yield* Queue.offer(
+            harness.sdkMessages,
+            makeResultFrame({
+              uuid: "goal-wake-result",
+              result: "Waiting for the review.",
+              terminalReason: "stop_hook_prevented",
+            }),
+          );
+          const terminal = yield* Queue.take(harness.terminalReceipts);
+          assert.equal(terminal.status, "completed");
+          assert.equal(goalStatuses(harness.events).at(-1)?.status, "active");
+        }).pipe(
+          Effect.scoped,
+          Effect.provide(
+            Layer.mergeAll(
+              IdAllocator.layer,
+              McpProviderSessions.layer,
+              NodeServices.layer,
+              NodeCrypto.layer,
+            ),
           ),
         ),
-      ),
     );
 
     it.effect(

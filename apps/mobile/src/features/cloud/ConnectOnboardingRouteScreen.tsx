@@ -94,7 +94,9 @@ function ConfiguredConnectOnboardingRouteScreen() {
         ) : (
           <View collapsable={false} className="rounded-[24px] bg-grouped-card p-5">
             <Text className="text-sm leading-normal text-foreground-muted">
-              {gt("Sign in to your HackerAI account to set up {product}.", { product: "HackerAI Connect" })}
+              {gt("Sign in to your HackerAI account to set up {product}.", {
+                product: "HackerAI Connect",
+              })}
             </Text>
           </View>
         )}

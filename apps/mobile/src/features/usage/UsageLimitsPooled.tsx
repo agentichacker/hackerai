@@ -208,7 +208,9 @@ function PoolWindowCard({
       <View className={wide ? "gap-1" : "flex-row items-start justify-between gap-3"}>
         <View className="gap-1">
           {label !== null ? (
-            <Text className="text-sm font-hackerai-medium text-foreground">{label ?? pool.label}</Text>
+            <Text className="text-sm font-hackerai-medium text-foreground">
+              {label ?? pool.label}
+            </Text>
           ) : null}
           <View className="flex-row items-baseline gap-1.5">
             <Text className="text-sm text-foreground-muted">

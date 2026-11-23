@@ -534,6 +534,7 @@ const resolvePrimaryStartConfig = Effect.fn("desktop.backendConfiguration.resolv
     const environment = yield* DesktopEnvironment.DesktopEnvironment;
     const serverExposure = yield* DesktopServerExposure.DesktopServerExposure;
     const backendExposure = yield* serverExposure.backendConfig;
+    const platform = yield* HostProcess.Platform;
 
     const bootstrap = {
       mode: "desktop" as const,
@@ -551,7 +552,7 @@ const resolvePrimaryStartConfig = Effect.fn("desktop.backendConfiguration.resolv
       desktopAppUpdate: input.desktopAppUpdate,
       desktopBrowserFd: 6,
       desktopBrowserControlFd: 7,
-      ...(process.platform === "win32"
+      ...(platform === "win32"
         ? {
             desktopStopFile: environment.path.join(
               environment.stateDir,

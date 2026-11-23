@@ -657,7 +657,6 @@
     "test": "vp test run"
   },
   "dependencies": {
-    "@pierre/diffs": "catalog:",
     "@hackerai/contracts": "workspace:*",
     "@hackerai/issue-tracker-linear": "workspace:*",
     "@hackerai/provider-acp-registry": "workspace:*",
@@ -673,6 +672,7 @@
     "@hackerai/shared": "workspace:*",
     "@hackerai/source-control-core": "workspace:*",
     "@hackerai/source-control-definitions": "workspace:*",
+    "@pierre/diffs": "catalog:",
     "effect": "catalog:",
     "gt-i18n": "1.0.40",
     "jszip": "3.10.1",

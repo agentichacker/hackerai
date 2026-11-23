@@ -28,7 +28,11 @@ describe("ExecutionEnvironmentDescriptor", () => {
         }).capabilities.serverInstallation,
       ).toEqual(installation);
     }
-    const spaced = { kind: "hackerai-launcher", launcher: "/opt/bin/hackerai ", baseDir: " /data/hackerai " };
+    const spaced = {
+      kind: "hackerai-launcher",
+      launcher: "/opt/bin/hackerai ",
+      baseDir: " /data/hackerai ",
+    };
     expect(
       decodeDescriptor({
         ...descriptor,

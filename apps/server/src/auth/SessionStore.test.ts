@@ -33,7 +33,9 @@ const layerServerConfig = (overrides?: Partial<ServerConfig.ServerConfig["Servic
         ...overrides,
       } satisfies ServerConfig.ServerConfig["Service"];
     }),
-  ).pipe(Layer.provide(ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-auth-session-test-" })));
+  ).pipe(
+    Layer.provide(ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-auth-session-test-" })),
+  );
 
 const layerServerEnvironment = (environmentId: EnvironmentId) =>
   Layer.succeed(ServerEnvironment.ServerEnvironmentIdentity, {
@@ -285,7 +287,10 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("SessionStore.lay
           ),
         );
 
-      const original = yield* cookieName("/srv/hackerai-one", EnvironmentId.make("environment-one"));
+      const original = yield* cookieName(
+        "/srv/hackerai-one",
+        EnvironmentId.make("environment-one"),
+      );
       const moved = yield* cookieName("/srv/hackerai-moved", EnvironmentId.make("environment-one"));
       const other = yield* cookieName("/srv/hackerai-one", EnvironmentId.make("environment-two"));
 

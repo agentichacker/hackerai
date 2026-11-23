@@ -94,7 +94,9 @@ describe("thread links", () => {
         local,
         title,
       ),
-    ).toBe("[Decoded](hackerai-thread://v1/thread:project:1) [Literal](hackerai-thread://v1/provider%3A1)");
+    ).toBe(
+      "[Decoded](hackerai-thread://v1/thread:project:1) [Literal](hackerai-thread://v1/provider%3A1)",
+    );
     const untitled = titlesIn({ local: { "a%3A1": "", "a:1": "Other" } });
     expect(relabelThreadLinks("[Kept](hackerai-thread://v1/a%3A1)", local, untitled)).toBe(
       "[Kept](hackerai-thread://v1/a%3A1)",
@@ -124,7 +126,9 @@ describe("thread links", () => {
     expect(
       relabelThreadLinks("[Kept label](<hackerai-thread://v2/local/t1>)", local, () => undefined),
     ).toBe("Kept label");
-    expect(threadLinkRefs("[a](<hackerai-thread://v2/there/t2>)", local)).toEqual([ref("there", "t2")]);
+    expect(threadLinkRefs("[a](<hackerai-thread://v2/there/t2>)", local)).toEqual([
+      ref("there", "t2"),
+    ]);
     for (const threadId of ["mcp:launch:qa(1)", "mcp:launch:qa)"]) {
       const thread = ref("there", threadId);
       const link = formatThreadLink(thread, "Original");
@@ -148,9 +152,9 @@ describe("thread links", () => {
     expect(relabelThreadLinks("[Old](hackerai-thread://v1/t1)", local, () => undefined)).toBe(
       "[Old](hackerai-thread://v1/t1)",
     );
-    expect(relabelThreadLinks("See <hackerai-thread://v1/gone>", local, () => undefined, japanese)).toBe(
-      "See スレッドは利用できなくなりました",
-    );
+    expect(
+      relabelThreadLinks("See <hackerai-thread://v1/gone>", local, () => undefined, japanese),
+    ).toBe("See スレッドは利用できなくなりました");
   });
 
   it("leaves links inside code spans and fences as written", () => {
@@ -192,9 +196,9 @@ describe("thread links", () => {
         return match;
       });
     });
-    expect(threadLinkRefs("<hackerai-thread://v2/local/t1> [a](hackerai-thread://v2/there/t2)", local)).toEqual(
-      [ref("local", "t1"), ref("there", "t2")],
-    );
+    expect(
+      threadLinkRefs("<hackerai-thread://v2/local/t1> [a](hackerai-thread://v2/there/t2)", local),
+    ).toEqual([ref("local", "t1"), ref("there", "t2")]);
   });
 
   it("writes a titleless autolink that opens that exact thread", () => {
@@ -265,9 +269,9 @@ describe("hosted thread links", () => {
         "https://hackerai.sh/threads/there/t1?prompt=go",
       ].join("\n"),
     );
-    expect(
-      relabelThreadLinks("https://hackerai.sh/threads/there/t1", local, () => undefined),
-    ).toBe("Thread on another machine");
+    expect(relabelThreadLinks("https://hackerai.sh/threads/there/t1", local, () => undefined)).toBe(
+      "Thread on another machine",
+    );
     expect(threadLinkRefs("Open https://hackerai.sh/threads/there/t%3A1", local)).toEqual([
       ref("there", "t:1"),
     ]);

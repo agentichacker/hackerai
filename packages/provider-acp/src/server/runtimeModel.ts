@@ -1201,7 +1201,11 @@ export function extractMcpToolCallIdentity(
     const deviceTool = HACKERAI_MCP_TITLE_CALL.exec(devicePath.slice("xd://".length))?.groups?.tool;
     if (deviceTool !== undefined && HACKERAI_MCP_TOOL_NAMES.has(deviceTool)) {
       const input = acpMcpFallbackInput(rawInput.content);
-      return { server: "hackerai-code", tool: deviceTool, ...(input === undefined ? {} : { input }) };
+      return {
+        server: "hackerai-code",
+        tool: deviceTool,
+        ...(input === undefined ? {} : { input }),
+      };
     }
   }
   const candidates = [

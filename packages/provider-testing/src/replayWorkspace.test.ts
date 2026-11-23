@@ -41,7 +41,9 @@ it.layer(NodeServices.layer)("checkpointWorkspace", (it) => {
       vi.stubEnv("GIT_CONFIG_VALUE_0", "false");
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-replay-workspace-decoy-" });
+      const root = yield* fs.makeTempDirectoryScoped({
+        prefix: "hackerai-replay-workspace-decoy-",
+      });
       const repo = path.join(root, "repo");
       const worktree = path.join(root, "worktree");
       yield* fs.makeDirectory(repo);

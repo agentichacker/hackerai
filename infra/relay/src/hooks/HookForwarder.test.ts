@@ -252,7 +252,10 @@ describe("HookForwarder", () => {
       yield* harness.send(
         new Request(hookUrl("hook-1/tok"), {
           method: "POST",
-          headers: { "x-hackerai-relay-delivery": "forged", "x-hackerai-relay-delivery-id": "forged" },
+          headers: {
+            "x-hackerai-relay-delivery": "forged",
+            "x-hackerai-relay-delivery-id": "forged",
+          },
           body: "{}",
         }),
       );

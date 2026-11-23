@@ -470,7 +470,10 @@ export function routesAfterRemoving(
     if (route === removed) return false;
     if (!isLearned(route)) return true;
     const profile = Option.getOrNull(route.profile);
-    if (profile?._tag === "BearerConnectionProfile" && profile.authorization === "hackerai-connect") {
+    if (
+      profile?._tag === "BearerConnectionProfile" &&
+      profile.authorization === "hackerai-connect"
+    ) {
       return removed.target._tag !== "RelayConnectionTarget";
     }
     return credentialConnectionId(connectionRouteId(route.target)) !== removedId;

@@ -129,7 +129,9 @@ it.layer(DatabaseMaintenance.layer.pipe(Layer.provideMerge(NodeServices.layer)))
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-requested-reclaim-" });
+        const baseDir = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-requested-reclaim-",
+        });
         const dbPath = path.join(baseDir, "userdata", "statev2.sqlite");
         const files = DatabaseMaintenance.reclaimFiles(path, dbPath);
         yield* Effect.void.pipe(Effect.provide(Sqlite.layerFromPath(dbPath)));

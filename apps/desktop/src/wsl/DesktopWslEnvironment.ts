@@ -382,7 +382,10 @@ export const buildWslRuntimeInstallScript = (
 // Two hours exceeds cold-install time while bounding orphan retention.
 const ORPHANED_RUNTIME_SCRATCH_MAX_AGE_MINUTES = 120;
 
-export const buildWslRuntimePruneScript = (runtimeId: string, hackeraiHome: string | null): string => {
+export const buildWslRuntimePruneScript = (
+  runtimeId: string,
+  hackeraiHome: string | null,
+): string => {
   const safeRuntimeId = sanitizeWslRuntimeId(runtimeId);
   return [
     "set -eu",
@@ -1289,16 +1292,20 @@ export const layer = Layer.effect(
       windowsToWslPath,
       getUserHome,
       getDistroIp,
-      prepareRuntime: Effect.fn("desktop.wsl.prepareRuntime")(function (distro, archive, hackeraiHome) {
-        return provideSpawner(
-          prepareWslRuntimeImpl(distro, archive, hackeraiHome, windowsToWslPath).pipe(
-            Effect.provideService(FileSystem.FileSystem, fileSystem),
-          ),
-        );
-      }),
-      pruneRuntimes: Effect.fn("desktop.wsl.pruneRuntimes")(function (distro, runtimeId, hackeraiHome) {
-        return provideSpawner(pruneWslRuntimesImpl(distro, runtimeId, hackeraiHome));
-      }),
+      prepareRuntime: Effect.fn("desktop.wsl.prepareRuntime")(
+        function (distro, archive, hackeraiHome) {
+          return provideSpawner(
+            prepareWslRuntimeImpl(distro, archive, hackeraiHome, windowsToWslPath).pipe(
+              Effect.provideService(FileSystem.FileSystem, fileSystem),
+            ),
+          );
+        },
+      ),
+      pruneRuntimes: Effect.fn("desktop.wsl.pruneRuntimes")(
+        function (distro, runtimeId, hackeraiHome) {
+          return provideSpawner(pruneWslRuntimesImpl(distro, runtimeId, hackeraiHome));
+        },
+      ),
       probeRuntime: Effect.fn("desktop.wsl.probeRuntime")(function (distro) {
         return provideSpawner(probeWslRuntimeImpl(distro));
       }),

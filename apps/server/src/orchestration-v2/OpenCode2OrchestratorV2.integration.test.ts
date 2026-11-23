@@ -139,7 +139,11 @@ const sessionInfo = (directory: string, permissions: ReadonlyArray<unknown>, tit
 });
 
 const instructionsWritten: ReadonlyArray<ProviderReplayEntry> = [
-  out("session.instructions.entry.put", { sessionID: SESSION, key: "hackerai-code", value: "<any>" }),
+  out("session.instructions.entry.put", {
+    sessionID: SESSION,
+    key: "hackerai-code",
+    value: "<any>",
+  }),
   reply("session.instructions.entry.put", null),
 ];
 

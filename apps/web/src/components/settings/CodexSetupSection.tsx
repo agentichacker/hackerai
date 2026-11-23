@@ -648,7 +648,9 @@ function ManagedCodexSetup({
                 ? gt("Using your installed Codex · v{version}.", {
                     version: installation.installedVersion,
                   })
-                : gt("Managed by HackerAI · v{version}.", { version: installation.installedVersion })
+                : gt("Managed by HackerAI · v{version}.", {
+                    version: installation.installedVersion,
+                  })
               : installation?.source === "local"
                 ? gt("Using your installed Codex.")
                 : gt("Managed by HackerAI.")

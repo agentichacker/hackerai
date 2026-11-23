@@ -516,7 +516,9 @@ function EmptyEnvironmentState() {
 
   return (
     <View className="items-center gap-3 rounded-2xl bg-grouped-card px-5 py-8">
-      <Text className="text-center text-lg font-hackerai-bold">{gt("Environment unavailable")}</Text>
+      <Text className="text-center text-lg font-hackerai-bold">
+        {gt("Environment unavailable")}
+      </Text>
       <Text className="text-center text-sm leading-normal text-foreground-muted">
         {gt("Start or reconnect an environment before adding a project.")}
       </Text>

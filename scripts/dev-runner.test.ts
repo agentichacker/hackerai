@@ -191,26 +191,28 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
       }),
     );
 
-    it.effect("drops an inherited HACKERAI_HOST and HACKERAI_LAN from a parent HackerAI server", () =>
-      Effect.gen(function* () {
-        const env = yield* createDevRunnerEnv({
-          mode: "dev",
-          baseEnv: { HACKERAI_PORT: "3773", HACKERAI_HOST: "0.0.0.0", HACKERAI_LAN: "true" },
-          serverOffset: 0,
-          webOffset: 0,
-          hackeraiHome: undefined,
-          browser: undefined,
-          autoBootstrapProjectFromCwd: undefined,
-          logWebSocketEvents: undefined,
-          host: undefined,
-          port: undefined,
-          devUrl: undefined,
-        });
+    it.effect(
+      "drops an inherited HACKERAI_HOST and HACKERAI_LAN from a parent HackerAI server",
+      () =>
+        Effect.gen(function* () {
+          const env = yield* createDevRunnerEnv({
+            mode: "dev",
+            baseEnv: { HACKERAI_PORT: "3773", HACKERAI_HOST: "0.0.0.0", HACKERAI_LAN: "true" },
+            serverOffset: 0,
+            webOffset: 0,
+            hackeraiHome: undefined,
+            browser: undefined,
+            autoBootstrapProjectFromCwd: undefined,
+            logWebSocketEvents: undefined,
+            host: undefined,
+            port: undefined,
+            devUrl: undefined,
+          });
 
-        assert.equal(env.HACKERAI_PORT, "13773");
-        assert.equal(env.HACKERAI_HOST, undefined);
-        assert.equal(env.HACKERAI_LAN, undefined);
-      }),
+          assert.equal(env.HACKERAI_PORT, "13773");
+          assert.equal(env.HACKERAI_HOST, undefined);
+          assert.equal(env.HACKERAI_LAN, undefined);
+        }),
     );
   });
 
@@ -546,8 +548,14 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
         assert.equal(yield* homeFor("~"), "/home/dev");
         assert.equal(yield* homeFor("~\\hackerai-dev"), path.join("/home/dev", "hackerai-dev"));
         assert.equal(yield* homeFor("  ~/hackerai-dev  "), path.join("/home/dev", "hackerai-dev"));
-        assert.equal(yield* homeFor("~someone/hackerai-dev"), path.resolve("~someone/hackerai-dev"));
-        assert.equal(yield* homeFor("relative/hackerai-dev"), path.resolve("relative/hackerai-dev"));
+        assert.equal(
+          yield* homeFor("~someone/hackerai-dev"),
+          path.resolve("~someone/hackerai-dev"),
+        );
+        assert.equal(
+          yield* homeFor("relative/hackerai-dev"),
+          path.resolve("relative/hackerai-dev"),
+        );
         assert.equal(yield* homeFor("/tmp/hackerai-dev"), path.resolve("/tmp/hackerai-dev"));
         // An explicit ~/.hackerai would put state in the live userdata; leaving it implicit selects ~/.hackerai/dev.
         assert.equal(yield* homeFor("~/.hackerai"), undefined);
@@ -793,7 +801,10 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
             }),
           );
 
-          yield* runDevRunnerWithInput({ ...devServerInput, hackeraiHome: input.hackeraiHome }).pipe(
+          yield* runDevRunnerWithInput({
+            ...devServerInput,
+            hackeraiHome: input.hackeraiHome,
+          }).pipe(
             Effect.provide(Layer.mergeAll(emptyConfigLayer, netServiceLayer, spawnerLayer)),
             Effect.provideService(HostProcess.Platform, "linux"),
             Effect.provideService(HostProcess.WorkingDirectory, input.cwd),
@@ -867,7 +878,11 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
                   return Effect.succeed(mockProcess(0));
                 }),
               );
-              yield* runDevRunnerWithInput({ ...devServerInput, hackeraiHome: undefined, seed }).pipe(
+              yield* runDevRunnerWithInput({
+                ...devServerInput,
+                hackeraiHome: undefined,
+                seed,
+              }).pipe(
                 Effect.provide(Layer.mergeAll(emptyConfigLayer, netServiceLayer, spawnerLayer)),
                 Effect.provideService(HostProcess.Platform, "linux"),
                 Effect.provideService(HostProcess.WorkingDirectory, root),
@@ -881,7 +896,10 @@ it.layer(NodeServices.layer)("dev-runner", (it) => {
 
           assert.deepStrictEqual(yield* spawnedArgs(false), []);
           const [seedArgs] = yield* spawnedArgs(undefined);
-          assert.includeMembers([...(seedArgs ?? [])], ["--base-dir", path.join(root, ".hackerai")]);
+          assert.includeMembers(
+            [...(seedArgs ?? [])],
+            ["--base-dir", path.join(root, ".hackerai")],
+          );
 
           // Either database means the worktree already has data.
           for (const name of ["state.sqlite", "statev2.sqlite"]) {

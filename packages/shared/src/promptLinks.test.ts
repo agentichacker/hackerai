@@ -126,9 +126,7 @@ describe("link round trips", () => {
     expect(promptLinkAppPath("https://hackerai.sh/env-1/thread-1?prompt=go")).toBe(
       "/env-1/thread-1?prompt=go",
     );
-    expect(promptLinkAppPath("https://hackerai.sh/threads/env-1/thread-1")).toBe(
-      "/env-1/thread-1",
-    );
+    expect(promptLinkAppPath("https://hackerai.sh/threads/env-1/thread-1")).toBe("/env-1/thread-1");
     expect(promptLinkAppPath("https://hackerai.sh/threads/env-1/thread-1?prompt=go")).toBe(
       "/env-1/thread-1?prompt=go",
     );

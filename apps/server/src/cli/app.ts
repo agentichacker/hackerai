@@ -192,7 +192,10 @@ async function sendDesktopAppActivationRequest(input: {
 }
 
 const appEnvironment = Config.all({
-  hackeraiHome: Config.String("HACKERAI_HOME").pipe(Config.option, Config.map(Option.getOrUndefined)),
+  hackeraiHome: Config.String("HACKERAI_HOME").pipe(
+    Config.option,
+    Config.map(Option.getOrUndefined),
+  ),
   sshConnection: Config.String("SSH_CONNECTION").pipe(Config.option),
   sshTty: Config.String("SSH_TTY").pipe(Config.option),
 });

@@ -60,7 +60,9 @@ describe("HtmlRender", () => {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const htmlRender = yield* HtmlRender.HtmlRender;
-      const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-html-images-" });
+      const directory = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-html-images-",
+      });
       const png = path.join(directory, "shot.png");
       const svg = path.join(directory, "logo.svg");
       yield* fileSystem.writeFile(png, PNG_BYTES);
@@ -89,8 +91,12 @@ describe("HtmlRender", () => {
       expect(prepared).toContain(`['${pngUri}', \`${svgUri}\`]`);
       expect(prepared).not.toContain(directory);
       for (const src of kept) expect(prepared).toContain(`<img src="${src}">`);
-      expect(prepared.indexOf("<head>")).toBeLessThan(prepared.indexOf('<style id="hackerai-theme">'));
-      expect(prepared.indexOf('<style id="hackerai-theme">')).toBeLessThan(prepared.indexOf("<title>"));
+      expect(prepared.indexOf("<head>")).toBeLessThan(
+        prepared.indexOf('<style id="hackerai-theme">'),
+      );
+      expect(prepared.indexOf('<style id="hackerai-theme">')).toBeLessThan(
+        prepared.indexOf("<title>"),
+      );
     }).pipe(Effect.provide(layerTest)),
   );
 
@@ -121,7 +127,9 @@ describe("HtmlRender", () => {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const htmlRender = yield* HtmlRender.HtmlRender;
-      const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-html-images-" });
+      const directory = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-html-images-",
+      });
       const svg = path.join(directory, "styled.svg");
       const source = [
         '<?xml version="1.0"?>',
@@ -142,7 +150,9 @@ describe("HtmlRender", () => {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const htmlRender = yield* HtmlRender.HtmlRender;
-      const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-html-images-" });
+      const directory = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-html-images-",
+      });
       const folder = path.join(directory, "folder.png");
       yield* fileSystem.makeDirectory(folder);
       const missing = path.join(directory, "missing.jpg");
@@ -273,7 +283,9 @@ describe("HtmlRender", () => {
       const htmlRender = yield* HtmlRender.HtmlRender;
       const mcpSessions = yield* McpProviderSessions.McpProviderSessions;
       const threadId = ThreadId.make("thread-html-path");
-      const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-html-page-" });
+      const directory = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-html-page-",
+      });
       const file = path.join(directory, "report.html");
       yield* fileSystem.writeFileString(file, "<!doctype html><p>First draft</p>");
       const page = { path: file, title: "Report", height: 300 };
@@ -313,7 +325,9 @@ describe("HtmlRender", () => {
       const config = yield* ServerConfig.ServerConfig;
       const htmlRender = yield* HtmlRender.HtmlRender;
       const threadId = ThreadId.make("thread-html-path-guard");
-      const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-html-page-" });
+      const directory = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-html-page-",
+      });
       const secret = path.join(directory, "id_rsa");
       yield* fileSystem.writeFileString(secret, "PRIVATE KEY");
       const page = path.join(directory, "page.html");
@@ -359,7 +373,9 @@ describe("HtmlRender", () => {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const htmlRender = yield* HtmlRender.HtmlRender;
-      const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-html-page-" });
+      const directory = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-html-page-",
+      });
       const secret = path.join(directory, "id_rsa");
       yield* fileSystem.writeFileString(secret, "PRIVATE KEY");
       const symlinked = path.join(directory, "symlinked.html");
@@ -558,7 +574,9 @@ fs.createReadStream(null, { fd: 3 }).on("end", quit).on("data", (chunk) => {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
         const htmlRender = yield* HtmlRender.HtmlRender;
-        const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-html-files-" });
+        const directory = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-html-files-",
+        });
         const secret = path.join(directory, "secret.js");
         yield* fileSystem.writeFileString(secret, 'window.secret = "abc123";');
         const secretUrl = NodeURL.pathToFileURL(secret).href;

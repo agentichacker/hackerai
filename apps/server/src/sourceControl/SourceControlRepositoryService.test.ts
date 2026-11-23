@@ -95,7 +95,9 @@ function layer(input: {
     Layer.provide(
       ServerConfig.layerTest(
         process.cwd(),
-        input.fileSystem ? "/tmp/hackerai-source-control-repos" : { prefix: "hackerai-source-control-repos-" },
+        input.fileSystem
+          ? "/tmp/hackerai-source-control-repos"
+          : { prefix: "hackerai-source-control-repos-" },
       ),
     ),
   );
@@ -368,7 +370,9 @@ it.effect("reports a Git LFS download as progress only while its partial files c
   Effect.gen(function* () {
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const parent = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-source-control-clone-lfs-" });
+    const parent = yield* fs.makeTempDirectoryScoped({
+      prefix: "hackerai-source-control-clone-lfs-",
+    });
     const destinationPath = path.join(parent, "hackerai");
     const incomplete = path.join(destinationPath, ".git", "lfs", "incomplete");
     const progress = yield* Queue.unbounded<GitCloneProgressLine>();
@@ -703,7 +707,9 @@ it.effect("discards only a directory git wrote to", () =>
   Effect.gen(function* () {
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const parent = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-source-control-discard-" });
+    const parent = yield* fs.makeTempDirectoryScoped({
+      prefix: "hackerai-source-control-discard-",
+    });
     const partial = path.join(parent, "partial");
     yield* fs.makeDirectory(path.join(partial, ".git"), { recursive: true });
     yield* fs.writeFileString(path.join(partial, "README.md"), "half");
@@ -734,7 +740,9 @@ it.effect("redacts query tokens and userinfo containing '@' from reported URLs",
   Effect.gen(function* () {
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const parent = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-source-control-redact2-" });
+    const parent = yield* fs.makeTempDirectoryScoped({
+      prefix: "hackerai-source-control-redact2-",
+    });
     yield* Effect.gen(function* () {
       const service = yield* SourceControlRepositoryService.SourceControlRepositoryService;
       const query = yield* service.prepareClone({

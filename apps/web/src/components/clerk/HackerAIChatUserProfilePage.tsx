@@ -1,4 +1,7 @@
-import { HackerAICHAT_PLAN_TUNNEL_LIMITS, type RelayHackerAIChatLink } from "@hackerai/contracts/relay";
+import {
+  HackerAICHAT_PLAN_TUNNEL_LIMITS,
+  type RelayHackerAIChatLink,
+} from "@hackerai/contracts/relay";
 import { MessageSquareIcon } from "lucide-react";
 import { T, useGT, Var } from "gt-react";
 import type { ReactNode } from "react";
@@ -55,7 +58,13 @@ function planLabel(link: RelayHackerAIChatLink): ReactNode {
 
 /** Links a HackerAI Chat account so paid subscribers get more tunnels. */
 export function HackerAIChatUserProfilePage() {
-  const { linkState, pending, linkUrl, link: handleLink, unlink: handleUnlink } = useHackerAIChatLink();
+  const {
+    linkState,
+    pending,
+    linkUrl,
+    link: handleLink,
+    unlink: handleUnlink,
+  } = useHackerAIChatLink();
   const usage = useManagedTunnelUsage();
   const gt = useGT();
 
@@ -67,7 +76,10 @@ export function HackerAIChatUserProfilePage() {
       title="HackerAI Chat"
       description={gt(
         "Link a paid HackerAI Chat account for more HackerAI Connect tunnels: up to {pro} with Pro, {premier} with Premier.",
-        { pro: HackerAICHAT_PLAN_TUNNEL_LIMITS.pro, premier: HackerAICHAT_PLAN_TUNNEL_LIMITS.premier },
+        {
+          pro: HackerAICHAT_PLAN_TUNNEL_LIMITS.pro,
+          premier: HackerAICHAT_PLAN_TUNNEL_LIMITS.premier,
+        },
       )}
       action={
         <ClerkUserProfileRefreshButton

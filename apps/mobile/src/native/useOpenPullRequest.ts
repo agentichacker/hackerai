@@ -1,5 +1,8 @@
 import { useNavigation, useRoute, StackActions } from "@react-navigation/native";
-import { isStandaloneIssueLink, resolveIssueLinkTarget } from "@hackerai/client-runtime/issue-links";
+import {
+  isStandaloneIssueLink,
+  resolveIssueLinkTarget,
+} from "@hackerai/client-runtime/issue-links";
 import {
   nativePullRequestDestination,
   pullRequestCandidateForIssueLink,

@@ -68,6 +68,7 @@ export class WindowsShellArgumentError extends Schema.TaggedError<WindowsShellAr
 const WINDOWS_SHELL_META_CHARS = /([()\][%!^"`<>&|;, *?])/g;
 // cmd.exe treats a newline as the end of a command, even inside a quoted argument.
 const WINDOWS_SHELL_UNSAFE_CHARS = /[\0\r\n]/;
+const isWindowsShellArgumentError = Schema.is(WindowsShellArgumentError);
 
 // Escape dynamic arguments for both cmd.exe and the target's CommandLineToArgvW parsing.
 function escapeWindowsShellArg(arg: string): string {
@@ -1052,7 +1053,7 @@ export const resolveSpawnCommand = Effect.fnUntraced(function* (
     Effect.try({
       try: () => escapeWindowsShellArg(argument),
       catch: (cause) =>
-        Schema.is(WindowsShellArgumentError)(cause)
+        isWindowsShellArgumentError(cause)
           ? cause
           : new WindowsShellArgumentError({ reason: String(cause) }),
     }),

@@ -873,7 +873,10 @@ const buildOnBlacksmith = Effect.fn("nativeClient.buildOnBlacksmith")(
   ) {
     const environment = yield* HostProcess.Environment;
     // The workflow itself runs this script: it must build, never dispatch.
-    if (environment.GITHUB_ACTIONS === "true" || environment.HACKERAI_NATIVE_CLIENT_BUILD === "local")
+    if (
+      environment.GITHUB_ACTIONS === "true" ||
+      environment.HACKERAI_NATIVE_CLIENT_BUILD === "local"
+    )
       return false;
     if (!(yield* isCommandAvailable("gh"))) return false;
     const repository =
@@ -1399,7 +1402,10 @@ const main = Command.make(
     const stamp = DateTime.formatIso(DateTime.makeUnsafe(started)).replaceAll(":", "-");
     const log = path.join(logs, `${stamp}-${platform}.log`);
     const result = yield* ensureClient(operations).pipe(
-      Effect.provideService(BuildLog, environment.HACKERAI_NATIVE_CLIENT_VERBOSE === "1" ? null : log),
+      Effect.provideService(
+        BuildLog,
+        environment.HACKERAI_NATIVE_CLIENT_VERBOSE === "1" ? null : log,
+      ),
       Effect.tapError(() => reportTelemetry(home, task, "failed", 0)),
     );
     if (result.installed && result.source)

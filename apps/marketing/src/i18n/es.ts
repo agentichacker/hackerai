@@ -28,7 +28,8 @@ export const es: Messages = {
     downloadForWindows: "Descargar para Windows",
     downloadForLinux: "Descargar para Linux",
     sourceLink: "Roba nuestro código (legalmente)",
-    screenshotAlt: "HackerAI ejecutando subagentes de Claude, Codex, Muse y Gemini en un mismo hilo",
+    screenshotAlt:
+      "HackerAI ejecutando subagentes de Claude, Codex, Muse y Gemini en un mismo hilo",
     endorsementsTitle: "Tolerado por más de {users} desarrolladores",
     endorsementsSub: "Algunos hasta tuitearon cosas buenas.",
     endorsementsLabel: "Opiniones de desarrolladores",

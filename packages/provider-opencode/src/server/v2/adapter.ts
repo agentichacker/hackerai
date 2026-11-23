@@ -427,7 +427,9 @@ interface PendingRequest {
 const rule = (action: string, effect: Rule["effect"]): Rule => ({ action, resource: "*", effect });
 
 /** OpenCode hides tools for names over 64 chars and rejects names over 100; hash long thread IDs. */
-export const hackeraiMcpServerName = Effect.fn("hackeraiMcpServerName")(function* (threadId: string) {
+export const hackeraiMcpServerName = Effect.fn("hackeraiMcpServerName")(function* (
+  threadId: string,
+) {
   const name = `hackerai-code-${threadId.replaceAll(/[^a-zA-Z0-9_-]/g, "_")}`;
   if (name.length <= 64) return name;
   const crypto = yield* Digest.Digest;
@@ -4420,7 +4422,10 @@ export const make = Effect.fn("OpenCode2Adapter.make")(function* (instanceId: Pr
       }
       const instructions = [
         buildRuntimeInstructions({ harness: "OpenCode", model: turnInput.modelSelection.model }),
-        hackeraiOrchestrationSystemPrompt(mcpAvailable, mcpSession?.capabilities?.has("device") === true),
+        hackeraiOrchestrationSystemPrompt(
+          mcpAvailable,
+          mcpSession?.capabilities?.has("device") === true,
+        ),
         mcpAvailable
           ? "To wait for a background shell you started (tests, a build), call `hackerai_background_wait` with its shell ID before you end your turn. Do not mark work you leave running, or PRs."
           : undefined,

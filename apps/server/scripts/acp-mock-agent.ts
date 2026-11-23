@@ -52,16 +52,19 @@ const decodeElicitationSchema = Schema.decodeUnknownSync(
 );
 const elicitationResponseLogPath = process.env.HACKERAI_ACP_ELICITATION_RESPONSE_LOG_PATH;
 const grokKillTaskShape = process.env.HACKERAI_ACP_GROK_KILL_TASK_SHAPE;
-const emitGrokBackgroundTaskPoll = process.env.HACKERAI_ACP_GROK_BACKGROUND_TASK_COMPLETION === "poll";
+const emitGrokBackgroundTaskPoll =
+  process.env.HACKERAI_ACP_GROK_BACKGROUND_TASK_COMPLETION === "poll";
 const emitForeignSessionUpdates = process.env.HACKERAI_ACP_EMIT_FOREIGN_SESSION_UPDATES === "1";
 const omitInitializeModelState = process.env.HACKERAI_ACP_OMIT_INITIALIZE_MODEL_STATE === "1";
-const completeFirstPromptOnCancel = process.env.HACKERAI_ACP_COMPLETE_FIRST_PROMPT_ON_CANCEL === "1";
+const completeFirstPromptOnCancel =
+  process.env.HACKERAI_ACP_COMPLETE_FIRST_PROMPT_ON_CANCEL === "1";
 const floodStderr = process.env.HACKERAI_ACP_FLOOD_STDERR === "1";
 const hangPromptForever = process.env.HACKERAI_ACP_HANG_PROMPT_FOREVER === "1";
 const agentVersion = process.env.HACKERAI_ACP_AGENT_VERSION ?? "0.0.0";
 const geminiApiKey = process.env.GEMINI_API_KEY;
 const idleError = process.env.HACKERAI_ACP_IDLE_ERROR;
-const emitTrackedToolCallKindThenHang = process.env.HACKERAI_ACP_EMIT_TRACKED_TOOL_CALL_KIND_THEN_HANG;
+const emitTrackedToolCallKindThenHang =
+  process.env.HACKERAI_ACP_EMIT_TRACKED_TOOL_CALL_KIND_THEN_HANG;
 const clientFsProbePath = process.env.HACKERAI_ACP_CLIENT_FS_PROBE_PATH;
 const clientFsProbeLogPath = process.env.HACKERAI_ACP_CLIENT_FS_PROBE_LOG_PATH;
 const encodeJson = Schema.encodeSync(Schema.fromJsonString(Schema.Unknown));
@@ -72,7 +75,8 @@ const failLoadSession = process.env.HACKERAI_ACP_FAIL_LOAD_SESSION === "1";
 const failLoadSessionAfterConfigReplay =
   process.env.HACKERAI_ACP_FAIL_LOAD_SESSION_AFTER_CONFIG_REPLAY === "1";
 const emitLoadReplay = process.env.HACKERAI_ACP_EMIT_LOAD_REPLAY === "1";
-const delayLoadSessionAfterReplay = process.env.HACKERAI_ACP_DELAY_LOAD_SESSION_AFTER_REPLAY === "1";
+const delayLoadSessionAfterReplay =
+  process.env.HACKERAI_ACP_DELAY_LOAD_SESSION_AFTER_REPLAY === "1";
 const loadSessionDelayMs = Number(process.env.HACKERAI_ACP_LOAD_SESSION_DELAY_MS ?? "5000");
 const modeNotifiedBeforeDelayedLoadReply = process.env.HACKERAI_ACP_NOTIFY_MODE_BEFORE_LOAD_REPLY;
 const holdSetConfigOptionUntilLoadReply =
@@ -98,7 +102,8 @@ const openCompactionPromptOrdinals = new Set(
   (process.env.HACKERAI_ACP_OPEN_COMPACTION_PROMPT_ORDINALS ?? "").split(",").map(Number),
 );
 const failSetModeConfigOption = process.env.HACKERAI_ACP_FAIL_SET_MODE_CONFIG_OPTION === "1";
-const emitEmptyDefaultAgentOption = process.env.HACKERAI_ACP_EMIT_EMPTY_DEFAULT_AGENT_OPTION === "1";
+const emitEmptyDefaultAgentOption =
+  process.env.HACKERAI_ACP_EMIT_EMPTY_DEFAULT_AGENT_OPTION === "1";
 const promptResponseText = process.env.HACKERAI_ACP_PROMPT_RESPONSE_TEXT;
 const promptDelayMs = Number(process.env.HACKERAI_ACP_PROMPT_DELAY_MS ?? "0");
 const terminalOutputBytes = Number(process.env.HACKERAI_ACP_EMIT_TERMINAL_OUTPUT_BYTES ?? "0");

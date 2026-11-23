@@ -93,7 +93,8 @@ export const resolveNewestVersion = Effect.fn("cli.update.resolve_newest")(funct
       Effect.mapError(() => new CliUpdateError({ reason: "Could not list hackerai releases." })),
       Effect.timeoutOrElse({
         duration: RELEASE_INDEX_TIMEOUT,
-        orElse: () => Effect.fail(new CliUpdateError({ reason: "Timed out listing hackerai releases." })),
+        orElse: () =>
+          Effect.fail(new CliUpdateError({ reason: "Timed out listing hackerai releases." })),
       }),
     );
     const releases = yield* decodeReleaseIndex(body).pipe(
@@ -168,7 +169,8 @@ export const repointLauncher = Effect.fn("cli.update.repoint_launcher")(function
   const remember = (launcher: string) =>
     recordPinnedRuntimeLauncher({ baseDir: input.baseDir, launcher }).pipe(
       Effect.mapError(
-        () => new CliUpdateError({ reason: `Could not record the HackerAI launcher at ${launcher}.` }),
+        () =>
+          new CliUpdateError({ reason: `Could not record the HackerAI launcher at ${launcher}.` }),
       ),
     );
 
@@ -179,13 +181,14 @@ export const repointLauncher = Effect.fn("cli.update.repoint_launcher")(function
     const quoted = Option.isSome(current) ? windowsShimTarget(current.value) : undefined;
     if (quoted === undefined || !ownsTarget(quoted)) return Option.none<string>();
     yield* remember(shimPath);
-    yield* fs
-      .writeFileString(shimPath, `@echo off\r\n"${input.targetEntryPath}" %*`)
-      .pipe(
-        Effect.mapError(
-          () => new CliUpdateError({ reason: `Could not rewrite the HackerAI launcher at ${shimPath}.` }),
-        ),
-      );
+    yield* fs.writeFileString(shimPath, `@echo off\r\n"${input.targetEntryPath}" %*`).pipe(
+      Effect.mapError(
+        () =>
+          new CliUpdateError({
+            reason: `Could not rewrite the HackerAI launcher at ${shimPath}.`,
+          }),
+      ),
+    );
     return Option.some(shimPath);
   }
 
@@ -199,7 +202,10 @@ export const repointLauncher = Effect.fn("cli.update.repoint_launcher")(function
   }).pipe(
     Effect.mapError(
       (cause) =>
-        new CliUpdateError({ reason: `Could not repoint the HackerAI launcher at ${launcher}.`, cause }),
+        new CliUpdateError({
+          reason: `Could not repoint the HackerAI launcher at ${launcher}.`,
+          cause,
+        }),
     ),
   );
   return Option.some(launcher);

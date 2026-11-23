@@ -51,7 +51,9 @@ describe("injectHtmlRenderBootstrap", () => {
     const fragment = `<${tag}><head><meta name="viewport"></head></${tag}>`;
     const injected = injectHtmlRenderBootstrap(fragment);
     expect(injected.startsWith("<!doctype html><head>")).toBe(true);
-    expect(injected.indexOf('<style id="hackerai-theme">')).toBeLessThan(injected.indexOf(`<${tag}>`));
+    expect(injected.indexOf('<style id="hackerai-theme">')).toBeLessThan(
+      injected.indexOf(`<${tag}>`),
+    );
     expect(injected).toContain('<meta name="viewport" content="width=device-width');
     expect(injected.endsWith(fragment)).toBe(true);
   });
@@ -62,7 +64,9 @@ describe("injectHtmlRenderBootstrap", () => {
   ])("keeps the bootstrap outside inert template content: %s", (fragment) => {
     const injected = injectHtmlRenderBootstrap(fragment);
     expect(injected.startsWith("<!doctype html><head>")).toBe(true);
-    expect(injected.indexOf('<style id="hackerai-theme">')).toBeLessThan(injected.indexOf("<template>"));
+    expect(injected.indexOf('<style id="hackerai-theme">')).toBeLessThan(
+      injected.indexOf("<template>"),
+    );
     expect(injected).toContain('<meta name="viewport" content="width=device-width');
     expect(injected.endsWith(fragment)).toBe(true);
   });

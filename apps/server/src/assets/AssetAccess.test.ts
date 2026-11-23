@@ -135,7 +135,9 @@ describe("AssetAccess", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-mcp-html-" });
+        const directory = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-mcp-html-",
+        });
         const file = path.join(directory, "app.html");
         const limit = MCP_APP_MAX_HTML_BYTES + 128 * 1024;
         yield* fileSystem.writeFile(file, new Uint8Array(limit).fill(120));
@@ -150,7 +152,9 @@ describe("AssetAccess", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-mcp-html-" });
+        const directory = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-mcp-html-",
+        });
         const file = path.join(directory, "app.html");
         const limit = MCP_APP_MAX_HTML_BYTES + 128 * 1024;
         for (const size of [limit + 1, limit * 2]) {
@@ -164,7 +168,9 @@ describe("AssetAccess", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-mcp-html-" });
+        const directory = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-mcp-html-",
+        });
         const file = path.join(directory, "app.html");
         for (const html of ["", "<body>" + "☃".repeat(100_000) + "</body>"]) {
           const expected = new TextEncoder().encode(html);
@@ -181,7 +187,9 @@ describe("AssetAccess", () => {
       Effect.gen(function* () {
         const fileSystem = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const directory = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-mcp-html-" });
+        const directory = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-mcp-html-",
+        });
         const error = yield* readMcpAppHtml(path.join(directory, "missing.html")).pipe(Effect.flip);
         expect(error._tag).toBe("PlatformError");
         expect(error.reason._tag).toBe("NotFound");
@@ -607,7 +615,9 @@ describe("AssetAccess", () => {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
         const { mountRoot, underWsl } = yield* makeFakeWslHost;
-        const workspaceRoot = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-media-wsl-root-" });
+        const workspaceRoot = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-media-wsl-root-",
+        });
         const filePath = path.join(mountRoot, "c", "Users", "me", "Pictures", "shot.png");
         yield* fs.makeDirectory(path.dirname(filePath), { recursive: true });
         yield* fs.writeFile(filePath, screenshotPng);
@@ -636,7 +646,9 @@ describe("AssetAccess", () => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const workspaceRoot = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-media-gitbash-" });
+        const workspaceRoot = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-media-gitbash-",
+        });
         const canonicalFile = path.join(yield* fs.realPath(workspaceRoot), "shot.png");
         yield* fs.writeFile(canonicalFile, screenshotPng);
         const gitBashPath = `/${canonicalFile[0]!.toLowerCase()}${canonicalFile.slice(2).replaceAll("\\", "/")}`;
@@ -741,7 +753,9 @@ describe("AssetAccess", () => {
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const root = yield* fs.realPath(yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-link-" }));
+        const root = yield* fs.realPath(
+          yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-link-" }),
+        );
         yield* fs.writeFileString(path.join(root, "payload.xhtml"), "<html/>");
         yield* fs.writeFileString(path.join(root, "real.pdf"), "%PDF-1.4");
         const link = path.join(root, "report.pdf");
@@ -1284,7 +1298,9 @@ describe("AssetAccess", () => {
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-asset-revision-" });
+      const root = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-asset-revision-",
+      });
       const pages = path.join(root, "pages");
       yield* fileSystem.makeDirectory(pages);
       const write = (name: string, text: string) =>
@@ -1477,7 +1493,9 @@ describe("AssetAccess", () => {
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-preview-literal-" });
+      const root = yield* fileSystem.makeTempDirectoryScoped({
+        prefix: "hackerai-preview-literal-",
+      });
       const directory = path.join(root, "assets#archive");
       yield* fileSystem.makeDirectory(directory);
 

@@ -1600,7 +1600,10 @@ function codexThreadRuntimeParams(input: {
         ? {}
         : {
             // Override only HackerAI's servers so launch-argument MCP servers survive.
-            "mcp_servers.hackerai-code": { ...hackeraiServer, disabled_tools: CODEX_DIRECT_ONLY_HACKERAI_TOOLS },
+            "mcp_servers.hackerai-code": {
+              ...hackeraiServer,
+              disabled_tools: CODEX_DIRECT_ONLY_HACKERAI_TOOLS,
+            },
             // Code Mode runs a blocking wait or delegate wait as a nested call, and the model
             // keeps polling it. A second, direct-only registration makes it a plain tool call.
             [`mcp_servers.${CODEX_HACKERAI_DIRECT_MCP_SERVER}`]: {

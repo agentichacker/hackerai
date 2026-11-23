@@ -34,7 +34,9 @@ const layerServerConfig = (
       } satisfies ServerConfig.ServerConfig["Service"];
     }),
   ).pipe(
-    Layer.provide(ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-auth-bootstrap-test-" })),
+    Layer.provide(
+      ServerConfig.layerTest(process.cwd(), { prefix: "hackerai-auth-bootstrap-test-" }),
+    ),
   );
 
 const layerPairingGrantStore = (

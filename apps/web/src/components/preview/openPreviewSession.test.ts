@@ -193,7 +193,11 @@ describe("openUrlInPreview from a link", () => {
       });
 
       if (entryPoint === "link") {
-        await openUrlInPreview({ openPreview, threadRef: sideChatRef, url: "https://hackerai.sh/" });
+        await openUrlInPreview({
+          openPreview,
+          threadRef: sideChatRef,
+          url: "https://hackerai.sh/",
+        });
       } else {
         await openFileInPreview({
           threadRef: sideChatRef,

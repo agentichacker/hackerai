@@ -93,7 +93,9 @@ export function ComposerInlineControl(props: {
           >
             <Text
               className={cn(
-                props.size === "large" ? "text-base font-hackerai-medium" : "text-sm font-hackerai-medium",
+                props.size === "large"
+                  ? "text-base font-hackerai-medium"
+                  : "text-sm font-hackerai-medium",
                 props.emphasized || props.selected ? "text-foreground" : "text-foreground-muted",
               )}
               numberOfLines={1}

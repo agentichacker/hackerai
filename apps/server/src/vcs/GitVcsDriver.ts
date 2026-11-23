@@ -1153,7 +1153,10 @@ export const makeVcsDriverShape = Effect.fn("makeGitVcsDriverShape")(function* (
       // Isolate bulk-checkin packs so cleanup cannot remove another Git writer's objects.
       const privateObjects = yield* Effect.acquireRelease(
         fileSystem
-          .makeTempDirectory({ directory: sharedObjects, prefix: "tmp_objdir-hackerai-checkpoint-" })
+          .makeTempDirectory({
+            directory: sharedObjects,
+            prefix: "tmp_objdir-hackerai-checkpoint-",
+          })
           .pipe(
             Effect.mapError(
               (cause) =>

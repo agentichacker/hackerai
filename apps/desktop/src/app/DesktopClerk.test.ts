@@ -416,7 +416,10 @@ it.effect.each(["startup", "open-url", "early-second-instance"] as const)(
         assert.strictEqual(delivery?.returnUrl, request.returnUrl);
       }).pipe(
         Effect.provide(layerDesktopClerk(true, [], "darwin", undefined, shell, listeners)),
-        Effect.provideService(HostProcess.Arguments, entry === "startup" ? ["hackerai", link] : ["hackerai"]),
+        Effect.provideService(
+          HostProcess.Arguments,
+          entry === "startup" ? ["hackerai", link] : ["hackerai"],
+        ),
         Effect.provideService(ElectronApp.ElectronApp, electronApp),
         Effect.provideService(
           ElectronWindow.ElectronWindow,

@@ -20,7 +20,12 @@ export function useHackerAIProjectFileState(
   environmentId: EnvironmentId,
   cwd: string | null,
 ): HackerAIProjectFileState {
-  const query = useProjectFileQuery(environmentId, cwd ?? "", HACKERAI_PROJECT_FILE_NAME, cwd !== null);
+  const query = useProjectFileQuery(
+    environmentId,
+    cwd ?? "",
+    HACKERAI_PROJECT_FILE_NAME,
+    cwd !== null,
+  );
   const contents = query.data && !query.data.truncated ? query.data.contents : null;
   const isPending = query.isPending;
   if (contents === null) {

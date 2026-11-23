@@ -629,7 +629,8 @@ it.layer(NodeServices.layer)("hackerai update checks the database before switchi
     stdoutInvalidUtf8: false,
     stderrInvalidUtf8: false,
   });
-  const blockedReason = "This database has migrations that hackerai@0.1.8 does not know: 79_example.";
+  const blockedReason =
+    "This database has migrations that hackerai@0.1.8 does not know: 79_example.";
 
   it.effect.each([
     {

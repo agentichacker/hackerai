@@ -104,7 +104,9 @@ const withScratch = <A, E>(
 ) =>
   Effect.gen(function* () {
     const fileSystem = yield* FileSystem.FileSystem;
-    const baseDir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-managed-folders-" });
+    const baseDir = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-managed-folders-",
+    });
     return yield* body({ baseDir }).pipe(Effect.provide(layer(baseDir, options)));
   }).pipe(Effect.scoped, Effect.provide(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)));
 
@@ -127,7 +129,9 @@ it.effect("offers nothing, and says why once, when the data dir sits inside a Gi
   return Effect.gen(function* () {
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const checkout = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-scratch-repo-" });
+    const checkout = yield* fileSystem.makeTempDirectoryScoped({
+      prefix: "hackerai-scratch-repo-",
+    });
     yield* git(checkout, ["init", "--quiet"]);
     const baseDir = path.join(checkout, ".hackerai");
     yield* fileSystem.makeDirectory(baseDir);

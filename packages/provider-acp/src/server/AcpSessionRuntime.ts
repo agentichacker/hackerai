@@ -1436,8 +1436,7 @@ export const make = Effect.fn("AcpSessionRuntime.make")(function* (
           extendEnv: options.spawn.extendEnv ?? true,
         }).pipe(
           Effect.mapError(
-            (cause) =>
-              new EffectAcpErrors.AcpSpawnError({ command: options.spawn.command, cause }),
+            (cause) => new EffectAcpErrors.AcpSpawnError({ command: options.spawn.command, cause }),
           ),
         );
   const linuxCgroupLease =
@@ -1975,7 +1974,8 @@ export const make = Effect.fn("AcpSessionRuntime.make")(function* (
       meta !== null &&
       typeof meta === "object" &&
       !Array.isArray(meta) &&
-      (meta as { readonly hackeraiSessionLoadReady?: unknown }).hackeraiSessionLoadReady === "replay_idle";
+      (meta as { readonly hackeraiSessionLoadReady?: unknown }).hackeraiSessionLoadReady ===
+        "replay_idle";
     const extractedModelConfigId = extractModelConfigId(sessionSetupResult);
     const nextModelConfigId =
       extractedModelConfigId ?? (syntheticReplayIdle ? current.modelConfigId : undefined);

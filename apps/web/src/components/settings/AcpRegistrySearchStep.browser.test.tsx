@@ -1,4 +1,8 @@
-import { EnvironmentId, ProviderDriverKind, type AcpRegistrySearchAgent } from "@hackerai/contracts";
+import {
+  EnvironmentId,
+  ProviderDriverKind,
+  type AcpRegistrySearchAgent,
+} from "@hackerai/contracts";
 import { expect, it, vi } from "vite-plus/test";
 import { page, userEvent } from "vite-plus/test/browser";
 

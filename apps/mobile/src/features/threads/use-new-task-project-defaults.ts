@@ -53,7 +53,9 @@ export function useNewTaskProjectDefaults(project: EnvironmentProject | null) {
   );
   const hackeraiProjectFileData = hackeraiProjectFileQuery.data as ProjectReadFileResult | null;
   const hackeraiProjectFile =
-    hackeraiProjectFileData === null || hackeraiProjectFileData.exists === false || hackeraiProjectFileData.truncated
+    hackeraiProjectFileData === null ||
+    hackeraiProjectFileData.exists === false ||
+    hackeraiProjectFileData.truncated
       ? null
       : parseHackerAIProjectFile(hackeraiProjectFileData.contents);
   const projectSettings = resolveProjectSettings(

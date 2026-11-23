@@ -88,56 +88,61 @@ it.live("reports failure when the Windows cleanup shell cannot start", () =>
   }).pipe(Effect.scoped, Effect.provide(Layer.mergeAll(NodeServices.layer, NetService.layer))),
 );
 
-it.layer(Layer.mergeAll(NodeServices.layer, NetService.layer))("hackerai uninstall command", (it) => {
-  it.effect("names another home's service it leaves installed", () =>
-    Effect.gen(function* () {
-      const fs = yield* FileSystem.FileSystem;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-uninstall-cli-test-" });
-      const uninstalls: Array<true> = [];
-      vi.spyOn(BootService, "layer").mockReturnValue(
-        Layer.succeed(
-          BootService.BootService,
-          BootService.BootService.of({
-            status: Effect.succeed({
-              supported: true,
-              installed: true,
-              current: true,
-              installedBaseDir: "/home/me/.hackerai",
-              unitPath: "/home/me/.config/systemd/user/hackerai.service",
-              logPath: "/home/me/.hackerai/userdata/logs/boot-service.log",
+it.layer(Layer.mergeAll(NodeServices.layer, NetService.layer))(
+  "hackerai uninstall command",
+  (it) => {
+    it.effect("names another home's service it leaves installed", () =>
+      Effect.gen(function* () {
+        const fs = yield* FileSystem.FileSystem;
+        const baseDir = yield* fs.makeTempDirectoryScoped({
+          prefix: "hackerai-uninstall-cli-test-",
+        });
+        const uninstalls: Array<true> = [];
+        vi.spyOn(BootService, "layer").mockReturnValue(
+          Layer.succeed(
+            BootService.BootService,
+            BootService.BootService.of({
+              status: Effect.succeed({
+                supported: true,
+                installed: true,
+                current: true,
+                installedBaseDir: "/home/me/.hackerai",
+                unitPath: "/home/me/.config/systemd/user/hackerai.service",
+                logPath: "/home/me/.hackerai/userdata/logs/boot-service.log",
+              }),
+              withStopped: (operation) => operation,
+              restart: Effect.die("unexpected restart"),
+              install: () => Effect.die("unexpected install"),
+              uninstall: Effect.sync(() => {
+                uninstalls.push(true);
+                return true;
+              }),
             }),
-            withStopped: (operation) => operation,
-            restart: Effect.die("unexpected restart"),
-            install: () => Effect.die("unexpected install"),
-            uninstall: Effect.sync(() => {
-              uninstalls.push(true);
-              return true;
-            }),
-          }),
-        ),
-      );
-
-      const output = yield* Command.runWith(uninstallCommand, { version: packageJson.version })([
-        "--base-dir",
-        baseDir,
-        "--yes",
-      ]).pipe(
-        Effect.andThen(TestConsole.logLines),
-        Effect.map((lines) => lines.join("\n")),
-        Effect.provideService(HostProcess.Environment, {}),
-        Effect.provideService(HostProcess.IsExecutable, false),
-        Effect.provide(
-          Layer.mergeAll(
-            ConfigProvider.layer(ConfigProvider.fromEnv({ env: {} })),
-            Layer.fresh(TestConsole.layer),
           ),
-        ),
-      );
-      assert.deepStrictEqual(uninstalls, []);
-      assert.include(output, "--base-dir '/home/me/.hackerai'");
-    }),
-  );
-});
+        );
+
+        const output = yield* Command.runWith(uninstallCommand, { version: packageJson.version })([
+          "--base-dir",
+          baseDir,
+          "--yes",
+        ]).pipe(
+          Effect.andThen(TestConsole.logLines),
+          Effect.map((lines) => lines.join("\n")),
+          Effect.provideService(HostProcess.Environment, {}),
+          Effect.provideService(HostProcess.IsExecutable, false),
+          Effect.provide(
+            Layer.mergeAll(
+              ConfigProvider.layer(ConfigProvider.fromEnv({ env: {} })),
+              Layer.fresh(TestConsole.layer),
+            ),
+          ),
+        );
+        assert.deepStrictEqual(uninstalls, []);
+        assert.include(output, "--base-dir '/home/me/.hackerai'");
+      }),
+    );
+  },
+);
 
 it.layer(NodeServices.layer)("hackerai uninstall launcher", (it) => {
   it.effect("claims only a launcher that points into this home's runtime tree", () =>
@@ -233,7 +238,10 @@ it.layer(NodeServices.layer)("hackerai uninstall launcher", (it) => {
       const cmd = path.join(root, "bin/hackerai.cmd");
       const edited = path.join(root, "bin/edited.cmd");
       yield* fs.writeFileString(cmd, `@echo off\r\n"${exe}" %*`);
-      yield* fs.writeFileString(edited, `@echo off\r\nset "HACKERAI_HOME=D:\\other"\r\n"${exe}" %*`);
+      yield* fs.writeFileString(
+        edited,
+        `@echo off\r\nset "HACKERAI_HOME=D:\\other"\r\n"${exe}" %*`,
+      );
       yield* fs.writeFileString(path.join(root, "runtime/launchers"), `${cmd}\r\n${edited}\r\n`);
       assert.deepStrictEqual(
         yield* findRecordedLaunchers(versionsDir).pipe(

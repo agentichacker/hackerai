@@ -126,7 +126,11 @@ it.layer(NodeServices.layer)("signWithJsign", (it) => {
     Effect.gen(function* () {
       for (const reply of [
         { exitCode: 1, stderr: BAD_SECRET },
-        { exitCode: 1, stderr: "jsign: Unsupported file: hackerai.exe\n", write: "MZ half-written" },
+        {
+          exitCode: 1,
+          stderr: "jsign: Unsupported file: hackerai.exe\n",
+          write: "MZ half-written",
+        },
       ]) {
         const result = yield* runSign([reply, signed(UNSIGNED)]);
         assert.strictEqual(result.error?._tag, "JsignFailedError");

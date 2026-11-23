@@ -76,9 +76,14 @@ export function useCloudLinkController(environmentId: EnvironmentId | null) {
   const [tunnelLimit, setTunnelLimit] = useState<number | null>(null);
 
   const reportUpdateFailure = (cause: unknown, reason?: string) => {
-    const message = thrownErrorMessage(cause, m) ?? m(msg("Could not update HackerAI Connect access."));
+    const message =
+      thrownErrorMessage(cause, m) ?? m(msg("Could not update HackerAI Connect access."));
     const traceId = findErrorTraceId(cause);
-    console.error("[hackerai-connect] Could not update HackerAI Connect", { message, traceId, cause });
+    console.error("[hackerai-connect] Could not update HackerAI Connect", {
+      message,
+      traceId,
+      cause,
+    });
     setOperationError(
       traceId ? m(msg("{message} Trace ID: {traceId}", { message, traceId })) : message,
     );
@@ -131,7 +136,9 @@ export function useCloudLinkController(environmentId: EnvironmentId | null) {
       ) {
         reportUpdateFailure(
           new Error(
-            m(msg("This connection needs permission to view and manage HackerAI Connect settings.")),
+            m(
+              msg("This connection needs permission to view and manage HackerAI Connect settings."),
+            ),
           ),
         );
         return false;
@@ -170,7 +177,11 @@ export function useCloudLinkController(environmentId: EnvironmentId | null) {
           reportUpdateFailure(
             cause,
             relayKeptLink
-              ? m(msg("Disconnected here, but HackerAI Connect still lists it. Remove it in Account."))
+              ? m(
+                  msg(
+                    "Disconnected here, but HackerAI Connect still lists it. Remove it in Account.",
+                  ),
+                )
               : undefined,
           );
         }

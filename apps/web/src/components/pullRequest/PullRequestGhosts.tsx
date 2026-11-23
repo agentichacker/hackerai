@@ -1,4 +1,8 @@
-import type { PullRequestListEntry, PullRequestSummary, ScopedThreadRef } from "@hackerai/contracts";
+import type {
+  PullRequestListEntry,
+  PullRequestSummary,
+  ScopedThreadRef,
+} from "@hackerai/contracts";
 import {
   ArrowLeftIcon,
   ChevronRightIcon,

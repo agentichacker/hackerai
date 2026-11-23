@@ -402,7 +402,9 @@ function GateScreen({
     </Button>
   );
   const offlineTitle = gt("{environment}''s HackerAI Connect is offline", { environment: name });
-  const cannotCheckTitle = gt("Can't check HackerAI Connect on {environment}", { environment: name });
+  const cannotCheckTitle = gt("Can't check HackerAI Connect on {environment}", {
+    environment: name,
+  });
   const checkAgain = retry(() => void check());
   switch (gate.kind) {
     case "checking":
@@ -421,9 +423,12 @@ function GateScreen({
               "Apps like Poke and Claude run in the cloud. They need a public address to reach {environment}.",
               { environment: name },
             ),
-            gt("HackerAI Connect gives {environment} that address. Each app still needs your approval.", {
-              environment: name,
-            }),
+            gt(
+              "HackerAI Connect gives {environment} that address. Each app still needs your approval.",
+              {
+                environment: name,
+              },
+            ),
           ]}
         >
           {/* Clerk's sign-in is its own modal, so this dialog closes first. */}

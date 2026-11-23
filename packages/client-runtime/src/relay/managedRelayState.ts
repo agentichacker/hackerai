@@ -236,18 +236,26 @@ export const deregisterManagedRelayEnvironment = Effect.fn(
 export const createManagedRelayHackerAIChatLinkRequest = Effect.fn(
   "clientRuntime.managedRelaySession.createHackerAIChatLinkRequest",
 )(function* (registry: AtomRegistry.AtomRegistry, input: { readonly accountId: string }) {
-  const clerkToken = yield* requireSessionClerkToken(registry, input.accountId, "link-hackeraiChat");
+  const clerkToken = yield* requireSessionClerkToken(
+    registry,
+    input.accountId,
+    "link-hackeraiChat",
+  );
   const relay = yield* ManagedRelay.ManagedRelayClient;
   return (yield* relay.createHackerAIChatLinkRequest({ clerkToken })).url;
 });
 
-export const unlinkManagedRelayHackerAIChat = Effect.fn("clientRuntime.managedRelaySession.unlinkHackerAIChat")(
-  function* (registry: AtomRegistry.AtomRegistry, input: { readonly accountId: string }) {
-    const clerkToken = yield* requireSessionClerkToken(registry, input.accountId, "unlink-hackeraiChat");
-    const relay = yield* ManagedRelay.ManagedRelayClient;
-    yield* relay.unlinkHackerAIChat({ clerkToken });
-  },
-);
+export const unlinkManagedRelayHackerAIChat = Effect.fn(
+  "clientRuntime.managedRelaySession.unlinkHackerAIChat",
+)(function* (registry: AtomRegistry.AtomRegistry, input: { readonly accountId: string }) {
+  const clerkToken = yield* requireSessionClerkToken(
+    registry,
+    input.accountId,
+    "unlink-hackeraiChat",
+  );
+  const relay = yield* ManagedRelay.ManagedRelayClient;
+  yield* relay.unlinkHackerAIChat({ clerkToken });
+});
 
 function requireClerkToken(
   get: Atom.AtomContext,

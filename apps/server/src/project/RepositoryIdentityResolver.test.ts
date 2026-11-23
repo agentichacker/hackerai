@@ -161,7 +161,13 @@ it.layer(NodeServices.layer)("RepositoryIdentityResolverLive", (it) => {
 
       yield* git(cwd, ["init"]);
       yield* git(cwd, ["remote", "add", "origin", "git@github.com:HackerAI/hackerai.git"]);
-      yield* git(cwd, ["remote", "set-url", "--push", "origin", "git@github.com:HackerAI/push.git"]);
+      yield* git(cwd, [
+        "remote",
+        "set-url",
+        "--push",
+        "origin",
+        "git@github.com:HackerAI/push.git",
+      ]);
       yield* git(cwd, ["config", "remote.origin.promisor", "true"]);
       yield* git(cwd, ["config", "remote.origin.partialclonefilter", "blob:none"]);
 

@@ -1,4 +1,8 @@
-import { HACKERAI_PROJECT_FILE_NAME, type EnvironmentId, type HackerAIProjectFile } from "@hackerai/contracts";
+import {
+  HACKERAI_PROJECT_FILE_NAME,
+  type EnvironmentId,
+  type HackerAIProjectFile,
+} from "@hackerai/contracts";
 import { parseHackerAIProjectFile } from "@hackerai/shared/hackeraiProjectFile";
 import { executeAtomQuery } from "@hackerai/client-runtime/state/runtime";
 

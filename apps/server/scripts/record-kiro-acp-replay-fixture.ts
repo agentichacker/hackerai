@@ -214,7 +214,8 @@ function wireToEntries(wire: ReadonlyArray<WireMessage>): {
   return { entries, droppedFrames };
 }
 
-const HACKERAI_INSTRUCTIONS_BODY = /<hackerai_code_instructions>\n[\s\S]*?\n<\/hackerai_code_instructions>/u;
+const HACKERAI_INSTRUCTIONS_BODY =
+  /<hackerai_code_instructions>\n[\s\S]*?\n<\/hackerai_code_instructions>/u;
 // A turn on another model sends its own runtime info, which the filter below
 // keeps; its model stays pinned and the linking guidance does not.
 const PULL_REQUEST_LINKING_BODY = /<pull_request_linking>\n[\s\S]*?\n<\/pull_request_linking>/u;

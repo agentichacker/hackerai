@@ -1273,82 +1273,84 @@ describe("KiroAdapterV2 MCP tools", () => {
   // Probed live on Kiro 2.33.1 against a stdio MCP server named hackerai-code, without
   // the permission round trip. Kiro titles the call "@hackerai-code/html_render", names
   // it in `tool_id`, and keeps only the result's text.
-  it.effect("shows HackerAI's html_render as HackerAI's tool with the page HackerAI published", () =>
-    Effect.gen(function* () {
-      const mcpSessions = yield* McpProviderSessions.McpProviderSessions;
-      const toolCallId = "tooluse_4N3LnlI9PRlphUtzdBQGDD";
-      const args = { html: "<p>hi</p>", title: "Probe", height: 120 };
-      const rawInput = { tool_id: "hackerai-code::html_render", arguments: args };
-      const kiroMeta = { kiro: { serverName: "hackerai-code", toolOrigin: "default" } };
-      const page = { attachmentId: "kiro-mcp-html-render-page", title: "Probe", height: 120 };
-      yield* runKiroScript({
-        scenario: "mcp-html-render",
-        frames: [
-          ...openSessionFrames({
-            initialize: KIRO_V3_INITIALIZE,
-            configOptions: [modeOption, autopilotOption("on")],
-          }),
-          turnPrompt,
-          update({
-            sessionUpdate: "tool_call",
-            toolCallId,
-            title: "@hackerai-code/html_render",
-            kind: "other",
-            status: "pending",
-            rawInput,
-            _meta: kiroMeta,
-          }),
-          update({
-            sessionUpdate: "tool_call_update",
-            toolCallId,
-            status: "in_progress",
-            rawInput,
-            _meta: kiroMeta,
-          }),
-          update({
-            sessionUpdate: "tool_call_update",
-            toolCallId,
-            status: "completed",
-            title: "@hackerai-code/html_render",
-            rawInput,
-            rawOutput: { response: "Rendered.", imageBase64Urls: [], message: "Rendered." },
-            content: [{ type: "content", content: { type: "text", text: "Rendered." } }],
-            _meta: kiroMeta,
-          }),
-          answer("session/prompt", { stopReason: "end_turn" }),
-          ...closeSession,
-        ],
-        drive: ({ events, startTurn }) =>
-          Effect.gen(function* () {
-            // HackerAI's MCP server records the page when Kiro calls html_render.
-            yield* mcpSessions.recordHtmlRender(
-              ThreadId.make("thread-kiro-mcp-html-render"),
-              args,
-              page,
-            );
-            yield* startTurn;
-            const turn = yield* collectTurn(events);
-            const items = turn.flatMap((event) =>
-              event.type === "turn_item.updated" &&
-              event.turnItem.type === "dynamic_tool" &&
-              event.turnItem.nativeItemRef?.nativeId === toolCallId
-                ? [event.turnItem]
-                : [],
-            );
-            const completed = items.at(-1);
-            assert.deepEqual(
-              items.map((item) => item.toolName),
-              items.map(() => "hackerai-code.html_render"),
-            );
-            assert.equal(completed?.status, "completed");
-            assert.deepEqual(completed?.input, args);
-            assert.deepEqual(
-              completed === undefined ? undefined : htmlRenderFromToolItem(completed),
-              page,
-            );
-          }),
-      });
-    }).pipe(Effect.provide(testLayer)),
+  it.effect(
+    "shows HackerAI's html_render as HackerAI's tool with the page HackerAI published",
+    () =>
+      Effect.gen(function* () {
+        const mcpSessions = yield* McpProviderSessions.McpProviderSessions;
+        const toolCallId = "tooluse_4N3LnlI9PRlphUtzdBQGDD";
+        const args = { html: "<p>hi</p>", title: "Probe", height: 120 };
+        const rawInput = { tool_id: "hackerai-code::html_render", arguments: args };
+        const kiroMeta = { kiro: { serverName: "hackerai-code", toolOrigin: "default" } };
+        const page = { attachmentId: "kiro-mcp-html-render-page", title: "Probe", height: 120 };
+        yield* runKiroScript({
+          scenario: "mcp-html-render",
+          frames: [
+            ...openSessionFrames({
+              initialize: KIRO_V3_INITIALIZE,
+              configOptions: [modeOption, autopilotOption("on")],
+            }),
+            turnPrompt,
+            update({
+              sessionUpdate: "tool_call",
+              toolCallId,
+              title: "@hackerai-code/html_render",
+              kind: "other",
+              status: "pending",
+              rawInput,
+              _meta: kiroMeta,
+            }),
+            update({
+              sessionUpdate: "tool_call_update",
+              toolCallId,
+              status: "in_progress",
+              rawInput,
+              _meta: kiroMeta,
+            }),
+            update({
+              sessionUpdate: "tool_call_update",
+              toolCallId,
+              status: "completed",
+              title: "@hackerai-code/html_render",
+              rawInput,
+              rawOutput: { response: "Rendered.", imageBase64Urls: [], message: "Rendered." },
+              content: [{ type: "content", content: { type: "text", text: "Rendered." } }],
+              _meta: kiroMeta,
+            }),
+            answer("session/prompt", { stopReason: "end_turn" }),
+            ...closeSession,
+          ],
+          drive: ({ events, startTurn }) =>
+            Effect.gen(function* () {
+              // HackerAI's MCP server records the page when Kiro calls html_render.
+              yield* mcpSessions.recordHtmlRender(
+                ThreadId.make("thread-kiro-mcp-html-render"),
+                args,
+                page,
+              );
+              yield* startTurn;
+              const turn = yield* collectTurn(events);
+              const items = turn.flatMap((event) =>
+                event.type === "turn_item.updated" &&
+                event.turnItem.type === "dynamic_tool" &&
+                event.turnItem.nativeItemRef?.nativeId === toolCallId
+                  ? [event.turnItem]
+                  : [],
+              );
+              const completed = items.at(-1);
+              assert.deepEqual(
+                items.map((item) => item.toolName),
+                items.map(() => "hackerai-code.html_render"),
+              );
+              assert.equal(completed?.status, "completed");
+              assert.deepEqual(completed?.input, args);
+              assert.deepEqual(
+                completed === undefined ? undefined : htmlRenderFromToolItem(completed),
+                page,
+              );
+            }),
+        });
+      }).pipe(Effect.provide(testLayer)),
   );
 });
 

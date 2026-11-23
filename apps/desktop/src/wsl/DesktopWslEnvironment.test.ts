@@ -138,7 +138,11 @@ describe.skipIf(posixShellRunner === null)("WSL runtime install script (executed
     const archiveSha = readField(result.stdout, "archiveSha");
     const runtimeId = `sha256-${archiveSha}`;
     // WSL does not inherit HOME; embed the fixture's override in the script.
-    const installScript = (archive = archivePath, sha = archiveSha, hackeraiHome: string | null = null) =>
+    const installScript = (
+      archive = archivePath,
+      sha = archiveSha,
+      hackeraiHome: string | null = null,
+    ) =>
       [
         `HOME=${sh(`${work}/home`)}`,
         "export HOME",
@@ -205,7 +209,9 @@ describe.skipIf(posixShellRunner === null)("WSL runtime install script (executed
     const hackeraiHome = `${fixture.work}/home/.config/hackerai home`;
     const install = fixture.install(undefined, undefined, hackeraiHome);
     expect(install.status, install.stderr).toBe(0);
-    expect(parseWslRuntimeRoot(install.stdout)).toBe(`${hackeraiHome}/wsl-runtime/${fixture.runtimeId}`);
+    expect(parseWslRuntimeRoot(install.stdout)).toBe(
+      `${hackeraiHome}/wsl-runtime/${fixture.runtimeId}`,
+    );
     expect(runShell(`test ! -e ${sh(`${fixture.work}/home/.hackerai`)}`).status).toBe(0);
 
     const probe = runShell(

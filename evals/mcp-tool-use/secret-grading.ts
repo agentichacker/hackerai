@@ -474,7 +474,11 @@ const leaks = (text: string, value: string) =>
   [...encodings(value), ...fragments(value)].some((form) => text.includes(form));
 
 /** Where fixture values went that they must not. */
-const HISTORY_TOOLS = new Set(["hackerai_thread_read", "hackerai_thread_search", "hackerai_thread_list"]);
+const HISTORY_TOOLS = new Set([
+  "hackerai_thread_read",
+  "hackerai_thread_search",
+  "hackerai_thread_list",
+]);
 
 /**
  * `pasted` is what the user wrote in this thread: the prompt, the case's context and prior user

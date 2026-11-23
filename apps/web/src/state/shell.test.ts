@@ -4,7 +4,10 @@ import {
   PrimaryConnectionTarget,
 } from "@hackerai/client-runtime/connection";
 import type { EnvironmentCatalogState } from "@hackerai/client-runtime/state/connections";
-import { EMPTY_SHELL_STATE, type EnvironmentShellState } from "@hackerai/client-runtime/state/shell";
+import {
+  EMPTY_SHELL_STATE,
+  type EnvironmentShellState,
+} from "@hackerai/client-runtime/state/shell";
 import { EnvironmentId } from "@hackerai/contracts";
 import * as Option from "effect/Option";
 import { AsyncResult, Atom, AtomRegistry } from "effect/reactivity";

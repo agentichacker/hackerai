@@ -331,7 +331,9 @@ it.effect(
           },
           Services: {
             "svc:hackerai": {
-              Web: { "hackerai:443": { Handlers: { "/hackerai": { Proxy: "http://127.0.0.1:3773" } } } },
+              Web: {
+                "hackerai:443": { Handlers: { "/hackerai": { Proxy: "http://127.0.0.1:3773" } } },
+              },
             },
           },
         }),

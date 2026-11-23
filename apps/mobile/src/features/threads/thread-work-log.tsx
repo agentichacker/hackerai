@@ -137,7 +137,10 @@ function WorkLogIcon(props: {
   const colorClassName = props.highlighted ? "accent-foreground" : props.colorClassName;
   if (props.icon === "hackerai-code") {
     return (
-      <HackerAIWordmark height={10} {...(colorClassName ? { colorClassName } : { color: props.color })} />
+      <HackerAIWordmark
+        height={10}
+        {...(colorClassName ? { colorClassName } : { color: props.color })}
+      />
     );
   }
   if (props.icon === "computer") {

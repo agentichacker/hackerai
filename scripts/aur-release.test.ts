@@ -64,7 +64,11 @@ describe.skipIf(HostProcess.Platform.defaultValue() !== "linux")("AUR release", 
       const version = nightly ? "1.2.4-nightly.20261104.1" : "1.2.3";
       const pkgname = nightly ? "hackerai-nightly-bin" : "hackerai-bin";
       const prefix =
-        naming === "versioned" ? `HackerAI-Code-${version}` : nightly ? "HackerAI-Code-Nightly" : "HackerAI-Code";
+        naming === "versioned"
+          ? `HackerAI-Code-${version}`
+          : nightly
+            ? "HackerAI-Code-Nightly"
+            : "HackerAI-Code";
       const assets = [
         { name: `${prefix}-x86_64.AppImage`, digest: `sha256:${"a".repeat(64)}` },
         ...(failure === "missing"

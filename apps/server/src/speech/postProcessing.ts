@@ -40,7 +40,9 @@ const make = Effect.gen(function* () {
           (mode === "custom" ? customInstructions.trim() : "") ||
           DEFAULT_SPEECH_POST_PROCESSING_PROMPT;
         // Providers run in a working directory; cleanup must not read a checkout.
-        const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-voice-cleanup-" });
+        const cwd = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-voice-cleanup-",
+        });
         const generated = yield* textGeneration.generateTranscriptionPostProcessing({
           cwd,
           prompt: buildTranscriptionPostProcessingPrompt(

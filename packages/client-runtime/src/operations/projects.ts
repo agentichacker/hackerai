@@ -11,7 +11,11 @@ import type {
 } from "@hackerai/contracts";
 import { SourceControlProviderKind } from "@hackerai/contracts";
 import { cloneUrlRepositoryPath } from "@hackerai/shared/cloneUrl";
-import { isAbsolutePath, isExplicitRelativePath, newProjectFolderName } from "@hackerai/shared/path";
+import {
+  isAbsolutePath,
+  isExplicitRelativePath,
+  newProjectFolderName,
+} from "@hackerai/shared/path";
 import * as Arr from "effect/Array";
 import * as Option from "effect/Option";
 import * as Order from "effect/Order";

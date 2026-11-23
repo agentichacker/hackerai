@@ -559,7 +559,9 @@ function disabledManagedRelayClient(relayUrl: string): ManagedRelayClient["Servi
     linkEnvironment: unavailable("clientRuntime.managedRelay.linkEnvironment"),
     unlinkEnvironment: unavailable("clientRuntime.managedRelay.unlinkEnvironment"),
     getHackerAIChatLink: unavailable("clientRuntime.managedRelay.getHackerAIChatLink"),
-    createHackerAIChatLinkRequest: unavailable("clientRuntime.managedRelay.createHackerAIChatLinkRequest"),
+    createHackerAIChatLinkRequest: unavailable(
+      "clientRuntime.managedRelay.createHackerAIChatLinkRequest",
+    ),
     unlinkHackerAIChat: unavailable("clientRuntime.managedRelay.unlinkHackerAIChat"),
     getEnvironmentStatus: unavailable("clientRuntime.managedRelay.getEnvironmentStatus"),
     connectEnvironment: unavailable("clientRuntime.managedRelay.connectEnvironment"),

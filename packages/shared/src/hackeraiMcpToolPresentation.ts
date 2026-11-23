@@ -227,7 +227,10 @@ const HACKERAI_MCP_TOOLS: Readonly<Record<string, HackerAIMcpToolDefinition>> = 
   ),
   request_secret: tool(["Ask for", "Asking for", "Asked for", "a secret"], "secret-request"),
   create_threads: tool(["Create", "Creating", "Created", "HackerAI threads"], "thread-create"),
-  hackerai_thread_start: tool(["Start", "Starting", "Started", "a HackerAI thread"], "thread-create"),
+  hackerai_thread_start: tool(
+    ["Start", "Starting", "Started", "a HackerAI thread"],
+    "thread-create",
+  ),
   hackerai_thread_list: tool(["List", "Listing", "Listed", "HackerAI threads"], "thread-list"),
   hackerai_thread_read: tool(["Read", "Reading", "Read", "a HackerAI thread"], "thread-read"),
   hackerai_thread_send: tool(["Send", "Sending", "Sent", "to a HackerAI thread"], "thread-send"),
@@ -248,7 +251,10 @@ const HACKERAI_MCP_TOOLS: Readonly<Record<string, HackerAIMcpToolDefinition>> = 
     ["Hand off", "Handing off", "Handed off", "thread to a git worktree"],
     "worktree-handoff",
   ),
-  hackerai_worktree_status: tool(["Get", "Getting", "Got", "thread worktree status"], "worktree-status"),
+  hackerai_worktree_status: tool(
+    ["Get", "Getting", "Got", "thread worktree status"],
+    "worktree-status",
+  ),
   preview_status: tool(["Get", "Getting", "Got", "preview browser status"], "browser", "browser"),
   preview_open: tool(
     ["Open", "Opening", "Opened", "a page in the preview browser"],
@@ -367,7 +373,10 @@ const HACKERAI_MCP_TOOLS: Readonly<Record<string, HackerAIMcpToolDefinition>> = 
     ["Cancel", "Canceling", "Requested cancellation of", "a queued run"],
     "queue-cancel",
   ),
-  hackerai_queue_reorder: tool(["Reorder", "Reordering", "Reordered", "a queued run"], "queue-reorder"),
+  hackerai_queue_reorder: tool(
+    ["Reorder", "Reordering", "Reordered", "a queued run"],
+    "queue-reorder",
+  ),
   hackerai_queue_promote_to_steer: tool(
     ["Steer with", "Steering with", "Requested steering with", "a queued message"],
     "queue-steer",
@@ -376,7 +385,10 @@ const HACKERAI_MCP_TOOLS: Readonly<Record<string, HackerAIMcpToolDefinition>> = 
     ["List", "Listing", "Listed", "pending questions"],
     "question-list",
   ),
-  hackerai_pending_request_read: tool(["Read", "Reading", "Read", "pending questions"], "question-read"),
+  hackerai_pending_request_read: tool(
+    ["Read", "Reading", "Read", "pending questions"],
+    "question-read",
+  ),
   hackerai_pending_request_respond: tool(
     ["Answer", "Answering", "Answered", "pending questions"],
     "question-respond",
@@ -385,20 +397,45 @@ const HACKERAI_MCP_TOOLS: Readonly<Record<string, HackerAIMcpToolDefinition>> = 
     ["Read", "Reading", "Read", "thread configuration"],
     "thread-configuration",
   ),
-  hackerai_thread_configure: tool(["Use", "Using", "Used", "thread model settings"], "thread-configure"),
+  hackerai_thread_configure: tool(
+    ["Use", "Using", "Used", "thread model settings"],
+    "thread-configure",
+  ),
   hackerai_thread_transfer: tool(["Use", "Using", "Used", "thread transfers"], "thread-fork"),
-  hackerai_thread_fork: tool(["Fork", "Forking", "Requested a fork of", "this thread"], "thread-fork"),
+  hackerai_thread_fork: tool(
+    ["Fork", "Forking", "Requested a fork of", "this thread"],
+    "thread-fork",
+  ),
   hackerai_thread_merge_back: tool(
     ["Merge", "Merging", "Requested a merge of", "thread context"],
     "thread-merge",
   ),
-  hackerai_thread_search: tool(["Search", "Searching", "Searched", "thread content"], "thread-search"),
-  hackerai_thread_transfers: tool(["Read", "Reading", "Read", "thread transfers"], "thread-transfers"),
-  hackerai_thread_organize: tool(["Organize", "Organizing", "Organized", "a thread"], "thread-organize"),
-  hackerai_thread_update: tool(["Update", "Updating", "Updated", "HackerAI thread metadata"], "thread-update"),
-  hackerai_worktree_list: tool(["List", "Listing", "Listed", "workspace branches"], "worktree-list"),
+  hackerai_thread_search: tool(
+    ["Search", "Searching", "Searched", "thread content"],
+    "thread-search",
+  ),
+  hackerai_thread_transfers: tool(
+    ["Read", "Reading", "Read", "thread transfers"],
+    "thread-transfers",
+  ),
+  hackerai_thread_organize: tool(
+    ["Organize", "Organizing", "Organized", "a thread"],
+    "thread-organize",
+  ),
+  hackerai_thread_update: tool(
+    ["Update", "Updating", "Updated", "HackerAI thread metadata"],
+    "thread-update",
+  ),
+  hackerai_worktree_list: tool(
+    ["List", "Listing", "Listed", "workspace branches"],
+    "worktree-list",
+  ),
   hackerai_preview_list: tool(["List", "Listing", "Listed", "preview tabs"], "browser", "browser"),
-  hackerai_preview_close: tool(["Close", "Closing", "Closed", "a preview tab"], "browser", "browser"),
+  hackerai_preview_close: tool(
+    ["Close", "Closing", "Closed", "a preview tab"],
+    "browser",
+    "browser",
+  ),
   hackerai_environment_read: tool(
     ["Read", "Reading", "Read", "environment preferences"],
     "environment-read",
@@ -421,10 +458,16 @@ const HACKERAI_MCP_TOOLS: Readonly<Record<string, HackerAIMcpToolDefinition>> = 
   ),
   hackerai_theme_read: tool(["Read", "Reading", "Read", "themes"], "theme-read"),
   hackerai_theme_set: tool(["Set", "Setting", "Set", "the theme"], "theme-set"),
-  hackerai_thread_launch: tool(["Launch", "Launching", "Launched", "a project thread"], "thread-create"),
+  hackerai_thread_launch: tool(
+    ["Launch", "Launching", "Launched", "a project thread"],
+    "thread-create",
+  ),
   hackerai_project_list: tool(["List", "Listing", "Listed", "projects"], "project-list"),
   hackerai_project_read: tool(["Read", "Reading", "Read", "a project"], "project-read"),
-  hackerai_project_create: tool(["Register", "Registering", "Registered", "a project"], "project-create"),
+  hackerai_project_create: tool(
+    ["Register", "Registering", "Registered", "a project"],
+    "project-create",
+  ),
   hackerai_project_update: tool(["Update", "Updating", "Updated", "a project"], "project-update"),
   hackerai_project_delete: tool(["Delete", "Deleting", "Deleted", "a project"], "project-delete"),
   hackerai_project_clone: tool(["Clone", "Cloning", "Cloned", "a repository"], "project-clone"),
@@ -436,13 +479,18 @@ const HACKERAI_MCP_TOOLS: Readonly<Record<string, HackerAIMcpToolDefinition>> = 
     ["Discard", "Discarding", "Discarded", "a pending attachment"],
     "attachment-discard",
   ),
-  hackerai_thread_send_attachments: tool(["Send", "Sending", "Sent", "attachments"], "attachment-send"),
+  hackerai_thread_send_attachments: tool(
+    ["Send", "Sending", "Sent", "attachments"],
+    "attachment-send",
+  ),
   html_preview: tool(["Preview", "Previewing", "Previewed", "an HTML page"], "html-preview"),
   html_render: tool(["Render", "Rendering", "Rendered", "an HTML page"], "html-render"),
   send_to_user: tool(["Send", "Sending", "Sent", "a message"], "send-to-user"),
 };
 
-export const HACKERAI_MCP_TOOL_NAMES: ReadonlySet<string> = new Set(Object.keys(HACKERAI_MCP_TOOLS));
+export const HACKERAI_MCP_TOOL_NAMES: ReadonlySet<string> = new Set(
+  Object.keys(HACKERAI_MCP_TOOLS),
+);
 
 function normalizeHackerAIMcpToolLabel(value: string): string {
   return value.replace(/\s+(?:complete|completed)\s*$/i, "").trim();
@@ -513,9 +561,11 @@ const ACTION_TOOLS: Readonly<Record<string, (action: string) => string | undefin
   hackerai_queue: (action) => `hackerai_queue_${action}`,
   hackerai_pending_request: (action) => `hackerai_pending_request_${action}`,
   hackerai_thread_transfer: (action) =>
-    ({ fork: "hackerai_thread_fork", merge_back: "hackerai_thread_merge_back", status: "hackerai_thread_transfers" })[
-      action
-    ],
+    ({
+      fork: "hackerai_thread_fork",
+      merge_back: "hackerai_thread_merge_back",
+      status: "hackerai_thread_transfers",
+    })[action],
 };
 
 /** Pass the call's input so an action tool resolves to the labels and summary of its action. */
@@ -558,5 +608,7 @@ export function resolveHackerAIMcpToolPresentation(
   input?: unknown,
 ): HackerAIMcpToolPresentation | null {
   const definition = resolveHackerAIMcpToolDefinition(toolName, input);
-  return definition === null ? null : { displayName: definition.displayName, logo: "hackerai-code" };
+  return definition === null
+    ? null
+    : { displayName: definition.displayName, logo: "hackerai-code" };
 }

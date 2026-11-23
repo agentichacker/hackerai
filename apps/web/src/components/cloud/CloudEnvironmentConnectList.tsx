@@ -181,9 +181,12 @@ export function CloudEnvironmentConnectRows({
           ? gt("HackerAI Connect route added")
           : gt("Environment added"),
         description: savedWithoutRelay.has(environment.environmentId)
-          ? gt("{environment} falls back to HackerAI Connect when its other routes are unreachable.", {
-              environment: environment.label,
-            })
+          ? gt(
+              "{environment} falls back to HackerAI Connect when its other routes are unreachable.",
+              {
+                environment: environment.label,
+              },
+            )
           : gt("Connecting to {environment} through HackerAI Connect.", {
               environment: environment.label,
             }),

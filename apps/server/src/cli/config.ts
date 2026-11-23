@@ -104,7 +104,9 @@ export const traceMaxFilesConfig = Config.Int("HACKERAI_TRACE_MAX_FILES").pipe(
 const EnvServerConfig = Config.all({
   logLevel: Config.LogLevel("HACKERAI_LOG_LEVEL").pipe(Config.withDefault("Info")),
   traceMinLevel: Config.LogLevel("HACKERAI_TRACE_MIN_LEVEL").pipe(Config.withDefault("Info")),
-  traceTimingEnabled: Config.Boolean("HACKERAI_TRACE_TIMING_ENABLED").pipe(Config.withDefault(true)),
+  traceTimingEnabled: Config.Boolean("HACKERAI_TRACE_TIMING_ENABLED").pipe(
+    Config.withDefault(true),
+  ),
   traceFile: traceFileConfig,
   traceMaxBytes: Config.Int("HACKERAI_TRACE_MAX_BYTES").pipe(Config.withDefault(10 * 1024 * 1024)),
   traceMaxFiles: traceMaxFilesConfig,
@@ -137,7 +139,10 @@ const EnvServerConfig = Config.all({
   ),
   port: Config.Port("HACKERAI_PORT").pipe(Config.option, Config.map(Option.getOrUndefined)),
   host: Config.String("HACKERAI_HOST").pipe(Config.option, Config.map(Option.getOrUndefined)),
-  hackeraiHome: Config.String("HACKERAI_HOME").pipe(Config.option, Config.map(Option.getOrUndefined)),
+  hackeraiHome: Config.String("HACKERAI_HOME").pipe(
+    Config.option,
+    Config.map(Option.getOrUndefined),
+  ),
   devUrl: Config.URL("VITE_DEV_SERVER_URL").pipe(Config.option, Config.map(Option.getOrUndefined)),
   devAllowedOrigins: Config.String("HACKERAI_DEV_ALLOWED_ORIGINS").pipe(
     Config.withDefault(""),

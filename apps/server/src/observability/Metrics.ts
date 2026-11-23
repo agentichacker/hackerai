@@ -19,9 +19,12 @@ export const orchestrationCommandsTotal = Metric.counter("hackerai_orchestration
   description: "Total orchestration commands dispatched, by outcome.",
 });
 
-export const orchestrationCommandDuration = Metric.timer("hackerai_orchestration_command_duration", {
-  description: "Orchestration command handling duration, excluding thread dispatch lock wait.",
-});
+export const orchestrationCommandDuration = Metric.timer(
+  "hackerai_orchestration_command_duration",
+  {
+    description: "Orchestration command handling duration, excluding thread dispatch lock wait.",
+  },
+);
 
 export const orchestrationEffectClaimsTotal = Metric.counter(
   "hackerai_orchestration_effect_claims_total",
@@ -30,10 +33,13 @@ export const orchestrationEffectClaimsTotal = Metric.counter(
   },
 );
 
-export const orchestrationEffectQueueWait = Metric.timer("hackerai_orchestration_effect_queue_wait", {
-  description:
-    "Time from an orchestration effect's temporal availability until claim, including same-thread blocking.",
-});
+export const orchestrationEffectQueueWait = Metric.timer(
+  "hackerai_orchestration_effect_queue_wait",
+  {
+    description:
+      "Time from an orchestration effect's temporal availability until claim, including same-thread blocking.",
+  },
+);
 
 // A failed batch (transport errors and 408/429/500/502/503/504 after 3 retries) is dropped with
 // every push for the next 60 s, logged only at Debug. Incremental exports it as a monotonic counter.

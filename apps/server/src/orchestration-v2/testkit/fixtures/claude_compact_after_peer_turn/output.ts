@@ -1,5 +1,8 @@
 import { assert } from "@effect/vitest";
-import type { OrchestrationV2ThreadProjection, ProviderReplayTranscript } from "@hackerai/contracts";
+import type {
+  OrchestrationV2ThreadProjection,
+  ProviderReplayTranscript,
+} from "@hackerai/contracts";
 
 import type { OrchestratorV2ScenarioResult } from "../../OrchestratorScenario.ts";
 import { assertSemanticProjectionIntegrity, projectionFor } from "../shared.ts";

@@ -41,7 +41,8 @@ const encodeJson = Schema.encodeSync(Schema.fromJsonString(Schema.Unknown));
 const decodeJson = Schema.decodeUnknownSync(Schema.fromJsonString(Schema.Unknown));
 const HOME_PLACEHOLDER = "/home/fx-replay";
 const FX_INSTANCE_ID = ProviderInstanceId.make("fx");
-const HACKERAI_INSTRUCTIONS_BODY = /<hackerai_code_instructions>\n[\s\S]*?\n<\/hackerai_code_instructions>/u;
+const HACKERAI_INSTRUCTIONS_BODY =
+  /<hackerai_code_instructions>\n[\s\S]*?\n<\/hackerai_code_instructions>/u;
 const EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/giu;
 const TOKEN = /\b(?:sk-|gho_|ghp_|xai-|vercel_)[A-Za-z0-9_-]{8,}\b/gu;
 
@@ -326,7 +327,10 @@ function normalizeEntries(input: {
 const DEFAULT_FX_SETTINGS = Schema.decodeSync(FxSettings)({});
 
 const RecorderEnv = Config.all({
-  HACKERAI_FX_BIN: Config.String("HACKERAI_FX_BIN").pipe(Config.option, Config.map(Option.getOrUndefined)),
+  HACKERAI_FX_BIN: Config.String("HACKERAI_FX_BIN").pipe(
+    Config.option,
+    Config.map(Option.getOrUndefined),
+  ),
   HOME: Config.String("HOME").pipe(Config.option, Config.map(Option.getOrUndefined)),
   USER: Config.String("USER").pipe(Config.option, Config.map(Option.getOrUndefined)),
   AI_GATEWAY_API_KEY: Config.String("AI_GATEWAY_API_KEY").pipe(

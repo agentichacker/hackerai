@@ -334,7 +334,9 @@ describe("CodexAdapterV2 native protocol logging", () => {
             payload: {
               id: requestId,
               method: "thread/start",
-              params: { config: { "shell_environment_policy.set.HACKERAI_THREAD_ID": appThreadId } },
+              params: {
+                config: { "shell_environment_policy.set.HACKERAI_THREAD_ID": appThreadId },
+              },
             },
           });
           yield* protocolLogger({
@@ -575,7 +577,8 @@ const CODEX_TEST_RUNTIME_POLICY = ProviderAdapter.ProviderAdapterV2RuntimePolicy
 });
 const HACKERAI_THREAD_ENV_KEY = "shell_environment_policy.set.HACKERAI_THREAD_ID";
 const threadEnvOf = (params: unknown) =>
-  Predicate.hasProperty(params, "config") && Predicate.hasProperty(params.config, HACKERAI_THREAD_ENV_KEY)
+  Predicate.hasProperty(params, "config") &&
+  Predicate.hasProperty(params.config, HACKERAI_THREAD_ENV_KEY)
     ? params.config[HACKERAI_THREAD_ENV_KEY]
     : undefined;
 

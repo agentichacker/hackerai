@@ -73,7 +73,9 @@ export function RelayClientInstallDialog() {
           </DialogTitle>
           <DialogDescription>
             {isInstalling
-              ? gt("HackerAI is preparing this environment for secure access through HackerAI Connect.")
+              ? gt(
+                  "HackerAI is preparing this environment for secure access through HackerAI Connect.",
+                )
               : gt(
                   "HackerAI needs the relay client to make this environment available through HackerAI Connect.",
                 )}

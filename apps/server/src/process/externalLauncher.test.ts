@@ -1062,7 +1062,9 @@ it.effect("matches macOS bundles on the name boundary only", () =>
   Effect.gen(function* () {
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const unrelatedHome = yield* fs.makeTempDirectoryScoped({ prefix: "hackerai-editor-unrelated-" });
+    const unrelatedHome = yield* fs.makeTempDirectoryScoped({
+      prefix: "hackerai-editor-unrelated-",
+    });
     const unrelated = path.join(
       unrelatedHome,
       "Applications/WebStormHelper.app/Contents/MacOS/webstorm",

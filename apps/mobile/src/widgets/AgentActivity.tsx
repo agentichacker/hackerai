@@ -252,9 +252,7 @@ function AgentActivity(
   // tint it through the container's foreground style, which the template image
   // inherits.
   const renderLogo = (height: number, color: Foreground, modifiers: typeof linkModifiers = []) => (
-    <HStack
-      modifiers={[frame({ width: height, height }), foregroundStyle(color), ...modifiers]}
-    >
+    <HStack modifiers={[frame({ width: height, height }), foregroundStyle(color), ...modifiers]}>
       <Image assetName="HackerAIMark" modifiers={[resizable()]} />
     </HStack>
   );

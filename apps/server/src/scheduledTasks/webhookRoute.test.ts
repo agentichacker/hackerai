@@ -145,7 +145,10 @@ describe("webhook route", () => {
       });
       yield* send("/api/hooks/id/tok", { ...relayHeaders, "x-hackerai-relay-delivery": proof });
       yield* send("/api/hooks/id/tok", relayHeaders);
-      yield* send("/api/hooks/id/tok", { ...relayHeaders, "x-hackerai-relay-delivery": forgedProof });
+      yield* send("/api/hooks/id/tok", {
+        ...relayHeaders,
+        "x-hackerai-relay-delivery": forgedProof,
+      });
       yield* send("/api/hooks/id/tok", {
         ...relayHeaders,
         "x-hackerai-relay-delivery-id": "relay-2",

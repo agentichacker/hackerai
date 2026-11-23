@@ -363,7 +363,12 @@ it.effect("resolves the identity of a project whose remote was added during the 
       // A shell read before the turn caches the folder as having no repository.
       assert.isNull(yield* enrichment.readRepositoryIdentity(workspaceRoot));
 
-      yield* git(["remote", "add", "origin", "https://github.com/hackerai-triage/example-29929.git"]);
+      yield* git([
+        "remote",
+        "add",
+        "origin",
+        "https://github.com/hackerai-triage/example-29929.git",
+      ]);
       const changes = yield* enrichment.subscribeChanges;
       const observer = yield* RunFinalization.RunFinalizationObserver;
       yield* observer.refresh({

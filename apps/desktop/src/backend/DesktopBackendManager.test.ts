@@ -395,9 +395,14 @@ describe("DesktopBackendManager", () => {
       );
       const stopFile = NodePath.join(root, "desktop-stop-3773");
       // Stands in for a server that exits only after it sees the desktop's request.
-      const exitCode = Effect.gen(function* () {
-        while (!NodeFS.existsSync(stopFile)) yield* Effect.yieldNow;
-        return ChildProcessSpawner.ExitCode(0);
+      const exitCode = Effect.callback<ChildProcessSpawner.ExitCode>((resume) => {
+        const stopFileName = NodePath.basename(stopFile);
+        const watcher = NodeFS.watch(NodePath.dirname(stopFile), (_event, filename) => {
+          if (filename !== stopFileName) return;
+          watcher.close();
+          resume(Effect.succeed(ChildProcessSpawner.ExitCode(0)));
+        });
+        return Effect.sync(() => watcher.close());
       });
       const layerSpawner = Layer.succeed(
         ChildProcessSpawner.ChildProcessSpawner,

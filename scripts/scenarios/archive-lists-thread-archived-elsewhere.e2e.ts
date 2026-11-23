@@ -97,7 +97,11 @@ test(
     try {
       await runPromise(settings.apply);
       const project = await hackerai.project("demo");
-      const thread = await hackerai.thread({ project, title: "Archived elsewhere", messages: ["first"] });
+      const thread = await hackerai.thread({
+        project,
+        title: "Archived elsewhere",
+        messages: ["first"],
+      });
       await hackerai.open("/settings/archived");
       await expect(screen.getByText("No archived threads")).toBeVisible();
 

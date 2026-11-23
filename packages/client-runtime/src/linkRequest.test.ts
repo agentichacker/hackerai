@@ -436,9 +436,9 @@ describe("linkRequestTarget", () => {
     expect(linkRequestTarget(unfamiliar, [box], box.environmentId)).toEqual({ kind: "address" });
     expect(linkRequestTargetName(unfamiliar)).toBe("https://other.example");
     // A username in the address must not pass for the host the code goes to.
-    expect(linkRequestTargetName({ url: "https://box.hackeraiConnect.example@other.example/x" })).toBe(
-      "https://other.example",
-    );
+    expect(
+      linkRequestTargetName({ url: "https://box.hackeraiConnect.example@other.example/x" }),
+    ).toBe("https://other.example");
     // A known address in another spelling is the box, linked at its own addresses only.
     expect(
       linkRequestTarget({ url: "https://BOX.hackeraiConnect.example:443/mcp" }, [box], null),
@@ -453,9 +453,9 @@ describe("linkRequestTarget", () => {
       kind: "address",
     });
     expect(linkRequestTarget({ url: "not a url" }, [box], null)).toEqual({ kind: "address" });
-    expect(linkRequestTarget({ url: "blob:https://box.hackeraiConnect.example/1" }, [box], null)).toEqual(
-      { kind: "address" },
-    );
+    expect(
+      linkRequestTarget({ url: "blob:https://box.hackeraiConnect.example/1" }, [box], null),
+    ).toEqual({ kind: "address" });
     // A private address two machines share names neither.
     const mini = { ...box, environmentId: EnvironmentId.make("environment-mini") };
     expect(linkRequestTarget({ url: "http://10.0.0.2:3773" }, [box, mini], null)).toEqual({

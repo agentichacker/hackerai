@@ -344,8 +344,8 @@ function apiSection() {
 }
 
 function toolRow(name: string) {
-  const found = [...apiSection().querySelectorAll("label")].find(
-    (element) => element.textContent?.trim().startsWith(name),
+  const found = [...apiSection().querySelectorAll("label")].find((element) =>
+    element.textContent?.trim().startsWith(name),
   );
   if (!found) throw new Error(`Missing tool row: ${name}`);
   return found;
@@ -912,9 +912,7 @@ it("writes the API's base URL and key into the agents the user picked", async ()
   expect(toolChecked("Codex")).toBe("true");
 
   // Codex keeps its own login, so the key is saved for Claude alone.
-  await act(async () =>
-    toolRow("Codex").querySelector<HTMLElement>('[role="checkbox"]')?.click(),
-  );
+  await act(async () => toolRow("Codex").querySelector<HTMLElement>('[role="checkbox"]')?.click());
   await typeApiKey("sk-test");
   await click("Connect");
 
@@ -1062,9 +1060,9 @@ it("does not save a key into an agent whose environment this computer's administ
   await click("UnlimitedAI");
 
   expect(toolChecked("Claude")).toBe("false");
-  expect(
-    toolRow("Claude").querySelector('[role="checkbox"]')?.hasAttribute("data-disabled"),
-  ).toBe(true);
+  expect(toolRow("Claude").querySelector('[role="checkbox"]')?.hasAttribute("data-disabled")).toBe(
+    true,
+  );
   expect(apiSection().textContent).toContain("locks the environment for Claude");
   expect(apiSection().textContent).toContain("Managed by Acme.");
 });
@@ -1091,7 +1089,11 @@ it("does not offer to connect when this connection cannot save settings", async 
     sessionAtom(primaryId),
     AsyncResult.success({
       ...session([AuthProvidersManageScope]),
-      permissions: [AuthOrchestrationReadScope, AuthOrchestrationOperateScope, AuthProvidersManageScope],
+      permissions: [
+        AuthOrchestrationReadScope,
+        AuthOrchestrationOperateScope,
+        AuthProvidersManageScope,
+      ],
     }),
   );
   await using _screen = await mountWelcome();

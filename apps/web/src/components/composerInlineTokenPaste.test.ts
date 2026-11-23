@@ -1,5 +1,9 @@
 import { threadChipCopyTarget } from "@hackerai/client-runtime/thread-reference";
-import { type ComposerContextClipboardFragment, EnvironmentId, ThreadId } from "@hackerai/contracts";
+import {
+  type ComposerContextClipboardFragment,
+  EnvironmentId,
+  ThreadId,
+} from "@hackerai/contracts";
 import {
   COMPOSER_CONTEXT_CLIPBOARD_MIME,
   encodeComposerContextFragment,

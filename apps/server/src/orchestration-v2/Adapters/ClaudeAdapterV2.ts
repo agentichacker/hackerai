@@ -2389,8 +2389,7 @@ export function makeClaudeQueryOptions(input: {
         };
   // A settings file path cannot take extra keys, so it goes through unchanged.
   const pinnedEnvironment =
-    input.settingsEnvironment === undefined ||
-    Object.keys(input.settingsEnvironment).length === 0
+    input.settingsEnvironment === undefined || Object.keys(input.settingsEnvironment).length === 0
       ? undefined
       : input.settingsEnvironment;
   const effectiveQuerySettings =

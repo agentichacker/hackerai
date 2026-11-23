@@ -65,7 +65,10 @@ const handlers = {
   hackerai_background_wait: McpToolAccess.readsAsCaller((input) =>
     Effect.gen(function* () {
       const { scope, threads } = yield* readCaller();
-      const caller = yield* McpInvocationContext.requireThreadScope(scope, "hackerai_background_wait");
+      const caller = yield* McpInvocationContext.requireThreadScope(
+        scope,
+        "hackerai_background_wait",
+      );
       return yield* threads
         .awaitBackgroundTasks({
           threadId: caller.thread.threadId,

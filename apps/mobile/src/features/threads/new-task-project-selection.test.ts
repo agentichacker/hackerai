@@ -158,7 +158,9 @@ describe("newTaskFilteredProject", () => {
 
 describe("resolveEnvironmentProjectMatch", () => {
   it("follows the same repository onto the target machine", () => {
-    const selected = makeProject("hackerai", "mac", { repositoryKey: "github.com/hackerai/hackerai" });
+    const selected = makeProject("hackerai", "mac", {
+      repositoryKey: "github.com/hackerai/hackerai",
+    });
     const target = [
       makeProject("other", "server", { repositoryKey: "github.com/hackerai/other" }),
       makeProject("hackerai-clone", "server", { repositoryKey: "github.com/hackerai/hackerai" }),

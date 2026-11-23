@@ -17,7 +17,11 @@ import {
 import { relayFailureReason } from "../../cloud/relayFailureReason";
 import { relayEnvironmentDiscovery } from "../../state/relay";
 import { useAtomCommand } from "../../state/use-atom-command";
-import { HackerAICHAT_SUBSCRIPTION_URL, TunnelUsageMeter, tunnelUpgradeCopy } from "../cloud/TunnelUsage";
+import {
+  HackerAICHAT_SUBSCRIPTION_URL,
+  TunnelUsageMeter,
+  tunnelUpgradeCopy,
+} from "../cloud/TunnelUsage";
 import { Button, InlineButton } from "../ui/button";
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "../ui/collapsible";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../ui/empty";
@@ -99,8 +103,9 @@ function HackerAIConnectEnvironmentRow(props: {
               </p>
               <p className="mt-4 max-w-xl text-xs leading-4.5 text-muted-foreground">
                 <T>
-                  HackerAI Connect access will be revoked, any managed tunnel will be removed, and a host
-                  space will become available. Local connections on your devices are not changed.
+                  HackerAI Connect access will be revoked, any managed tunnel will be removed, and a
+                  host space will become available. Local connections on your devices are not
+                  changed.
                 </T>
               </p>
               <div className="mt-4 flex justify-end gap-2">
@@ -157,7 +162,10 @@ function HackerAIConnectTunnelUsage() {
             <>
               {tunnelUpgradeCopy(usage.upgrade, m)}{" "}
               {usage.upgrade === "link" ? (
-                <InlineButton disabled={hackeraiChat.pending !== null} onClick={() => void hackeraiChat.link()}>
+                <InlineButton
+                  disabled={hackeraiChat.pending !== null}
+                  onClick={() => void hackeraiChat.link()}
+                >
                   {hackeraiChat.pending === "link" ? gt("Opening…") : gt("Link HackerAI Chat")}
                 </InlineButton>
               ) : (
@@ -328,7 +336,8 @@ export function HackerAIConnectUserProfilePage() {
                 </EmptyTitle>
                 <EmptyDescription>
                   <T>
-                    Link an environment from its local Settings to make it available through HackerAI Connect.
+                    Link an environment from its local Settings to make it available through
+                    HackerAI Connect.
                   </T>
                 </EmptyDescription>
               </EmptyHeader>

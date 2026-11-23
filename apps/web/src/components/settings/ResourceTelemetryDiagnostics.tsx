@@ -1137,7 +1137,9 @@ function ResourceTelemetryDiagnosticsBody({
               value={allHackerAI ? formatBytes(allHackerAI.currentRssBytes) : "..."}
               detail={
                 allHackerAI
-                  ? gt("{bytes} combined process peaks", { bytes: formatBytes(allHackerAI.peakRssBytes) })
+                  ? gt("{bytes} combined process peaks", {
+                      bytes: formatBytes(allHackerAI.peakRssBytes),
+                    })
                   : undefined
               }
             />

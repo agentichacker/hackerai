@@ -324,7 +324,8 @@ export const isRelayTracingEnabled = (env: Readonly<Record<string, string | unde
     telemetry: flag("HACKERAI_TELEMETRY_ENABLED", HACKERAI_TRUE, HACKERAI_FALSE, String),
   }).pipe(
     Effect.map(
-      ({ telemetry, hackerai, spec }) => telemetry.value !== false && !(hackerai.value ?? spec.value ?? false),
+      ({ telemetry, hackerai, spec }) =>
+        telemetry.value !== false && !(hackerai.value ?? spec.value ?? false),
     ),
     Effect.provide(ConfigProvider.layer(ConfigProvider.fromEnvRecord(env))),
     Effect.orDie,
@@ -373,7 +374,11 @@ export const resolveSignalEndpoint = (
       // the desktop's own.
       const url = blankAsUnset(fallback.bootstrapUrl) ?? settingsUrl;
       if (url === undefined) return undefined;
-      return { url, export: hackerai.export, source: url === settingsUrl ? "settings" : "bootstrap" };
+      return {
+        url,
+        export: hackerai.export,
+        source: url === settingsUrl ? "settings" : "bootstrap",
+      };
     },
   });
 };

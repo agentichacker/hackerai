@@ -60,7 +60,9 @@ test(
       };
     });
 
-    await hackerai.open(`/settings/devices?machine=${encodeURIComponent(environment)}#device-sources`);
+    await hackerai.open(
+      `/settings/devices?machine=${encodeURIComponent(environment)}#device-sources`,
+    );
     const more = browser.locator("#device-sources").getByRole("button", "More", { exact: true });
     const testConnection = screen.getByRole("menuitem", "Test connection", { exact: true });
     const pending = screen.getByText("Testing connection", { exact: true });

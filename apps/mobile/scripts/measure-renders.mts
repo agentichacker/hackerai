@@ -87,7 +87,9 @@ const connectInspector = Effect.fn("measure.connectInspector")(function* (metro:
     .pipe(Effect.flatMap(HttpClientResponse.schemaBodyJson(InspectorTargets)));
   const target = targets.find((entry) => entry.appId.startsWith("com.hackerai.hackerai"));
   if (!target)
-    return yield* new MeasureError({ message: `No HackerAI app is attached to Metro at ${metro}.` });
+    return yield* new MeasureError({
+      message: `No HackerAI app is attached to Metro at ${metro}.`,
+    });
   // Expo closes inspector sockets unless Origin matches Metro's advertised URL; pass that URL as --metro.
   const socket = yield* Socket.makeWebSocket(target.webSocketDebuggerUrl, {
     headers: { origin: new URL(metro).origin },
@@ -238,7 +240,9 @@ const measureStreamReply = Effect.fn("measure.streamReply")(function* (
     return yield* new MeasureError({ message: `Run ${run}: the reply never started streaming.` });
   yield* evaluate("__hackeraiRenderCounterStart()");
   yield* Effect.sleep(`${options.windowSeconds} seconds`);
-  const report = yield* decodeReport(yield* evaluate("JSON.stringify(__hackeraiRenderCounterStop())"));
+  const report = yield* decodeReport(
+    yield* evaluate("JSON.stringify(__hackeraiRenderCounterStop())"),
+  );
   // An in-view streaming thread must commit; out-of-view streaming may commit nothing.
   if (report.commits === 0 && Option.isNone(route))
     return yield* new MeasureError({
@@ -286,7 +290,9 @@ const measureRouteOpen = Effect.fn("measure.routeOpen")(function* (
   yield* evaluate("__hackeraiRenderCounterStart()");
   yield* evaluate(appLink(options, route));
   yield* Effect.sleep(`${options.windowSeconds} seconds`);
-  const report = yield* decodeReport(yield* evaluate("JSON.stringify(__hackeraiRenderCounterStop())"));
+  const report = yield* decodeReport(
+    yield* evaluate("JSON.stringify(__hackeraiRenderCounterStop())"),
+  );
   if (report.commits === 0)
     return yield* new MeasureError({
       message: `Run ${run}: no React commits in the window. Check that ${route} is a valid app path.`,

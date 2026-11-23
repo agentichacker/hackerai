@@ -221,7 +221,10 @@ function wrapPosixCommand(command: string, sentinel: string): string {
     chunk += encoded;
     chunkBytes += bytes;
   }
-  lines.push(`${prefix}'${chunk}'`, `${evaluate('"$__hackerai_command"')}; unset __hackerai_command`);
+  lines.push(
+    `${prefix}'${chunk}'`,
+    `${evaluate('"$__hackerai_command"')}; unset __hackerai_command`,
+  );
   // The leading space gives every line the history suppression a short command gets.
   return lines.join("\r ");
 }

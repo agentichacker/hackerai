@@ -1642,7 +1642,11 @@ describe("extractMcpToolCallIdentity", () => {
       kind: "other",
       title: "unrelated display title",
       status: "pending",
-      _meta: { toolName: "mcp::hackerai-code::hackerai_thread_send", serverId: "hackerai-code", provenance: "mcp" },
+      _meta: {
+        toolName: "mcp::hackerai-code::hackerai_thread_send",
+        serverId: "hackerai-code",
+        provenance: "mcp",
+      },
     });
 
     expect(extractMcpToolCallIdentity(toolCall)).toEqual({

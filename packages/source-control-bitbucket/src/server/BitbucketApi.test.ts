@@ -310,7 +310,10 @@ it.effect.each([false, true])(
       response: () =>
         Response.json({
           ...bitbucketPullRequest,
-          source: { ...bitbucketPullRequest.source, repository: { full_name: "your-org/hackerai" } },
+          source: {
+            ...bitbucketPullRequest.source,
+            repository: { full_name: "your-org/hackerai" },
+          },
         }),
     });
     return Effect.gen(function* () {

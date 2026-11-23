@@ -1420,7 +1420,9 @@ describe("signed APNs registration metadata", () => {
               push_token: "unchanged-token",
               activity_push_token: "unchanged-token",
               bundle_id:
-                changed === "bundle" ? "com.hackerai.hackerai.preview" : "com.hackerai.hackerai.dev",
+                changed === "bundle"
+                  ? "com.hackerai.hackerai.preview"
+                  : "com.hackerai.hackerai.dev",
               aps_environment: changed === "environment" ? "production" : "sandbox",
             },
           ],

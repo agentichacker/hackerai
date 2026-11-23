@@ -1198,7 +1198,9 @@ const layerMakeServer = Layer.unwrap(
             const recoverManagedTunnel = (config: RelayManagedEndpointRuntimeConfig) =>
               runManagedTunnelRecovery(config).pipe(
                 Effect.tap((recovered) =>
-                  recovered ? Effect.logInfo("HackerAI Connect managed tunnel recovered") : Effect.void,
+                  recovered
+                    ? Effect.logInfo("HackerAI Connect managed tunnel recovered")
+                    : Effect.void,
                 ),
                 Effect.catchCause((cause) =>
                   Cause.hasInterrupts(cause)
@@ -1237,9 +1239,9 @@ const layerMakeServer = Layer.unwrap(
             const wantsCliLink = hasCloudPublicConfig
               ? yield* CloudCliState.readCliDesiredCloudLink.pipe(
                   Effect.catch((cause) =>
-                    Effect.logWarning("Failed to read the desired HackerAI Connect link", { cause }).pipe(
-                      Effect.as(false),
-                    ),
+                    Effect.logWarning("Failed to read the desired HackerAI Connect link", {
+                      cause,
+                    }).pipe(Effect.as(false)),
                   ),
                 )
               : false;
@@ -1277,7 +1279,9 @@ const layerMakeServer = Layer.unwrap(
                     : Effect.void,
                 ),
                 Effect.catch((cause) =>
-                  Effect.logWarning("Failed to start the stored HackerAI Connect tunnel", { cause }),
+                  Effect.logWarning("Failed to start the stored HackerAI Connect tunnel", {
+                    cause,
+                  }),
                 ),
                 Effect.asVoid,
               );
@@ -1298,9 +1302,12 @@ const layerMakeServer = Layer.unwrap(
               Effect.catchCause((cause) =>
                 Cause.hasInterrupts(cause)
                   ? Effect.interrupt
-                  : Effect.logWarning("Failed to register HackerAI Connect managed tunnel recovery", {
-                      cause,
-                    }).pipe(Effect.as({ status: "unavailable" as const })),
+                  : Effect.logWarning(
+                      "Failed to register HackerAI Connect managed tunnel recovery",
+                      {
+                        cause,
+                      },
+                    ).pipe(Effect.as({ status: "unavailable" as const })),
               ),
             );
             // Jitter registrations so update waves do not hit the relay simultaneously.
@@ -1339,9 +1346,12 @@ const layerMakeServer = Layer.unwrap(
                       : Effect.logInfo("HackerAI Connect desired link reconciled on startup"),
                   ),
                   Effect.catch((cause) =>
-                    Effect.logWarning("Failed to reconcile HackerAI Connect desired link on startup", {
-                      cause,
-                    }).pipe(Effect.as(null)),
+                    Effect.logWarning(
+                      "Failed to reconcile HackerAI Connect desired link on startup",
+                      {
+                        cause,
+                      },
+                    ).pipe(Effect.as(null)),
                   ),
                 );
               if (reconciledMode === "managed") {

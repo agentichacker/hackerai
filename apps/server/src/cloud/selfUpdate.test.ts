@@ -87,7 +87,9 @@ const makeHarness = Effect.fn("test.make_self_update_harness")(function* (
           order.push("extract");
           const stagingDir = input.args[input.args.indexOf("-C") + 1];
           if (stagingDir === undefined) return yield* Effect.die("missing tar target");
-          yield* fs.writeFileString(path.join(stagingDir, "hackerai"), "#!/bin/sh\n").pipe(Effect.orDie);
+          yield* fs
+            .writeFileString(path.join(stagingDir, "hackerai"), "#!/bin/sh\n")
+            .pipe(Effect.orDie);
           return {
             stdout: "",
             stderr: "",
@@ -479,7 +481,13 @@ it.layer(NodeServices.layer)("pruning runtimes on start", (it) => {
         ? path.join(tempDir, "alias-home")
         : baseDir;
       if (input.servicePlistThroughLink) yield* fs.symlink(realHome, programHome);
-      const program = path.join(programHome, "runtime", "versions", input.servicePlistStarts, "hackerai");
+      const program = path.join(
+        programHome,
+        "runtime",
+        "versions",
+        input.servicePlistStarts,
+        "hackerai",
+      );
       yield* fs.writeFileString(
         path.join(agentsDir, "com.hackerai.hackerai.service.plist"),
         `<plist><dict>\n<key>ProgramArguments</key>\n<array>\n<string>${program}</string>\n<string>__service-launcher</string>\n</array>\n</dict></plist>\n`,

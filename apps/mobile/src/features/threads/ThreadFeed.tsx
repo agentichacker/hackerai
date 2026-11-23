@@ -85,7 +85,11 @@ import {
 } from "@hackerai/contracts";
 import type { ToolCallVisibility } from "@hackerai/contracts/settings";
 import { encodeComposerContextFragment } from "@hackerai/shared/composerContextClipboard";
-import { hasThreadLinks, hostedThreadLink, parseThreadLinkHref } from "@hackerai/shared/threadLinks";
+import {
+  hasThreadLinks,
+  hostedThreadLink,
+  parseThreadLinkHref,
+} from "@hackerai/shared/threadLinks";
 import { PROMPT_LINK_MAX_PROMPT_LENGTH } from "@hackerai/shared/promptLinks";
 import {
   parseComposerContextHref,
@@ -117,7 +121,10 @@ import {
   renderCodexInlineDirectivesAsMarkdown,
   splitCodexArtifactTemplateMarkdown,
 } from "@hackerai/shared/codexMarkdownDirectives";
-import { CHAT_LIST_ANCHOR_OFFSET, resolveChatListAnchoredEndSpace } from "@hackerai/shared/chatList";
+import {
+  CHAT_LIST_ANCHOR_OFFSET,
+  resolveChatListAnchoredEndSpace,
+} from "@hackerai/shared/chatList";
 import { imageMimeType } from "@hackerai/shared/image";
 import { videoMimeType } from "@hackerai/shared/video";
 import { SymbolView, type AppSymbolName } from "../../components/ui/AppSymbol";
@@ -2998,7 +3005,9 @@ function ThreadFeedPlaceholder(props: {
       }}
     >
       <View className="max-w-[320px] items-center gap-2">
-        <Text className="text-center font-hackerai-bold text-lg text-foreground">{props.title}</Text>
+        <Text className="text-center font-hackerai-bold text-lg text-foreground">
+          {props.title}
+        </Text>
         <Text className="text-center text-sm leading-normal text-foreground-secondary">
           {props.detail}
         </Text>

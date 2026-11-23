@@ -110,7 +110,9 @@ const browserSetupCommand = Command.make("setup", { baseDir: baseDirFlag }).pipe
   Command.withHandler(({ baseDir }) =>
     Effect.gen(function* () {
       if ((yield* HostProcess.Platform) !== "linux") {
-        return yield* Console.log("Nothing to set up: HackerAI's browser runs as is on this system.");
+        return yield* Console.log(
+          "Nothing to set up: HackerAI's browser runs as is on this system.",
+        );
       }
       const fs = yield* FileSystem.FileSystem;
       const isRoot = (yield* HostProcess.UserId) === 0;
@@ -119,7 +121,9 @@ const browserSetupCommand = Command.make("setup", { baseDir: baseDirFlag }).pipe
       // sudo resets the environment, so a chosen home has to be on the command line.
       const setupCommand = yield* resolveRootCliCommand(
         PreviewBrowserHost.SETUP_SUBCOMMAND,
-        Option.isSome(baseDir) || env.HACKERAI_HOME !== undefined ? ["--base-dir", baseDirPath] : [],
+        Option.isSome(baseDir) || env.HACKERAI_HOME !== undefined
+          ? ["--base-dir", baseDirPath]
+          : [],
       );
       // Root, unless sudo came from another user, is likely the server's own account.
       const rootWarning =
@@ -159,7 +163,9 @@ const browserSetupCommand = Command.make("setup", { baseDir: baseDirFlag }).pipe
           );
         }
         if (missing.length > 0) {
-          yield* Console.log(`HackerAI's browser is missing ${missing.join(", ")}; setup installs them.`);
+          yield* Console.log(
+            `HackerAI's browser is missing ${missing.join(", ")}; setup installs them.`,
+          );
         }
         if (needsFonts) {
           yield* Console.log(

@@ -620,7 +620,9 @@ describe("AcpSessionRuntime", () => {
           cwd: process.cwd(),
           clientInfo: { name: "hackerai-test", version: "0.0.0" },
           authMethodId: "test",
-          mcpServers: [{ type: "stdio", name: "hackerai-code", command: "/usr/bin/node", args: [] }],
+          mcpServers: [
+            { type: "stdio", name: "hackerai-code", command: "/usr/bin/node", args: [] },
+          ],
           acpMcpServers: [{ type: "acp", name: "hackerai-code", serverId: "hackerai-code" }],
           requestLogger: (event) =>
             Effect.sync(() => {
@@ -1236,7 +1238,9 @@ describe("AcpSessionRuntime", () => {
         sessionLoadReplayIdleReadiness: true,
       });
       const started = yield* runtime.start();
-      expect(started.sessionSetupResult._meta).toMatchObject({ hackeraiSessionLoadReady: "replay_idle" });
+      expect(started.sessionSetupResult._meta).toMatchObject({
+        hackeraiSessionLoadReady: "replay_idle",
+      });
 
       yield* runtime.getEvents().pipe(
         Stream.filter((event) => event._tag === "ConfigOptionsUpdated"),
@@ -1649,7 +1653,10 @@ describe("AcpSessionRuntime", () => {
         let promptsStarted = 0;
         const runtime = yield* AcpSessionRuntime.make({
           ...mockRuntimeOptions,
-          spawn: { ...mockRuntimeOptions.spawn, env: { HACKERAI_ACP_REQUEST_LOG_PATH: requestLogPath } },
+          spawn: {
+            ...mockRuntimeOptions.spawn,
+            env: { HACKERAI_ACP_REQUEST_LOG_PATH: requestLogPath },
+          },
           interruptPromptOnCancel: false,
           // The cancel spends a test-clock second in its outgoing record, the window in which the
           // next prompt could overtake it.

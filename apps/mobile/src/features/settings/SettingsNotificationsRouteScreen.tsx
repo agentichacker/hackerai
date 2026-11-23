@@ -197,7 +197,9 @@ export function SettingsNotificationsRouteScreen() {
           contentContainerClassName="px-5 pt-4"
         >
           <Text className="text-base text-foreground-muted">
-            {gt("Notifications require {product} in this app build.", { product: "HackerAI Connect" })}
+            {gt("Notifications require {product} in this app build.", {
+              product: "HackerAI Connect",
+            })}
           </Text>
         </ScrollView>
       </SettingsScreen>

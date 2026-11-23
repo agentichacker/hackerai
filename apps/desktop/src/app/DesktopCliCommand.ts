@@ -307,7 +307,9 @@ export const make = Effect.gen(function* () {
         yield* writeUserPath([...entries, binDirectory].join(";"));
         yield* fs
           .writeFileString(ownedPathMarker, `${binDirectory}\n`)
-          .pipe(Effect.mapError(() => fail("Added hackerai to your PATH but could not record it.")));
+          .pipe(
+            Effect.mapError(() => fail("Added hackerai to your PATH but could not record it.")),
+          );
       }
       return yield* state;
     }
@@ -398,7 +400,8 @@ export const make = Effect.gen(function* () {
       return yield* fail("Install the hackerai command first.");
     }
     const setup = startupLine(installed.value);
-    if (setup === undefined) return yield* fail("HackerAI cannot add hackerai to this shell's PATH.");
+    if (setup === undefined)
+      return yield* fail("HackerAI cannot add hackerai to this shell's PATH.");
     const shadowedBy = yield* foreignFirstOnPath;
     if (Option.isSome(shadowedBy)) {
       return yield* fail(
@@ -442,7 +445,9 @@ export const make = Effect.gen(function* () {
           const present =
             (yield* exists(other)) || Option.isSome(yield* fs.readLink(other).pipe(Effect.option));
           if (present && (windows || !(yield* isOurLink(other)))) {
-            return yield* logInfo("left the hackerai command to Settings beside another HackerAI", { other });
+            return yield* logInfo("left the hackerai command to Settings beside another HackerAI", {
+              other,
+            });
           }
         }
       }

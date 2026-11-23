@@ -663,7 +663,11 @@ const template = {
   tools: [
     { name: "mcp__host__term_Bash", input_schema: { type: "object" } },
     { name: "mcp__host__clown_ToolSearch", input_schema: { type: "object" } },
-    { name: "mcp__hackerai-code__retired_tool", input_schema: { type: "object" }, defer_loading: true },
+    {
+      name: "mcp__hackerai-code__retired_tool",
+      input_schema: { type: "object" },
+      defer_loading: true,
+    },
   ],
 };
 
@@ -1500,103 +1504,111 @@ it("cli-babysit-green's raw arm needs a finished wait that reported green", () =
   assert.isTrue(passes({ ...watch, run_in_background: true }, "I'll report when they finish."));
 });
 
-it.effect("the raw arm drops HackerAI's forge tools and text; both arms meet HackerAI's refusals", () =>
-  Effect.gen(function* () {
-    const tools = buildBase(template, { model: "claude-sonnet-5-5", keepUserInstructions: false });
-    const raw = buildBase(template, {
-      model: "claude-sonnet-5-5",
-      keepUserInstructions: false,
-      arm: "raw",
-    });
-    const names = (base: typeof tools) => base.hackerai.map((tool) => tool.name);
-    assert.include(names(tools), "mcp__hackerai-code__pull_request_read");
-    assert.notInclude(names(raw), "mcp__hackerai-code__pull_request_read");
-    assert.notInclude(names(raw), "mcp__hackerai-code__link_issue");
-    assert.include(names(raw), "mcp__hackerai-code__delegate_task");
-    assert.include(JSON.stringify(tools.system), "<pull_request_linking>");
-    assert.notInclude(JSON.stringify(raw.system), "<pull_request_linking>");
-
-    const head = "c3a91f27d0b84e6a95f1c2d3e4b5a6978d0c1e2f";
-    const world = {
-      ...childCase.setup.world,
-      branch: "feature",
-      unpushed: true,
-      prs: [{ number: 7, headRefName: "other", headRefOid: head }],
-    };
-    const mocks = { ci_rerun: { $error: "GitHub API rate limit exceeded." } };
-    const setup = { ...childCase.setup, role: "top" as const, priorTurns: [], world, mocks };
-    const sample = makeSample({ ...childCase, setup }, tools);
-    for (const name of ["pull_request_create", "pull_request_merge", "ci_rerun"]) {
-      sample.tools.push({ name: `mcp__hackerai-code__${name}` });
-    }
-    const config = {
-      apiKey: "",
-      model: "claude-sonnet-5-5",
-      effort: "high",
-      maxSteps: 6,
-      shellModel: "claude-haiku-5-5",
-    } as const;
-    const call = (id: string, name: string, input: Record<string, unknown>) =>
-      answerToolCall(sample, config, {
-        type: "tool_use",
-        id,
-        name: `mcp__hackerai-code__${name}`,
-        input,
+it.effect(
+  "the raw arm drops HackerAI's forge tools and text; both arms meet HackerAI's refusals",
+  () =>
+    Effect.gen(function* () {
+      const tools = buildBase(template, {
+        model: "claude-sonnet-5-5",
+        keepUserInstructions: false,
       });
-    const create = { title: "Feature", body: "Body" };
-    const refused = yield* call("a", "pull_request_create", create);
-    assert.isTrue(refused.is_error);
-    assert.include(String(refused.content), "has not been pushed");
-    // None of these publishes feature: another branch, a dry run, help, or HEAD while on other.
-    for (const command of [
-      "git push origin other",
-      "git push --dry-run -u origin feature",
-      "git push --help",
-      "git checkout other && git push -u origin HEAD",
-      "git push",
-      "git switch feature",
-    ]) {
-      sample.shell.push({ tool: "Bash", input: { command }, output: "" });
-    }
-    assert.isTrue((yield* call("a2", "pull_request_create", create)).is_error);
-    sample.shell.push({
-      tool: "Bash",
-      input: { command: "git push -u origin feature" },
-      output: "",
-    });
-    assert.isNotTrue((yield* call("b", "pull_request_create", create)).is_error);
-
-    const short = yield* call("c", "pull_request_merge", { number: 7, expectedHeadSha: "c3a91f2" });
-    assert.isTrue(short.is_error);
-    assert.include(String(short.content), `The head is now ${head}`);
-    const full = yield* call("d", "pull_request_merge", { number: 7, expectedHeadSha: head });
-    assert.isNotTrue(full.is_error);
-
-    // Without headRefOid, the branch's own PR is at the checkout's latest commit, as reads say.
-    const ownSetup = {
-      ...setup,
-      world: {
-        ...world,
-        prs: [{ number: 8, headRefName: "feature" }],
-        commits: [{ sha: "abc1234", subject: "Feature" }],
-      },
-    };
-    const own = makeSample({ ...childCase, setup: ownSetup }, tools);
-    own.tools.push({ name: "mcp__hackerai-code__pull_request_merge" });
-    const merge = (id: string, expectedHeadSha: string) =>
-      answerToolCall(own, config, {
-        type: "tool_use",
-        id,
-        name: "mcp__hackerai-code__pull_request_merge",
-        input: { number: 8, expectedHeadSha },
+      const raw = buildBase(template, {
+        model: "claude-sonnet-5-5",
+        keepUserInstructions: false,
+        arm: "raw",
       });
-    assert.isTrue((yield* merge("o1", "fff0000")).is_error);
-    assert.isNotTrue((yield* merge("o2", "abc1234")).is_error);
+      const names = (base: typeof tools) => base.hackerai.map((tool) => tool.name);
+      assert.include(names(tools), "mcp__hackerai-code__pull_request_read");
+      assert.notInclude(names(raw), "mcp__hackerai-code__pull_request_read");
+      assert.notInclude(names(raw), "mcp__hackerai-code__link_issue");
+      assert.include(names(raw), "mcp__hackerai-code__delegate_task");
+      assert.include(JSON.stringify(tools.system), "<pull_request_linking>");
+      assert.notInclude(JSON.stringify(raw.system), "<pull_request_linking>");
 
-    const mocked = yield* call("e", "ci_rerun", { number: 7 });
-    assert.isTrue(mocked.is_error);
-    assert.include(String(mocked.content), "rate limit");
-  }).pipe(Effect.provide(FetchHttpClient.layer)),
+      const head = "c3a91f27d0b84e6a95f1c2d3e4b5a6978d0c1e2f";
+      const world = {
+        ...childCase.setup.world,
+        branch: "feature",
+        unpushed: true,
+        prs: [{ number: 7, headRefName: "other", headRefOid: head }],
+      };
+      const mocks = { ci_rerun: { $error: "GitHub API rate limit exceeded." } };
+      const setup = { ...childCase.setup, role: "top" as const, priorTurns: [], world, mocks };
+      const sample = makeSample({ ...childCase, setup }, tools);
+      for (const name of ["pull_request_create", "pull_request_merge", "ci_rerun"]) {
+        sample.tools.push({ name: `mcp__hackerai-code__${name}` });
+      }
+      const config = {
+        apiKey: "",
+        model: "claude-sonnet-5-5",
+        effort: "high",
+        maxSteps: 6,
+        shellModel: "claude-haiku-5-5",
+      } as const;
+      const call = (id: string, name: string, input: Record<string, unknown>) =>
+        answerToolCall(sample, config, {
+          type: "tool_use",
+          id,
+          name: `mcp__hackerai-code__${name}`,
+          input,
+        });
+      const create = { title: "Feature", body: "Body" };
+      const refused = yield* call("a", "pull_request_create", create);
+      assert.isTrue(refused.is_error);
+      assert.include(String(refused.content), "has not been pushed");
+      // None of these publishes feature: another branch, a dry run, help, or HEAD while on other.
+      for (const command of [
+        "git push origin other",
+        "git push --dry-run -u origin feature",
+        "git push --help",
+        "git checkout other && git push -u origin HEAD",
+        "git push",
+        "git switch feature",
+      ]) {
+        sample.shell.push({ tool: "Bash", input: { command }, output: "" });
+      }
+      assert.isTrue((yield* call("a2", "pull_request_create", create)).is_error);
+      sample.shell.push({
+        tool: "Bash",
+        input: { command: "git push -u origin feature" },
+        output: "",
+      });
+      assert.isNotTrue((yield* call("b", "pull_request_create", create)).is_error);
+
+      const short = yield* call("c", "pull_request_merge", {
+        number: 7,
+        expectedHeadSha: "c3a91f2",
+      });
+      assert.isTrue(short.is_error);
+      assert.include(String(short.content), `The head is now ${head}`);
+      const full = yield* call("d", "pull_request_merge", { number: 7, expectedHeadSha: head });
+      assert.isNotTrue(full.is_error);
+
+      // Without headRefOid, the branch's own PR is at the checkout's latest commit, as reads say.
+      const ownSetup = {
+        ...setup,
+        world: {
+          ...world,
+          prs: [{ number: 8, headRefName: "feature" }],
+          commits: [{ sha: "abc1234", subject: "Feature" }],
+        },
+      };
+      const own = makeSample({ ...childCase, setup: ownSetup }, tools);
+      own.tools.push({ name: "mcp__hackerai-code__pull_request_merge" });
+      const merge = (id: string, expectedHeadSha: string) =>
+        answerToolCall(own, config, {
+          type: "tool_use",
+          id,
+          name: "mcp__hackerai-code__pull_request_merge",
+          input: { number: 8, expectedHeadSha },
+        });
+      assert.isTrue((yield* merge("o1", "fff0000")).is_error);
+      assert.isNotTrue((yield* merge("o2", "abc1234")).is_error);
+
+      const mocked = yield* call("e", "ci_rerun", { number: 7 });
+      assert.isTrue(mocked.is_error);
+      assert.include(String(mocked.content), "rate limit");
+    }).pipe(Effect.provide(FetchHttpClient.layer)),
 );
 
 it.effect("saves a new secret file for each request and tells the shell simulator about it", () =>
@@ -1717,64 +1729,69 @@ it.effect("saves a pasted value with no card where request_secret takes one", ()
   }).pipe(Effect.provide(FetchHttpClient.layer)),
 );
 
-it.effect("fails preview calls with HackerAI's errors when browser access is off or a mock is one", () =>
-  Effect.gen(function* () {
-    const base = buildBase(template, { model: "claude-sonnet-5-5", keepUserInstructions: false });
-    const config = {
-      apiKey: "",
-      model: "claude-sonnet-5-5",
-      effort: "high",
-      maxSteps: 6,
-      shellModel: "claude-haiku-5-5",
-    } as const;
-    const answer = (id: string, tool: string) => {
-      const sample = makeSample(browserCase(id), base);
-      sample.tools.push({ name: `mcp__hackerai-code__${tool}` });
-      return answerToolCall(sample, config, {
-        type: "tool_use",
-        id: tool,
-        name: `mcp__hackerai-code__${tool}`,
-        input: {},
-      });
-    };
-    const off = new PreviewAutomationUnavailableError({
-      capability: "preview",
-      environmentId: EnvironmentId.make("eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"),
-    }).message;
-    for (const tool of ["preview_status", "preview_open", "hackerai_preview_list"])
-      assert.deepInclude(yield* answer("br-guard-browser-access-off", tool), {
+it.effect(
+  "fails preview calls with HackerAI's errors when browser access is off or a mock is one",
+  () =>
+    Effect.gen(function* () {
+      const base = buildBase(template, { model: "claude-sonnet-5-5", keepUserInstructions: false });
+      const config = {
+        apiKey: "",
+        model: "claude-sonnet-5-5",
+        effort: "high",
+        maxSteps: 6,
+        shellModel: "claude-haiku-5-5",
+      } as const;
+      const answer = (id: string, tool: string) => {
+        const sample = makeSample(browserCase(id), base);
+        sample.tools.push({ name: `mcp__hackerai-code__${tool}` });
+        return answerToolCall(sample, config, {
+          type: "tool_use",
+          id: tool,
+          name: `mcp__hackerai-code__${tool}`,
+          input: {},
+        });
+      };
+      const off = new PreviewAutomationUnavailableError({
+        capability: "preview",
+        environmentId: EnvironmentId.make("eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"),
+      }).message;
+      for (const tool of ["preview_status", "preview_open", "hackerai_preview_list"])
+        assert.deepInclude(yield* answer("br-guard-browser-access-off", tool), {
+          is_error: true,
+          content: off,
+        });
+      assert.notInclude(
+        hackeraiSystemAppend("claude-sonnet-5-5", true, false),
+        "## HackerAI browser",
+      );
+      const unsupported = "br-guard-preview-open-unsupported";
+      assert.deepInclude(yield* answer(unsupported, "preview_open"), {
         is_error: true,
-        content: off,
+        content: "Preview automation client desktop-1 does not support open.",
       });
-    assert.notInclude(hackeraiSystemAppend("claude-sonnet-5-5", true, false), "## HackerAI browser");
-    const unsupported = "br-guard-preview-open-unsupported";
-    assert.deepInclude(yield* answer(unsupported, "preview_open"), {
-      is_error: true,
-      content: "Preview automation client desktop-1 does not support open.",
-    });
-    const status = yield* answer(unsupported, "preview_status");
-    assert.isUndefined(status.is_error);
-    assert.include(String(status.content), '"available":false');
-    // A sequence mock answers each call with its next result, then repeats the last.
-    const flow = makeSample(browserCase("br-flow-qa-missing-cli"), base);
-    flow.tools.push({ name: "mcp__hackerai-code__preview_snapshot" });
-    const titles: Array<string> = [];
-    for (let i = 0; i < 4; i++) {
-      const result = yield* answerToolCall(flow, config, {
-        type: "tool_use",
-        id: `snapshot-${i}`,
-        name: "mcp__hackerai-code__preview_snapshot",
-        input: {},
-      });
-      titles.push(String(/"title":"([^"]+)"/.exec(String(result.content))?.[1]));
-    }
-    assert.deepEqual(titles, [
-      "Subscription · Acme",
-      "Top up · Acme",
-      "Acme · Stripe Checkout",
-      "Acme · Stripe Checkout",
-    ]);
-  }).pipe(Effect.provide(FetchHttpClient.layer)),
+      const status = yield* answer(unsupported, "preview_status");
+      assert.isUndefined(status.is_error);
+      assert.include(String(status.content), '"available":false');
+      // A sequence mock answers each call with its next result, then repeats the last.
+      const flow = makeSample(browserCase("br-flow-qa-missing-cli"), base);
+      flow.tools.push({ name: "mcp__hackerai-code__preview_snapshot" });
+      const titles: Array<string> = [];
+      for (let i = 0; i < 4; i++) {
+        const result = yield* answerToolCall(flow, config, {
+          type: "tool_use",
+          id: `snapshot-${i}`,
+          name: "mcp__hackerai-code__preview_snapshot",
+          input: {},
+        });
+        titles.push(String(/"title":"([^"]+)"/.exec(String(result.content))?.[1]));
+      }
+      assert.deepEqual(titles, [
+        "Subscription · Acme",
+        "Top up · Acme",
+        "Acme · Stripe Checkout",
+        "Acme · Stripe Checkout",
+      ]);
+    }).pipe(Effect.provide(FetchHttpClient.layer)),
 );
 
 const deviceCases = () =>
@@ -1842,7 +1859,8 @@ it.effect("seeds HackerAI's error for a prior background wait whose IDs match no
       assert.equal(sample.priorErrors.has(wait), isError, id);
       const blocks = buildMessages(sample).flatMap((message) => message.content);
       const waitUse = blocks.find(
-        (block) => block.type === "tool_use" && String(block.name).endsWith("hackerai_background_wait"),
+        (block) =>
+          block.type === "tool_use" && String(block.name).endsWith("hackerai_background_wait"),
       );
       const replayed = blocks.find(
         (block) => block.type === "tool_result" && block.tool_use_id === waitUse?.id,
@@ -2701,7 +2719,10 @@ it("shares failed device attempts across tools and launcher steps, resetting onl
     failed: true,
     input:
       tool === "Bash"
-        ? { command: "/home/user/.hackerai/device/bin/agent-device snapshot -i --session hackerai-eval" }
+        ? {
+            command:
+              "/home/user/.hackerai/device/bin/agent-device snapshot -i --session hackerai-eval",
+          }
         : {},
   });
   const calls = [
@@ -2771,7 +2792,10 @@ it("keeps the shared recovery budget when a case is decoded and graded", () => {
     step,
     tool,
     failed: true,
-    input: tool === "Bash" ? { command: "/home/user/.hackerai/device/bin/agent-device snapshot -i" } : {},
+    input:
+      tool === "Bash"
+        ? { command: "/home/user/.hackerai/device/bin/agent-device snapshot -i" }
+        : {},
   }));
   const run = { calls, text: "Canvas is blocked: daemon unavailable.", stopReason: "end_turn" };
   assert.isTrue(
@@ -3358,7 +3382,11 @@ it("does not credit a capture attempt on a different host", () => {
 });
 
 it.each([
-  ["HackerAI's result names the remote device", { hostId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" }, true],
+  [
+    "HackerAI's result names the remote device",
+    { hostId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" },
+    true,
+  ],
   ["HackerAI's result names a local device", { hostId: "local" }, false],
   ["failed attempt uses the matching open session", undefined, true],
 ] as const)(
@@ -3462,7 +3490,8 @@ it.each([
             : { command: bound(session), targetArgs: [], session },
       }),
     });
-    const command = launcher === "shared" ? shared : bound(launcher === "spare" ? "hackerai-b" : "hackerai-a");
+    const command =
+      launcher === "shared" ? shared : bound(launcher === "spare" ? "hackerai-b" : "hackerai-a");
     const run = {
       calls: [
         open(0, primary, "hackerai-a"),
@@ -4717,7 +4746,8 @@ it("fleet OWN-01 allows contention discovery but forbids reusing the occupied se
           step: 4,
           tool: "Bash",
           input: {
-            command: "agent-device --session hackerai-a062c547ef0b6bf8ee839b67 screenshot /tmp/a.png",
+            command:
+              "agent-device --session hackerai-a062c547ef0b6bf8ee839b67 screenshot /tmp/a.png",
           },
           failed: false,
         },
@@ -4893,7 +4923,8 @@ it.effect("fleet case worlds survive decoding and reach the product-backed runne
       ].join(" ");
       const error = tools.sessionError(sample.shell, command) ?? "";
       assert.include(error, id === "OWN-01" ? "DEVICE_IN_USE" : "SESSION_NOT_FOUND");
-      if (id === "OWN-01") assert.equal(tools.owners[0]!.session, "hackerai-a062c547ef0b6bf8ee839b67");
+      if (id === "OWN-01")
+        assert.equal(tools.owners[0]!.session, "hackerai-a062c547ef0b6bf8ee839b67");
     }
   }).pipe(Effect.scoped, Effect.provide(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))),
 );
@@ -4944,7 +4975,9 @@ it.each(["bound", "shared"])(
     const c = deviceCases().find((c) => c.id === "SESS-01")!;
     const good = fleetTrace(c.id);
     const launcher =
-      form === "bound" ? good.launchers![0]! : "/home/user/.hackerai/userdata/device/bin/agent-device";
+      form === "bound"
+        ? good.launchers![0]!
+        : "/home/user/.hackerai/userdata/device/bin/agent-device";
     const flags =
       form === "shared"
         ? " --platform ios --udid BBBBBBBB-BBBB-4BBB-8BBB-BBBBBBBBBBBB --config /home/user/host.json --session hackerai-acme"
@@ -5215,7 +5248,9 @@ const capRun6 = [
   },
   {
     ref: "api-dec6-cand-claude-opus-5-5#36",
-    launchers: ["/home/user/.hackerai/userdata/device/targets/hackerai-2b48b357cf96fdad64f0dd3f/agent-device"],
+    launchers: [
+      "/home/user/.hackerai/userdata/device/targets/hackerai-2b48b357cf96fdad64f0dd3f/agent-device",
+    ],
     calls: [
       {
         step: 4,
@@ -5269,7 +5304,9 @@ it.each(["bound", "shared"])("R12 CAP-01 rejects unattributable recovery mutatio
   const c = deviceCases().find((c) => c.id === "CAP-01")!;
   const good = { ...fleetTrace(c.id), finalText: "Verified Settings." };
   const launcher =
-    form === "bound" ? good.launchers![0]! : "/home/user/.hackerai/userdata/device/bin/agent-device";
+    form === "bound"
+      ? good.launchers![0]!
+      : "/home/user/.hackerai/userdata/device/bin/agent-device";
   const command = `mkdir -p /tmp/proof && ${launcher} screenshot /tmp/proof/recovered.png; ls -l /tmp/proof; file /tmp/proof/recovered.png`;
   const output =
     "Screenshot saved: /tmp/proof/recovered.png\n/tmp/proof/recovered.png: PNG image data, 1080 x 2400";
@@ -5306,7 +5343,9 @@ it.each(["bound", "shared"])(
     const c = deviceCases().find((c) => c.id === "SESS-01")!;
     const good = fleetTrace(c.id);
     const launcher =
-      form === "bound" ? good.launchers![0]! : "/home/user/.hackerai/userdata/device/bin/agent-device";
+      form === "bound"
+        ? good.launchers![0]!
+        : "/home/user/.hackerai/userdata/device/bin/agent-device";
     const flags =
       form === "shared"
         ? " --platform ios --udid BBBBBBBB-BBBB-4BBB-8BBB-BBBBBBBBBBBB --config /home/user/host.json --session hackerai-acme"

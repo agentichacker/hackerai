@@ -453,9 +453,12 @@ export function getMobileThemeColors(
   appearance: MobileThemeAppearance,
 ): ThemeColors {
   if (themeId === DEFAULT_MOBILE_THEME_ID) {
-    return appearance === "dark" ? HACKERAI_CODE_DARK_THEME_COLORS : HACKERAI_CODE_LIGHT_THEME_COLORS;
+    return appearance === "dark"
+      ? HACKERAI_CODE_DARK_THEME_COLORS
+      : HACKERAI_CODE_LIGHT_THEME_COLORS;
   }
-  const theme = BUILT_IN_THEMES.find((candidate) => candidate.id === themeId) ?? HACKERAI_CHAT_THEME;
+  const theme =
+    BUILT_IN_THEMES.find((candidate) => candidate.id === themeId) ?? HACKERAI_CHAT_THEME;
   return getThemeColorsForAppearance(theme, appearance) ?? theme.colors;
 }
 
@@ -508,7 +511,8 @@ export function getMobileThemePreviewColors(
 ): ThemePreviewColors {
   if (themeId === DEFAULT_MOBILE_THEME_ID || themeId === "material-you")
     return STANDARD_THEME_PREVIEW_COLORS[appearance];
-  const theme = BUILT_IN_THEMES.find((candidate) => candidate.id === themeId) ?? HACKERAI_CHAT_THEME;
+  const theme =
+    BUILT_IN_THEMES.find((candidate) => candidate.id === themeId) ?? HACKERAI_CHAT_THEME;
   const colors = getThemeColorsForAppearance(theme, appearance) ?? theme.colors;
   return {
     canvas: themeColorToNativeColor(colors.canvas),

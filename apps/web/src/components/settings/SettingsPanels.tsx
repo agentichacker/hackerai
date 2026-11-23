@@ -2574,9 +2574,7 @@ export function AboutSettingsPanel() {
           description={gt("Product information, downloads, and documentation.")}
           control={
             <Button
-              render={
-                <a href={HACKERAI_WEBSITE_URL} target="_blank" rel="noreferrer noopener" />
-              }
+              render={<a href={HACKERAI_WEBSITE_URL} target="_blank" rel="noreferrer noopener" />}
               size="sm"
               variant="outline"
             >

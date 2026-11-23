@@ -1009,7 +1009,9 @@ describe("DesktopBackendConfiguration", () => {
             ),
           ),
         ),
-        Layer.provideMerge(layerEnvironment("/tmp/hackerai-wsl-isavailable", { platform: "win32" })),
+        Layer.provideMerge(
+          layerEnvironment("/tmp/hackerai-wsl-isavailable", { platform: "win32" }),
+        ),
         Layer.provide(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)),
       ),
     );

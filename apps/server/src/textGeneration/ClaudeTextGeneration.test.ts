@@ -83,7 +83,8 @@ function withFakeClaudeEnv<A, E, R>(
       HACKERAI_FAKE_CLAUDE_REJECTS_NO_SESSION_PERSISTENCE: input.rejectsNoSessionPersistence
         ? "1"
         : undefined,
-      HACKERAI_FAKE_CLAUDE_EXIT_CODE: input.exitCode === undefined ? undefined : String(input.exitCode),
+      HACKERAI_FAKE_CLAUDE_EXIT_CODE:
+        input.exitCode === undefined ? undefined : String(input.exitCode),
       HACKERAI_FAKE_CLAUDE_STDERR: input.stderr,
       HACKERAI_FAKE_CLAUDE_EXPECTED_TOOLS: input.expectedTools,
       HACKERAI_FAKE_CLAUDE_ARGS_MUST_CONTAIN: input.argsMustContain,
