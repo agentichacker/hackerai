@@ -6,6 +6,7 @@ import * as Layer from "effect/Layer";
 import * as Option from "effect/Option";
 import * as Path from "effect/Path";
 
+import * as HostProcess from "@hackerai/shared/HostProcess";
 import { symlinksSupported } from "@hackerai/shared/testing/symlinks";
 import * as SourceControlHost from "@hackerai/source-control-core/server/SourceControlHost";
 import * as TestSourceControlHost from "@hackerai/source-control-testing/TestSourceControlHost";
@@ -42,8 +43,11 @@ const runWithTempDirectory = <A, E, R>(
   Effect.scoped(
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
+      const platform = yield* HostProcess.Platform;
       const cwd = yield* fileSystem.makeTempDirectoryScoped({ prefix: "hackerai-pr-template-" });
       yield* runGit(cwd, ["init", "--initial-branch=main"]);
+      // The long-name fixture below exceeds MAX_PATH, which git refuses to index without this.
+      if (platform === "win32") yield* runGit(cwd, ["config", "core.longpaths", "true"]);
       yield* runGit(cwd, ["config", "user.email", "test@example.com"]);
       yield* runGit(cwd, ["config", "user.name", "Test User"]);
       return yield* test(cwd);

@@ -396,13 +396,16 @@ describe("DesktopBackendManager", () => {
       const stopFile = NodePath.join(root, "desktop-stop-3773");
       // Stands in for a server that exits only after it sees the desktop's request.
       const exitCode = Effect.callback<ChildProcessSpawner.ExitCode>((resume) => {
-        const stopFileName = NodePath.basename(stopFile);
-        const watcher = NodeFS.watch(NodePath.dirname(stopFile), (_event, filename) => {
-          if (filename !== stopFileName) return;
-          watcher.close();
+        // Poll rather than watch: inotify can coalesce the create event on Linux CI.
+        const check = () => {
+          if (!NodeFS.existsSync(stopFile)) return;
+          NodeFS.unwatchFile(stopFile, check);
           resume(Effect.succeed(ChildProcessSpawner.ExitCode(0)));
-        });
-        return Effect.sync(() => watcher.close());
+        };
+        NodeFS.watchFile(stopFile, { interval: 5 }, check);
+        // The stop file is written before exitCode is first awaited.
+        check();
+        return Effect.sync(() => NodeFS.unwatchFile(stopFile, check));
       });
       const layerSpawner = Layer.succeed(
         ChildProcessSpawner.ChildProcessSpawner,

@@ -245,11 +245,22 @@ mod tests {
                 .unwrap()
                 .is_none()
         );
-        assert!(destination(vec![window(1, "HackerAI"), window(1, "HackerAI")], 1, "HackerAI").is_err());
         assert!(
-            destination(vec![window(2, "HackerAI"), window(1, "HackerAI")], 1, "HackerAI")
-                .unwrap()
-                .is_some()
+            destination(
+                vec![window(1, "HackerAI"), window(1, "HackerAI")],
+                1,
+                "HackerAI"
+            )
+            .is_err()
+        );
+        assert!(
+            destination(
+                vec![window(2, "HackerAI"), window(1, "HackerAI")],
+                1,
+                "HackerAI"
+            )
+            .unwrap()
+            .is_some()
         );
     }
     #[test]
@@ -263,7 +274,9 @@ mod tests {
             next_event(&mut events, deadline).unwrap_err().to_string(),
             "HackerAI did not become visible."
         );
-        hyprland.write_all(b"openwindow>>1,1,hackerai,HackerAI\n").unwrap();
+        hyprland
+            .write_all(b"openwindow>>1,1,hackerai,HackerAI\n")
+            .unwrap();
         assert!(next_event(&mut events, deadline).is_ok());
         drop(hyprland);
         assert_eq!(

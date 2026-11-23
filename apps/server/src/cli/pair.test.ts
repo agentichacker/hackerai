@@ -512,7 +512,7 @@ describe("hackerai pair", () => {
           if (Exit.isFailure(exit)) {
             assert.include(
               String(Cause.squash(exit.cause)),
-              `hackerai@0.0.45 pair --base-dir ${baseDir}`,
+              `npx @hackerai/cli@0.0.45 pair --base-dir ${baseDir}`,
             );
           }
         }),

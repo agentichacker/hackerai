@@ -5007,9 +5007,8 @@
     " をこのデバイスから削除しますか？"
   ],
   "e4881cc289fa945c": "ここに保存されているペアリング、資格情報、キャッシュされたスレッドが削除されます。",
-  "849028e0a146ac5b": [
-    "It stays on your HackerAI Connect account and keeps its host space. Deregister it in",
-    " ",
+  "d94bbadb9b0e962c": [
+    "It stays on your HackerAI Connect account and keeps its host space. Deregister it in ",
     {
       "i": 1,
       "k": "_gt_value_1",

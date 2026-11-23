@@ -495,7 +495,8 @@ function ApiKeySection({
     submitting.current = true;
     setError(null);
     setStatus("checking");
-    try {
+    // React Compiler rejects `try`/`finally` without `catch`, so reset the guard on the promise.
+    await (async () => {
       const generatorId = apiKeyTextGeneratorId(choice);
       const config: TextGeneratorConfig = {
         kind: "openaiCompatible",
@@ -563,9 +564,9 @@ function ApiKeySection({
       });
       setApiKey("");
       setPicked(null);
-    } finally {
+    })().finally(() => {
       submitting.current = false;
-    }
+    });
   };
 
   if (done !== null) {

@@ -11,10 +11,10 @@ describe("MCP app links", () => {
       return new URL(mcpHandoffAction(app, MCP_URL)!.link);
     };
     const poke = opened("poke");
-    expect(poke.searchParams.get("name")).toBe("HackerAI");
+    expect(poke.searchParams.get("name")).toBe("HackerAI Code");
     expect(poke.searchParams.get("url")).toBe(MCP_URL);
     const claude = opened("claude");
-    expect(claude.searchParams.get("connectorName")).toBe("HackerAI");
+    expect(claude.searchParams.get("connectorName")).toBe("HackerAI Code");
     expect(claude.searchParams.get("connectorUrl")).toBe(MCP_URL);
   });
 
