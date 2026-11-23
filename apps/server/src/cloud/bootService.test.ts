@@ -268,7 +268,7 @@ const makeHarness = Effect.fn("test.make_boot_service_harness")(function* (
       // `--no-block` only queues the job, so systemd reports success even when it refuses it.
       const failed =
         command === control.failCommand ||
-        (refusedStart && command === "systemctl --user restart HackerAIcode.service");
+        (refusedStart && command === "systemctl --user restart hackerai.service");
       if (!failed && command.startsWith("loginctl enable-linger --no-ask-password ")) {
         control.linger = "yes";
         control.managerReachable ||= control.lingerStartsManager;
@@ -921,7 +921,7 @@ it.layer(NodeServices.layer)("boot service install", (it) => {
             ? [
                 "systemctl --user stop hackerai.service",
                 "systemctl --user reset-failed hackerai.service",
-                "systemctl --user restart HackerAIcode.service",
+                "systemctl --user restart hackerai.service",
               ]
             : [
                 "launchctl bootout --wait gui/501/com.hackerai.hackerai.service",
@@ -1253,7 +1253,7 @@ process.disconnect();
         "systemctl --user stop hackerai.service",
         "repair",
         "systemctl --user reset-failed hackerai.service",
-        "systemctl --user restart HackerAIcode.service",
+        "systemctl --user restart hackerai.service",
       ]);
       expect(control.active).toBe(true);
       control.enabled = false;
@@ -1264,7 +1264,7 @@ process.disconnect();
       commands.length = 0;
       yield* service.withStopped(Effect.sync(() => commands.push("repair")));
       expect(commands).toContain("systemctl --user stop hackerai.service");
-      expect(commands).not.toContain("systemctl --user restart HackerAIcode.service");
+      expect(commands).not.toContain("systemctl --user restart hackerai.service");
       expect(control.active).toBe(false);
       control.enabled = true;
       control.active = true;
@@ -1455,7 +1455,7 @@ process.disconnect();
         "systemctl --user stop hackerai.service",
         "systemctl --user daemon-reload",
         "systemctl --user reset-failed hackerai.service",
-        "systemctl --user restart HackerAIcode.service",
+        "systemctl --user restart hackerai.service",
       ]);
     }),
   );
@@ -1489,7 +1489,7 @@ process.disconnect();
         ).toEqual([
           "systemctl --user stop hackerai.service",
           "systemctl --user reset-failed hackerai.service",
-          "systemctl --user restart HackerAIcode.service",
+          "systemctl --user restart hackerai.service",
         ]);
       }
     }),

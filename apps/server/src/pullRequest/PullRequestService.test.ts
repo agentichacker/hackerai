@@ -1232,7 +1232,7 @@ it.effect("puts the author a query names exactly ahead of those it only begins",
     assert.deepStrictEqual(queries, ["theo"]);
     assert.deepStrictEqual(
       result.authors.map((author) => author.login),
-      ["your-org", "octocat", "theo-browne"],
+      ["octocat", "your-org", "theo-browne"],
     );
     assert.strictEqual(result.truncated, true);
   }),

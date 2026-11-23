@@ -513,12 +513,12 @@ export function formatConnectReachable(
 export const HACKERAI_CONNECT_TROUBLESHOOTING_SECTIONS = [
   "the-hosts-tunnel-is-offline",
   "port-7844-is-blocked-on-the-host",
-  "the-tunnel-works-but-hackerai-code-does-not-answer",
+  "the-tunnel-works-but-hackerai-does-not-answer",
   "the-hackerai-connect-address-does-not-resolve-or-answer",
   "this-device-cant-reach-hackerai-connect",
   "sign-in-account-or-link-problems",
   "the-clock-is-off",
-  "the-host-runs-an-older-hackerai-code",
+  "the-host-runs-an-older-hackerai",
   "hackerai-connect-returned-an-error",
 ] as const;
 export type HackerAIConnectTroubleshootingSection = (typeof HACKERAI_CONNECT_TROUBLESHOOTING_SECTIONS)[number];
