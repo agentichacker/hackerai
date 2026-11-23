@@ -66,7 +66,11 @@ runs:
         mkdir -p "$GRADLE_USER_HOME" "$CCACHE_DIR"
         rm -rf "$EAS_LOCAL_BUILD_WORKINGDIR"
         printf 'org.gradle.caching=true\norg.gradle.daemon=false\n' > "$GRADLE_USER_HOME/gradle.properties"
-        sudo sed -i 's|http://|https://|g' /etc/apt/hackerai-ubuntu-mirrors.txt /etc/apt/sources.list.d/ubuntu.sources
+        # The mirror file only exists when ./.github/actions/setup-apt-mirrors ran.
+        sudo sed -i 's|http://|https://|g' /etc/apt/sources.list.d/ubuntu.sources
+        if [ -f /etc/apt/hackerai-ubuntu-mirrors.txt ]; then
+          sudo sed -i 's|http://|https://|g' /etc/apt/hackerai-ubuntu-mirrors.txt
+        fi
         sudo apt-get update -qq && sudo apt-get install -y -qq ccache
         ccache --zero-stats
 
