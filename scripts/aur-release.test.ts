@@ -90,6 +90,7 @@ describe.skipIf(HostProcess.Platform.defaultValue() !== "linux")("AUR release", 
       const before = yield* fs.readFileString(recipe);
       const env = {
         PATH: `${tools}:${inherited.PATH}`,
+        HACKERAI_REPOSITORY: "your-org/hackerai",
         RELEASE_TAG: `v${version}`,
         AUR_FIXTURE_RELEASE: fixture,
         AUR_SSH_PRIVATE_KEY: "",

@@ -3435,8 +3435,12 @@ export const verifyWindowsPackagedRuntime = Effect.fn(
   const path = yield* Path.Path;
   const asarPath = path.join(input.packagedAppDir, "resources", WINDOWS_SERVER_ASAR_RESOURCE);
   yield* verifyWindowsPrimaryFffNativeLoad({ ...input, asarPath });
-  yield* verifyWindowsPackagedAppBoot(input);
   const hostPlatform = yield* HostProcess.Platform;
+  const hostArchitecture = yield* HostProcess.Architecture;
+  // An arm64 app cannot boot on an x64 host; matching-arch verification runs in CI.
+  if (hostPlatform === "win32" && hostArchitecture === input.targetArch) {
+    yield* verifyWindowsPackagedAppBoot(input);
+  }
   if (hostPlatform !== "win32") {
     yield* Effect.log(
       `[desktop-artifact] Skipped the bundle self-check on a ${hostPlatform} host.`,
