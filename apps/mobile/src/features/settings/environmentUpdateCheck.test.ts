@@ -4,6 +4,11 @@ import { describe, expect, it, vi } from "vite-plus/test";
 
 import { environmentReleaseCheckAtom, releaseCheckError } from "./environmentUpdateCheck";
 
+// The real package loads React Native, which the unit runner cannot parse.
+vi.mock("expo-constants", () => ({
+  default: { expoConfig: { version: "2.3.0", extra: { releaseRepository: "example/hackerai" } } },
+}));
+
 function stubHangingFetch() {
   const { promise: called, resolve } = Promise.withResolvers<AbortSignal>();
   vi.stubGlobal("fetch", (_url: string, init: { signal: AbortSignal }) => {
