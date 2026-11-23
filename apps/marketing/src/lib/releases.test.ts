@@ -19,7 +19,10 @@ describe("fetchLatestRelease", () => {
   });
 
   it("fails closed when no release repository is configured", async () => {
+    // GitHub Actions sets GITHUB_REPOSITORY, so clear every source the site reads.
+    vi.stubEnv("HACKERAI_RELEASE_REPOSITORY", "");
     vi.stubEnv("HACKERAI_REPOSITORY", "");
+    vi.stubEnv("GITHUB_REPOSITORY", "");
     const { fetchLatestRelease } = await import("./releases");
 
     await expect(fetchLatestRelease("stable")).rejects.toThrow(
