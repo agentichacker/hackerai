@@ -468,21 +468,25 @@ jobs:
           $shortcut = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\$env:PRODUCT_NAME.lnk"
           if (-not (Test-Path -LiteralPath $shortcut)) { throw "The Start menu shortcut $shortcut is missing." }
 
-          # Add/Remove Programs lists the package name, so match the entry by where it was installed.
-          $entries = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
-            ForEach-Object { Get-ItemProperty $_.PSPath }
-          $entry = $entries |
-            Where-Object { $_.InstallLocation -and $_.InstallLocation.TrimEnd('\') -eq $installDir.TrimEnd('\') } |
-            Select-Object -First 1
-          if (-not $entry) {
-            $entries | ForEach-Object { Write-Host "Uninstall entry: '$($_.DisplayName)' in '$($_.InstallLocation)'" }
+          # Add/Remove Programs lists "<product> <version>" and keeps no install path in that entry,
+          # so match each entry by the uninstaller it points at (32- and 64-bit views can both exist).
+          $uninstallRoot = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall'
+          $entries = @(Get-ChildItem $uninstallRoot |
+            ForEach-Object { Get-ItemProperty $_.PSPath } |
+            Where-Object { $_.UninstallString -and $_.UninstallString.Contains($installDir) })
+          if ($entries.Count -eq 0) {
+            Get-ChildItem $uninstallRoot | ForEach-Object { Get-ItemProperty $_.PSPath } |
+              ForEach-Object { Write-Host "Uninstall entry: '$($_.DisplayName)' '$($_.UninstallString)'" }
             throw 'The uninstall entry is missing from the registry.'
           }
+          $entry = $entries[0]
           if ($entry.DisplayVersion -ne $version) {
             throw "The uninstall entry reports version $($entry.DisplayVersion)."
           }
-          "UNINSTALL_KEY=$($entry.PSChildName)" >> $env:GITHUB_ENV
-          Write-Host "Uninstall entry: '$($entry.DisplayName)' $($entry.DisplayVersion), publisher '$($entry.Publisher)', key $($entry.PSChildName)."
+          "UNINSTALL_KEYS=$($entries.PSChildName -join ' ')" >> $env:GITHUB_ENV
+          $entry |
+            Select-Object DisplayName, DisplayVersion, Publisher, DisplayIcon, UninstallString, QuietUninstallString |
+            Format-List | Out-String | Write-Host
 
       - name: Read the installed executable's version resource and icon
         id: version_info
@@ -572,8 +576,10 @@ jobs:
 
           $shortcut = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\$env:PRODUCT_NAME.lnk"
           if (Test-Path -LiteralPath $shortcut) { throw "The Start menu shortcut was not removed." }
-          if (Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\$env:UNINSTALL_KEY") {
-            throw 'The uninstall entry is still in the registry.'
+          foreach ($key in $env:UNINSTALL_KEYS.Split(' ', [StringSplitOptions]::RemoveEmptyEntries)) {
+            if (Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\$key") {
+              throw "The uninstall entry $key is still in the registry."
+            }
           }
           Write-Host 'Uninstalled cleanly.'
 
