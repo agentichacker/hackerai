@@ -440,6 +440,7 @@ jobs:
 
       # One-click NSIS installers install per user without a prompt when given /S.
       - name: Install silently
+        id: install
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -466,17 +467,25 @@ jobs:
 
           $shortcut = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\$env:PRODUCT_NAME.lnk"
           if (-not (Test-Path -LiteralPath $shortcut)) { throw "The Start menu shortcut $shortcut is missing." }
-          $entry = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
-            ForEach-Object { Get-ItemProperty $_.PSPath } |
-            Where-Object { $_.DisplayName -eq $env:PRODUCT_NAME } |
+
+          # Add/Remove Programs lists the package name, so match the entry by where it was installed.
+          $entries = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
+            ForEach-Object { Get-ItemProperty $_.PSPath }
+          $entry = $entries |
+            Where-Object { $_.InstallLocation -and $_.InstallLocation.TrimEnd('\') -eq $installDir.TrimEnd('\') } |
             Select-Object -First 1
-          if (-not $entry) { throw 'The uninstall entry is missing from the registry.' }
+          if (-not $entry) {
+            $entries | ForEach-Object { Write-Host "Uninstall entry: '$($_.DisplayName)' in '$($_.InstallLocation)'" }
+            throw 'The uninstall entry is missing from the registry.'
+          }
           if ($entry.DisplayVersion -ne $version) {
             throw "The uninstall entry reports version $($entry.DisplayVersion)."
           }
-          Write-Host "Uninstall entry: $($entry.DisplayName) $($entry.DisplayVersion), publisher '$($entry.Publisher)'."
+          "UNINSTALL_KEY=$($entry.PSChildName)" >> $env:GITHUB_ENV
+          Write-Host "Uninstall entry: '$($entry.DisplayName)' $($entry.DisplayVersion), publisher '$($entry.Publisher)', key $($entry.PSChildName)."
 
       - name: Read the installed executable's version resource and icon
+        id: version_info
         shell: pwsh
         env:
           LAUNCH_CHECK: ${{ runner.temp }}/launch-check
@@ -501,7 +510,11 @@ jobs:
           $bitmap.Dispose()
           Write-Host "Saved the application icon."
 
+      # Each check after the install runs even when an earlier one failed, so one job reports
+      # every problem. "Require every check" fails the job if any of them did.
       - name: Open the seeded thread in the installed app
+        id: seeded
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         shell: bash
         env:
           LAUNCH_CHECK: ${{ runner.temp }}/launch-check
@@ -511,6 +524,8 @@ jobs:
             --executable "$INSTALLED_EXE" --artifacts-dir "$LAUNCH_CHECK/seeded"
 
       - name: Start the installed app with an empty home
+        id: first_run
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         shell: bash
         env:
           LAUNCH_CHECK: ${{ runner.temp }}/launch-check
@@ -528,6 +543,8 @@ jobs:
           if-no-files-found: ignore
 
       - name: Uninstall silently
+        id: uninstall
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -555,8 +572,14 @@ jobs:
 
           $shortcut = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\$env:PRODUCT_NAME.lnk"
           if (Test-Path -LiteralPath $shortcut) { throw "The Start menu shortcut was not removed." }
-          $entry = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
-            ForEach-Object { Get-ItemProperty $_.PSPath } |
-            Where-Object { $_.DisplayName -eq $env:PRODUCT_NAME }
-          if ($entry) { throw 'The uninstall entry is still in the registry.' }
+          if (Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\$env:UNINSTALL_KEY") {
+            throw 'The uninstall entry is still in the registry.'
+          }
           Write-Host 'Uninstalled cleanly.'
+
+      - name: Require every check
+        if: ${{ always() && (steps.version_info.outcome != 'success' || steps.seeded.outcome != 'success' || steps.first_run.outcome != 'success' || steps.uninstall.outcome != 'success') }}
+        shell: bash
+        run: |
+          echo "::error::Windows verification did not pass: install=${{ steps.install.outcome }}, version_info=${{ steps.version_info.outcome }}, seeded=${{ steps.seeded.outcome }}, first_run=${{ steps.first_run.outcome }}, uninstall=${{ steps.uninstall.outcome }}."
+          exit 1
