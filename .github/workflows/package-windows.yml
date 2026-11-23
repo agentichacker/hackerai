@@ -297,8 +297,6 @@ jobs:
     needs: [package]
     runs-on: windows-2025
     timeout-minutes: 25
-    env:
-      LAUNCH_CHECK: ${{ runner.temp }}/launch-check
     steps:
       # The bundles target Node 24 syntax; prefer the newest Node the image ships.
       - name: Select Node.js
@@ -459,6 +457,8 @@ jobs:
 
       - name: Read the installed executable's version resource and icon
         shell: pwsh
+        env:
+          LAUNCH_CHECK: ${{ runner.temp }}/launch-check
         run: |
           $ErrorActionPreference = 'Stop'
           New-Item -ItemType Directory -Force -Path $env:LAUNCH_CHECK | Out-Null
@@ -481,6 +481,8 @@ jobs:
 
       - name: Open the seeded thread in the installed app
         shell: bash
+        env:
+          LAUNCH_CHECK: ${{ runner.temp }}/launch-check
         run: |
           set -euo pipefail
           node verify/smoke-desktop-app.mjs \
@@ -488,6 +490,8 @@ jobs:
 
       - name: Start the installed app with an empty home
         shell: bash
+        env:
+          LAUNCH_CHECK: ${{ runner.temp }}/launch-check
         run: |
           set -euo pipefail
           node verify/smoke-desktop-first-run.mjs \
@@ -498,7 +502,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: windows-launch-check
-          path: ${{ env.LAUNCH_CHECK }}
+          path: ${{ runner.temp }}/launch-check
           if-no-files-found: ignore
 
       - name: Uninstall silently
