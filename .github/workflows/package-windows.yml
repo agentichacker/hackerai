@@ -1,9 +1,12 @@
 name: Package Windows desktop (unsigned)
 
-# Builds the Windows x64 NSIS installer from source without publishing a release.
-# The release pipeline is gated on repository variables and signing secrets that
-# this checkout does not have; this workflow only packages and uploads the
-# installer so the Windows build can be exercised and inspected.
+# Builds the Windows x64 NSIS installer the way release.yml's Windows job does, then proves it on a
+# Windows machine: silent install, launch, packaged natives, and silent uninstall. The release
+# pipeline is gated on repository variables and signing secrets; this workflow packages, verifies,
+# and uploads the installer without publishing a release, so the installer is unsigned.
+#
+#   gh workflow run package-windows.yml --ref main
+#   gh run watch && gh run download --name desktop-win-x64
 
 on:
   workflow_dispatch:
@@ -15,11 +18,22 @@ concurrency:
   group: package-windows-${{ github.ref }}
   cancel-in-progress: false
 
+env:
+  # electron-builder leaves the default arch (x64) out of the unpacked app's directory name.
+  UNPACKED_DIR: win-unpacked
+  PRODUCT_NAME: HackerAI (Beta)
+  # Version 0.1.11 is a stable release, so the build carries the stable channel's stamp.
+  TELEMETRY_CHANNEL: stable
+  # The artifact names, AUR recipes and update manifests all use this prefix.
+  ARTIFACT_PREFIX: HackerAI-Code
+
 jobs:
-  package:
-    name: Package Windows x64
+  # The WSL backend runs the Linux CLI archive inside the distro, so the Windows desktop embeds
+  # the same-arch archive the release attaches.
+  wsl-runtime:
+    name: Build WSL runtime (Linux x64)
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 40
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -33,9 +47,117 @@ jobs:
         uses: ./.github/actions/setup-ci-deps
         with:
           install-args: --filter=hackerai... --filter=@hackerai/web... --filter=@hackerai/desktop... --filter=@hackerai/scripts...
-          # A filtered install that starts from the current full store adds
-          # nothing worth a second copy of it.
           save-pnpm-store: false
+
+      - name: Resolve build version
+        id: version
+        shell: bash
+        run: echo "version=$(node -p "require('./apps/desktop/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Align package versions to the build version
+        shell: bash
+        run: node scripts/update-release-package-versions.ts "${{ steps.version.outputs.version }}"
+
+      - name: Build JS bundle
+        shell: bash
+        env:
+          HACKERAI_TELEMETRY_CHANNEL: ${{ env.TELEMETRY_CHANNEL }}
+        run: vp run build:desktop:bundle
+
+      # The CLI archive ships this client; the desktop build brands its own copy.
+      - name: Apply web client branding
+        shell: bash
+        run: node scripts/apply-web-brand-assets.ts production apps/server/dist/client
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Build resource monitor
+        shell: bash
+        run: cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target x86_64-unknown-linux-gnu
+
+      - name: Build CLI single-executable
+        shell: bash
+        env:
+          # The executable bundles the server again, so it needs the same stamp as the JS bundle.
+          HACKERAI_TELEMETRY_CHANNEL: ${{ env.TELEMETRY_CHANNEL }}
+        run: node apps/server/scripts/cli.ts build-exe --verbose
+
+      - name: Stage resource monitor for the CLI archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          target_dir="$RUNNER_TEMP/cli-resource-monitor/linux-x64"
+          mkdir -p "$target_dir"
+          cp native/resource-monitor/target/x86_64-unknown-linux-gnu/release/hackerai-resource-monitor "$target_dir/"
+
+      # The Linux archive ships libatomic.so.1 and points HackerAI's RUNPATH at it.
+      - name: Install patchelf
+        shell: bash
+        run: command -v patchelf || { sudo apt-get update && sudo apt-get install -y patchelf; }
+
+      - name: Build CLI archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/build-cli-archive.ts \
+            --platform linux --arch x64 --version "${{ steps.version.outputs.version }}" \
+            --resource-monitor-dir "$RUNNER_TEMP/cli-resource-monitor" --output-dir release-cli
+
+      - name: Smoke-test CLI archive
+        shell: bash
+        run: node scripts/smoke-cli-archive.ts --archive release-cli/* --expect-version "${{ steps.version.outputs.version }}"
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cli-linux-x64
+          path: release-cli/*
+          if-no-files-found: error
+          # The archive is already gzip; deflating it again saves under 2%.
+          compression-level: 0
+
+  package:
+    name: Package Windows x64
+    runs-on: ubuntu-24.04
+    # Waits for the Linux CLI archive inside its own budget (see "Wait for Linux CLI archive").
+    timeout-minutes: 70
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          sparse-checkout: |
+            /*
+            !/.repos/
+          sparse-checkout-cone-mode: false
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=hackerai... --filter=@hackerai/web... --filter=@hackerai/desktop... --filter=@hackerai/scripts...
+          save-pnpm-store: false
+
+      - name: Resolve build version
+        id: version
+        shell: bash
+        run: echo "version=$(node -p "require('./apps/desktop/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Align package versions to the build version
+        shell: bash
+        run: node scripts/update-release-package-versions.ts "${{ steps.version.outputs.version }}"
+
+      - name: Build JS bundle
+        shell: bash
+        env:
+          HACKERAI_TELEMETRY_CHANNEL: ${{ env.TELEMETRY_CHANNEL }}
+        run: vp run build:desktop:bundle
+
+      - name: Apply web client branding
+        shell: bash
+        run: node scripts/apply-web-brand-assets.ts production apps/server/dist/client
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
@@ -48,29 +170,367 @@ jobs:
         with:
           tool: cargo-xwin@0.23.1
 
+      # Built here rather than inside the desktop build so that build can reuse the binary.
       - name: Build resource monitor
+        shell: bash
         run: cargo xwin build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target x86_64-pc-windows-msvc
 
-      - name: Build JS bundle
+      # This job starts alongside the WSL runtime job, which uploads the archive partway
+      # through, so the wait sits after all other setup. It stops early if that job failed.
+      - name: Wait for Linux CLI archive
+        shell: bash
+        timeout-minutes: 45
         env:
-          HACKERAI_TELEMETRY_CHANNEL: dev
-        run: vp run build:desktop:bundle
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT: cli-linux-x64
+          WSL_JOB: Build WSL runtime (Linux x64)
+        run: |
+          set -euo pipefail
+          auth=(-H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json")
+          run="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          deadline=$((SECONDS + 44 * 60))
+          api() { curl -fsSL --retry 3 --retry-all-errors --connect-timeout 10 "${auth[@]}" "$1"; }
+          while true; do
+            if api "$run/artifacts?name=$ARTIFACT" | jq -e '.total_count > 0' >/dev/null; then
+              echo "$ARTIFACT is ready."
+              break
+            fi
+            state="$(api "$run/attempts/$GITHUB_RUN_ATTEMPT/jobs?per_page=100" \
+              | jq -r --arg job "$WSL_JOB" '.jobs[] | select(.name == $job) | .conclusion')" || state=""
+            case "$state" in
+              failure|cancelled|skipped)
+                echo "::error::The WSL runtime job ended with $state, so $ARTIFACT will not arrive."
+                exit 1 ;;
+            esac
+            if (( SECONDS > deadline )); then
+              echo "::error::$ARTIFACT did not arrive in time."
+              exit 1
+            fi
+            echo "Waiting for $ARTIFACT..."
+            sleep 15
+          done
 
-      - name: Package Windows installer
+      - name: Download Linux CLI archive for WSL
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: cli-linux-x64
+          path: wsl-runtime
+
+      - name: Build desktop artifact
+        shell: bash
         env:
           HACKERAI_DESKTOP_REUSE_RESOURCE_MONITOR: true
-        run: >
-          vp run dist:desktop:artifact
-          --platform win
-          --target nsis
-          --arch x64
-          --skip-build
-          --verbose
+          BUILD_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          vp run dist:desktop:artifact \
+            --platform win \
+            --target nsis \
+            --arch x64 \
+            --build-version "$BUILD_VERSION" \
+            --skip-build \
+            --keep-stage \
+            --verbose \
+            --wsl-runtime "$GITHUB_WORKSPACE"/wsl-runtime/hackerai-*-linux-x64.tar.gz
+
+      # The verify job runs what this host could not: the packaged natives, and the
+      # installed app itself. Its scripts are bundled so that job needs no install.
+      - name: Stage verification inputs
+        shell: bash
+        env:
+          BUILD_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p verify/fixtures/desktop-launch verify/node_modules
+          unpacked=$(ls -d "${TMPDIR:-/tmp}"/hackerai-desktop-win-stage-*/app/dist/"$UNPACKED_DIR")
+          tar -C "$(dirname "$unpacked")" -cf verify/unpacked.tar "$(basename "$unpacked")"
+          esbuild=scripts/node_modules/.bin/esbuild
+          banner="import{createRequire as __cr}from'node:module';const require=__cr(import.meta.url);"
+          # build-desktop-artifact.ts's own import.meta.main guard must not run its CLI inside the bundle.
+          "$esbuild" scripts/verify-windows-desktop-artifact.ts --bundle --platform=node --format=esm \
+            --target=node24 --define:import.meta.main=false --banner:js="$banner" \
+            --outfile=verify/verify-windows-desktop-artifact.mjs
+          # The launch checks keep playwright-core external; it is pure JavaScript, so the Linux
+          # copy runs on Windows from beside the bundles.
+          for script in smoke-desktop-app smoke-desktop-first-run; do
+            "$esbuild" "scripts/$script.ts" --bundle --platform=node --format=esm --target=node24 \
+              --banner:js="$banner" --external:playwright-core --outfile="verify/$script.mjs"
+          done
+          cp -R "$(realpath scripts/node_modules/playwright-core)/." verify/node_modules/playwright-core/
+          # Each bundle locates the fixture beside itself, as the source does beside scripts/.
+          cp scripts/fixtures/desktop-launch/statev2.sqlite verify/fixtures/desktop-launch/
+          printf '%s' "$BUILD_VERSION" > verify/build-version.txt
+          ls -la verify verify/fixtures/desktop-launch
+
+      - name: Upload verification inputs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verify-win-x64
+          path: verify/*
+          if-no-files-found: error
+          retention-days: 3
+          compression-level: 1
+
+      - name: Collect release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-publish
+          for file in release/*.exe release/*.exe.blockmap release/latest.yml; do
+            test -e "$file"
+            cp "$file" release-publish/
+          done
+          ls -la release-publish
+          sha256sum release-publish/* | tee release-publish/SHA256SUMS.txt
 
       - name: Upload installer
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: hackerai-windows-x64-unsigned
-          path: release/*
+          name: desktop-win-x64
+          path: release-publish/*
           if-no-files-found: error
+          # Installers and blockmaps are already compressed; deflating them again saves under 0.3%.
           compression-level: 0
+
+  verify:
+    name: Verify on Windows x64
+    needs: [package]
+    runs-on: windows-2025
+    timeout-minutes: 25
+    env:
+      LAUNCH_CHECK: ${{ runner.temp }}/launch-check
+    steps:
+      # The bundles target Node 24 syntax; prefer the newest Node the image ships.
+      - name: Select Node.js
+        shell: bash
+        run: |
+          set -euo pipefail
+          node_bin="$(ls -d /c/hostedtoolcache/windows/node/*/x64 2>/dev/null | sort -V | tail -n 1 || true)"
+          if [[ -n "$node_bin" ]] && "$node_bin/node.exe" -e "process.exit(Number(process.versions.node.split('.')[0]) >= 24 ? 0 : 1)"; then
+            echo "$node_bin" >> "$GITHUB_PATH"
+          fi
+          node --version
+
+      - name: Download verification inputs
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: verify-win-x64
+          path: verify
+
+      - name: Download installer
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: desktop-win-x64
+          path: installer
+
+      - name: Verify packaged natives
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -C verify -xf verify/unpacked.tar
+          node verify/verify-windows-desktop-artifact.mjs \
+            --app-dir "$(cygpath -w "$PWD/verify/$UNPACKED_DIR")" \
+            --arch x64 --build-version "$(cat verify/build-version.txt)" --verbose
+
+      - name: Inspect the packaged payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module - "$(cygpath -m "$PWD/verify/$UNPACKED_DIR")" <<'EOF'
+          import { createHash } from "node:crypto";
+          import { readFileSync, readdirSync } from "node:fs";
+          import { join } from "node:path";
+
+          const root = process.argv[2];
+          const walk = (dir) =>
+            readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+              const path = join(dir, entry.name);
+              return entry.isDirectory() ? walk(path) : [path];
+            });
+          const files = walk(root);
+          console.log(`Packaged payload: ${files.length} files.`);
+          for (const file of files.filter((file) => !file.includes("locales"))) {
+            console.log(`  ${file.slice(root.length + 1)}`);
+          }
+
+          const archivePath = join(root, "resources", "wsl-runtime.tar.gz");
+          const hashPath = `${archivePath}.sha256`;
+          const actual = createHash("sha256").update(readFileSync(archivePath)).digest("hex");
+          const recorded = readFileSync(hashPath, "utf8").trim();
+          if (actual !== recorded) {
+            throw new Error(`WSL runtime digest mismatch: recorded ${recorded}, actual ${actual}`);
+          }
+          console.log(`WSL runtime embedded (sha256 ${actual}).`);
+
+          // Both encodings Windows executables and Node packages use.
+          const previousBrand = /t3code|t3\.code|pingdotgg|t3tools/gi;
+          let hits = 0;
+          for (const file of files) {
+            const bytes = readFileSync(file);
+            const count = (text) => (text.match(previousBrand) ?? []).length;
+            const found =
+              count(bytes.toString("latin1")) + count(bytes.toString("utf16le")) +
+              (previousBrand.test(file) ? 1 : 0);
+            if (found > 0) {
+              hits += found;
+              console.log(`  previous brand: ${file.slice(root.length + 1)} (${found})`);
+            }
+          }
+          if (hits > 0) throw new Error(`The packaged payload mentions the previous brand ${hits} times.`);
+          console.log("No previous-brand strings in the packaged payload.");
+          EOF
+
+      # cargo-xwin links this binary on Linux, and nothing else runs it before users do.
+      - name: Smoke-test resource monitor
+        shell: bash
+        env:
+          MONITOR: verify/${{ env.UNPACKED_DIR }}/resources/resource-monitor/hackerai-resource-monitor.exe
+          EXPECTED_ARCH: x86_64
+        run: |
+          node --input-type=module <<'EOF'
+          import { spawn } from "node:child_process";
+          const monitor = spawn(process.env.MONITOR, { stdio: ["pipe", "pipe", "inherit"] });
+          monitor.stdout.setEncoding("utf8");
+          let output = "";
+          const exited = new Promise((resolve) => monitor.on("close", resolve));
+          const hello = await new Promise((resolve, reject) => {
+            monitor.on("error", reject);
+            monitor.on("close", () => reject(new Error(`Resource monitor exited before hello: ${output}`)));
+            monitor.stdout.on("data", (chunk) => {
+              output += chunk;
+              const end = output.indexOf("\n");
+              if (end !== -1) resolve(JSON.parse(output.slice(0, end)));
+            });
+          });
+          if (hello.type !== "hello" || hello.arch !== process.env.EXPECTED_ARCH) {
+            throw new Error(`Unexpected hello: ${JSON.stringify(hello)}`);
+          }
+          const send = (message) => monitor.stdin.write(`${JSON.stringify({ version: hello.version, ...message })}\n`);
+          send({ type: "configure", rootPid: process.pid, sampleIntervalMs: 1000 });
+          send({ type: "sampleNow", requestId: "verify" });
+          monitor.stdin.end();
+          const exitCode = await exited;
+          const sample = output
+            .split("\n")
+            .filter((line) => line.trim())
+            .map((line) => JSON.parse(line))
+            .find((message) => message.requestId === "verify");
+          if (exitCode !== 0 || sample?.type !== "snapshot" || !sample.processes.some((p) => p.pid === process.pid)) {
+            throw new Error(`Resource monitor exited ${exitCode} with: ${output}`);
+          }
+          console.log(`Resource monitor sampled ${sample.scannedProcessCount} processes.`);
+          EOF
+
+      # One-click NSIS installers install per user without a prompt when given /S.
+      - name: Install silently
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = Get-ChildItem -LiteralPath "$env:GITHUB_WORKSPACE\installer" -Filter '*.exe' |
+            Where-Object { $_.Name -eq "$env:ARTIFACT_PREFIX-$(Get-Content verify/build-version.txt)-x64.exe" } |
+            Select-Object -First 1
+          if (-not $installer) { throw "The installer was not downloaded." }
+          Write-Host "Installing $($installer.Name) silently."
+          $process = Start-Process -FilePath $installer.FullName -ArgumentList '/S' -PassThru -Wait
+          if ($process.ExitCode -ne 0) { throw "The installer exited with $($process.ExitCode)." }
+
+          $installDir = Join-Path $env:LOCALAPPDATA "Programs\$env:PRODUCT_NAME"
+          $exe = Join-Path $installDir "$env:PRODUCT_NAME.exe"
+          if (-not (Test-Path -LiteralPath $exe)) {
+            Get-ChildItem (Join-Path $env:LOCALAPPDATA 'Programs') | ForEach-Object { Write-Host "Found $($_.FullName)" }
+            throw "The installer did not create $exe."
+          }
+          "INSTALLED_EXE=$exe" >> $env:GITHUB_ENV
+          "INSTALL_DIR=$installDir" >> $env:GITHUB_ENV
+          Write-Host "Installed to $installDir"
+          Get-ChildItem -LiteralPath $installDir | ForEach-Object { Write-Host "  $($_.Name)" }
+
+          $shortcut = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\$env:PRODUCT_NAME.lnk"
+          if (-not (Test-Path -LiteralPath $shortcut)) { throw "The Start menu shortcut $shortcut is missing." }
+          $entry = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
+            ForEach-Object { Get-ItemProperty $_.PSPath } |
+            Where-Object { $_.DisplayName -eq $env:PRODUCT_NAME } |
+            Select-Object -First 1
+          if (-not $entry) { throw 'The uninstall entry is missing from the registry.' }
+          if ($entry.DisplayVersion -ne (Get-Content verify/build-version.txt)) {
+            throw "The uninstall entry reports version $($entry.DisplayVersion)."
+          }
+          Write-Host "Uninstall entry: $($entry.DisplayName) $($entry.DisplayVersion), publisher '$($entry.Publisher)'."
+
+      - name: Read the installed executable's version resource and icon
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path $env:LAUNCH_CHECK | Out-Null
+          $info = (Get-Item -LiteralPath $env:INSTALLED_EXE).VersionInfo
+          $info |
+            Select-Object ProductName, ProductVersion, FileVersion, CompanyName, FileDescription, LegalCopyright |
+            Format-List | Out-String | Write-Host
+          if ($info.ProductVersion -ne (Get-Content verify/build-version.txt)) {
+            throw "The executable reports ProductVersion $($info.ProductVersion)."
+          }
+          if ($info.ProductName -ne $env:PRODUCT_NAME) { throw "Unexpected ProductName $($info.ProductName)." }
+
+          Add-Type -AssemblyName System.Drawing
+          $icon = [System.Drawing.Icon]::ExtractAssociatedIcon($env:INSTALLED_EXE)
+          if (-not $icon) { throw 'The executable has no icon.' }
+          $bitmap = $icon.ToBitmap()
+          $bitmap.Save((Join-Path $env:LAUNCH_CHECK 'app-icon.png'), [System.Drawing.Imaging.ImageFormat]::Png)
+          $bitmap.Dispose()
+          Write-Host "Saved the application icon."
+
+      - name: Open the seeded thread in the installed app
+        shell: bash
+        run: |
+          set -euo pipefail
+          node verify/smoke-desktop-app.mjs \
+            --executable "$INSTALLED_EXE" --artifacts-dir "$LAUNCH_CHECK/seeded"
+
+      - name: Start the installed app with an empty home
+        shell: bash
+        run: |
+          set -euo pipefail
+          node verify/smoke-desktop-first-run.mjs \
+            --executable "$INSTALLED_EXE" --artifacts-dir "$LAUNCH_CHECK/first-run"
+
+      - name: Upload launch check
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: windows-launch-check
+          path: ${{ env.LAUNCH_CHECK }}
+          if-no-files-found: ignore
+
+      - name: Uninstall silently
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installDir = $env:INSTALL_DIR
+          # A launch check force-closes the app; give what it left behind a moment to exit.
+          $deadline = (Get-Date).AddSeconds(30)
+          while (@(Get-Process | Where-Object { $_.Path -and $_.Path.StartsWith($installDir, [StringComparison]::OrdinalIgnoreCase) }).Count -gt 0) {
+            if ((Get-Date) -gt $deadline) {
+              Get-Process | Where-Object { $_.Path -and $_.Path.StartsWith($installDir, [StringComparison]::OrdinalIgnoreCase) } |
+                ForEach-Object { Write-Warning "Stopping $($_.ProcessName) ($($_.Id)) left running."; Stop-Process -Id $_.Id -Force }
+              break
+            }
+            Start-Sleep -Seconds 1
+          }
+
+          $uninstaller = Join-Path $installDir "Uninstall $env:PRODUCT_NAME.exe"
+          if (-not (Test-Path -LiteralPath $uninstaller)) { throw "The uninstaller $uninstaller is missing." }
+          # `_?=` keeps the uninstaller from relaunching a copy of itself, so -Wait means it finished.
+          $process = Start-Process -FilePath $uninstaller -ArgumentList '/S', "_?=$installDir" -PassThru -Wait
+          if ($process.ExitCode -ne 0) { throw "The uninstaller exited with $($process.ExitCode)." }
+          # An uninstaller kept in place by `_?=` cannot remove its own file.
+          $left = @(Get-ChildItem -LiteralPath $installDir -Recurse | Where-Object { $_.Name -ne "Uninstall $env:PRODUCT_NAME.exe" })
+          if ($left.Count -gt 0) { $left | ForEach-Object { Write-Host "Left behind: $($_.FullName)" }; throw 'The uninstaller left files behind.' }
+          Remove-Item -LiteralPath $installDir -Recurse -Force
+
+          $shortcut = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\$env:PRODUCT_NAME.lnk"
+          if (Test-Path -LiteralPath $shortcut) { throw "The Start menu shortcut was not removed." }
+          $entry = Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall' |
+            ForEach-Object { Get-ItemProperty $_.PSPath } |
+            Where-Object { $_.DisplayName -eq $env:PRODUCT_NAME }
+          if ($entry) { throw 'The uninstall entry is still in the registry.' }
+          Write-Host 'Uninstalled cleanly.'

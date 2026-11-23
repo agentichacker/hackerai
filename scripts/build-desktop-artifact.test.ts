@@ -600,6 +600,30 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
     ),
   );
 
+  // The AUR recipes and the merged update manifests name release assets this way.
+  it.effect("names release assets after HackerAI Code", () =>
+    Effect.gen(function* () {
+      const config = (platform: "win" | "linux", target: string) =>
+        createBuildConfig(platform, target, "0.1.11", false, false, undefined, undefined);
+      assert.equal(
+        (yield* config("win", "nsis")).artifactName,
+        "HackerAI-Code-${version}-${arch}.${ext}",
+      );
+      assert.equal(
+        (yield* config("linux", "AppImage")).artifactName,
+        "HackerAI-Code-${version}-${arch}.${ext}",
+      );
+      const appImage = (yield* config("linux", "AppImage")).appImage as { artifactName: string };
+      assert.equal(appImage.artifactName, "HackerAI-Code-${arch}.${ext}");
+    }).pipe(
+      Effect.provide(
+        ConfigProvider.layer(
+          ConfigProvider.fromEnv({ env: { GITHUB_REPOSITORY: "your-org/hackerai" } }),
+        ),
+      ),
+    ),
+  );
+
   it.effect("declares Calendar access for hosted commands in macOS builds", () =>
     Effect.gen(function* () {
       for (const version of ["0.1.0", "0.1.1-nightly.20261019.1"]) {

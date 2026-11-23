@@ -2839,7 +2839,7 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
     afterPack: (yield* Path.Path).join(yield* RepoRoot, "scripts/prepare-server-compile-cache.cjs"),
     appId: DESKTOP_APP_ID,
     productName: resolveDesktopProductName(version),
-    artifactName: "HackerAI-${version}-${arch}.${ext}",
+    artifactName: "HackerAI-Code-${version}-${arch}.${ext}",
     electronLanguages: [...DESKTOP_ELECTRON_LANGUAGES],
     files: [
       ...DESKTOP_FILE_EXCLUSIONS,
@@ -2990,8 +2990,8 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
       buildConfig.appImage = {
         artifactName:
           updateChannel === "nightly"
-            ? "HackerAI-Nightly-${arch}.${ext}"
-            : "HackerAI-${arch}.${ext}",
+            ? "HackerAI-Code-Nightly-${arch}.${ext}"
+            : "HackerAI-Code-${arch}.${ext}",
       };
     }
     buildConfig.deb = {
