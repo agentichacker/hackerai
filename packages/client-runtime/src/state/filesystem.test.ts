@@ -186,9 +186,9 @@ describe("browse entry filtering", () => {
   });
 
   it("matches substrings and subsequences, best match first", () => {
-    expect(names("code")).toEqual(["hackerai", "HackerAI-old", "my-hackerai"]);
-    expect(names("hackeraic")).toEqual(["hackerai", "HackerAI-old", "my-hackerai"]);
-    expect(names("tcd")).toEqual(["hackerai", "HackerAI-old", "my-hackerai"]);
+    expect(names("hack")).toEqual(["hackerai", "HackerAI-old", "my-hackerai"]);
+    expect(names("hkra")).toEqual(["hackerai", "HackerAI-old", "my-hackerai"]);
+    expect(names("hra")).toEqual(["hackerai", "HackerAI-old", "my-hackerai"]);
     expect(names("xyz")).toEqual([]);
   });
 
