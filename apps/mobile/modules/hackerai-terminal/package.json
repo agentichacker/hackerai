@@ -1,0 +1,17 @@
+{
+  "name": "@hackerai/mobile-terminal-native",
+  "version": "0.0.0",
+  "private": true,
+  "expo-module": {
+    "ios": {
+      "modules": [
+        "HackerAITerminalModule"
+      ]
+    },
+    "android": {
+      "modules": [
+        "expo.modules.hackeraiTerminal.HackerAITerminalModule"
+      ]
+    }
+  }
+}

@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--hackerai-font-sans);
+  --font-mono: var(--hackerai-font-mono);
+  --color-background: var(--hackerai-background);
+  --color-foreground: var(--hackerai-foreground);
+  --color-popover: var(--hackerai-popover);
+  --color-popover-foreground: var(--hackerai-popover-foreground);
+  --color-primary: var(--hackerai-primary);
+  --color-primary-foreground: var(--hackerai-primary-foreground);
+  --color-muted: var(--hackerai-muted);
+  --color-muted-foreground: var(--hackerai-muted-foreground);
+  --color-accent: var(--hackerai-accent);
+  --color-accent-foreground: var(--hackerai-accent-foreground);
+  --color-border: var(--hackerai-border);
+  --color-input: var(--hackerai-input);
+  --color-ring: var(--hackerai-ring);
+  --radius-sm: calc(var(--hackerai-radius) - 4px);
+  --radius-md: calc(var(--hackerai-radius) - 2px);
+  --radius-lg: var(--hackerai-radius);
+  --radius-xl: calc(var(--hackerai-radius) + 4px);
+  --radius-2xl: calc(var(--hackerai-radius) + 8px);
+}
+
+:host {
+  --hackerai-font-sans:
+    "DM Sans Variable", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+    sans-serif;
+  --hackerai-font-mono:
+    "SF Mono", "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  --hackerai-radius: 0.625rem;
+  --hackerai-background: white;
+  --hackerai-foreground: oklch(0.269 0 0);
+  --hackerai-popover: white;
+  --hackerai-popover-foreground: oklch(0.269 0 0);
+  --hackerai-primary: oklch(0.488 0.217 264);
+  --hackerai-primary-foreground: white;
+  --hackerai-destructive: oklch(0.577 0.245 27.325);
+  --hackerai-muted: rgb(0 0 0 / 4%);
+  --hackerai-muted-foreground: oklch(0.556 0 0);
+  --hackerai-accent: rgb(0 0 0 / 4%);
+  --hackerai-accent-foreground: oklch(0.269 0 0);
+  --hackerai-border: rgb(0 0 0 / 8%);
+  --hackerai-input: rgb(0 0 0 / 10%);
+  --hackerai-ring: oklch(0.488 0.217 264);
+  color: var(--hackerai-foreground);
+  font-family: var(--hackerai-font-sans);
+}
+
+* {
+  box-sizing: border-box;
+  border-color: var(--hackerai-border);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--hackerai-ring) 72%, transparent);
+  outline-offset: -2px;
+}
+
+/* Utility display classes must not override the native hidden state. */
+[hidden] {
+  display: none !important;
+}

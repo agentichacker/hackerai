@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["HackerAIComposerEditorModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.hackeraiComposereditor.HackerAIComposerEditorModule"]
+  }
+}

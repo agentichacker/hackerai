@@ -1,0 +1,24 @@
+{
+  "name": "@hackerai/source-control-definitions",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./registry": {
+      "types": "./src/registry.ts",
+      "import": "./src/registry.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "effect-tsgo tsrs --noEmit"
+  },
+  "dependencies": {
+    "@hackerai/source-control-azure-devops": "workspace:*",
+    "@hackerai/source-control-bitbucket": "workspace:*",
+    "@hackerai/source-control-core": "workspace:*",
+    "@hackerai/source-control-cursor-origin": "workspace:*",
+    "@hackerai/source-control-forgejo": "workspace:*",
+    "@hackerai/source-control-gitcafe": "workspace:*",
+    "@hackerai/source-control-github": "workspace:*",
+    "@hackerai/source-control-gitlab": "workspace:*"
+  }
+}

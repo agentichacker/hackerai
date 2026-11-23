@@ -1,0 +1,17 @@
+{
+  "name": "@hackerai/mobile-review-diff-native",
+  "version": "0.0.0",
+  "private": true,
+  "expo-module": {
+    "ios": {
+      "modules": [
+        "HackerAIReviewDiffModule"
+      ]
+    },
+    "android": {
+      "modules": [
+        "expo.modules.hackeraiReviewdiff.HackerAIReviewDiffModule"
+      ]
+    }
+  }
+}

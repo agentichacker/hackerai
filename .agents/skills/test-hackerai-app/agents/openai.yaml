@@ -1,0 +1,4 @@
+interface:
+  display_name: "HackerAI App Testing"
+  short_description: "Test web and desktop in HackerAI's Browser panel"
+  default_prompt: "Use $test-hackerai-app to verify the affected web or desktop flow through HackerAI's Browser panel."

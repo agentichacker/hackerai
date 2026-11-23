@@ -1,0 +1,10 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["HackerAITerminalModule"],
+    "podspecPath": "HackerAITerminalNative.podspec"
+  },
+  "android": {
+    "modules": ["expo.modules.hackeraiTerminal.HackerAITerminalModule"]
+  }
+}

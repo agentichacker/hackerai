@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "ARK85ZXQ4Z.com.hackerai.hackerai",
+          "ARK85ZXQ4Z.com.hackerai.hackerai.preview",
+          "ARK85ZXQ4Z.com.hackerai.hackerai.dev"
+        ],
+        "components": [{ "/": "/threads/*" }]
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://nitro.margelo.com/nitro.schema.json",
+  "cxxNamespace": ["hackeraiHighlights"],
+  "ios": {
+    "iosModuleName": "HackerAIHighlightsNative"
+  },
+  "android": {
+    "androidNamespace": ["hackeraiHighlights"],
+    "androidCxxLibName": "hackeraiHighlights"
+  },
+  "autolinking": {
+    "HackerAIHighlights": {
+      "all": {
+        "language": "c++",
+        "implementationClassName": "HybridHackerAIHighlights"
+      }
+    }
+  },
+  "ignorePaths": ["node_modules", "Vendor"]
+}

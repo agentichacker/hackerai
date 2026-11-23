@@ -1,0 +1,206 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { breadcrumbJsonLd, faqJsonLd, softwareJsonLd } from "../lib/seo";
+import { messagesFor } from "../i18n";
+import { DEFAULT_LOCALE } from "../i18n/locales";
+
+const t = messagesFor(DEFAULT_LOCALE);
+
+const faqs = [
+  {
+    question: "What is HackerAI?",
+    answer:
+      "HackerAI is a free, open-source control plane for coding agents. It runs the agents already installed and signed in on your machine, including Claude Code, Codex, Cursor, OpenCode, Grok Build, Antigravity, and other ACP-compatible tools, from one fast desktop and web interface.",
+  },
+  {
+    question: "Is HackerAI free?",
+    answer:
+      "Yes. HackerAI is MIT licensed and free to download, self-host, and modify. You bring your own subscription or API key for the agent you use; HackerAI does not resell tokens or add a markup.",
+  },
+  {
+    question: "Which coding agents does HackerAI support?",
+    answer:
+      "Claude Code, Codex, Cursor, OpenCode, Grok Build, Antigravity, Kiro, Pi, Muse Code, fx, and any agent that implements the Agent Client Protocol (ACP). If an agent is installed and authenticated on the machine running HackerAI, HackerAI can usually drive it.",
+  },
+  {
+    question: "Do I need my own Claude or Codex subscription?",
+    answer:
+      "You need whatever the underlying agent requires. Claude Code needs a Claude subscription or API access, and Codex needs a Codex login or OpenAI API key. HackerAI uses the credentials already on your machine and never asks you to paste them into a website.",
+  },
+  {
+    question: "Does my code go to HackerAI?",
+    answer:
+      "No. HackerAI does not train on your prompts or code. Content goes from your machine to the provider you chose: Anthropic, OpenAI, Google, xAI, or another endpoint. With HackerAI Connect, traffic rides a Cloudflare tunnel on your machine; HackerAI's relay only sets up the link and does not proxy your sessions. Product telemetry can be disabled with HACKERAI_TELEMETRY_ENABLED=false.",
+  },
+  {
+    question: "Does HackerAI work on macOS, Windows, and Linux?",
+    answer:
+      "Yes. HackerAI ships desktop builds for macOS (Apple Silicon and Intel), Windows 10 and 11, and Linux (.deb and AppImage), plus a CLI and a browser client. You can run the server on one machine and connect from another.",
+  },
+  {
+    question: "Can I use HackerAI remotely?",
+    answer:
+      "Yes. Run hackerai up on the machine that hosts your agents, then connect from a laptop, phone, or browser. HackerAI Connect, Tailscale, and LAN pairing are supported, and the agents keep running on the host machine.",
+  },
+  {
+    question: "Is HackerAI open source?",
+    answer:
+      "Yes. The entire source is MIT licensed. You can inspect it, self-host it, restyle the UI, add an agent, or ship your own build.",
+  },
+  {
+    question: "How is HackerAI different from Claude Code or the Codex app?",
+    answer:
+      "HackerAI is not a harness. It is the control plane that runs the harnesses you already use, puts their threads in one interface, and adds worktrees, diff review, one-click commits and pull requests, and remote access. Switching agents does not change your workflow.",
+  },
+  {
+    question: "Does HackerAI support local models?",
+    answer:
+      "HackerAI is designed around production coding agents such as Claude Code, Codex, and Cursor. Locally run models are not currently a supported target.",
+  },
+];
+---
+
+<Layout
+  title="HackerAI FAQ: supported agents, pricing, platforms, and privacy"
+  description="Answers about HackerAI: supported coding agents, subscriptions, pricing, macOS and Windows support, remote access, privacy, and the MIT license."
+  jsonLd={[
+    softwareJsonLd(t.layout.defaultDescription),
+    faqJsonLd(faqs),
+    breadcrumbJsonLd([
+      { name: "HackerAI", path: "/" },
+      { name: "FAQ", path: "/faq" },
+    ]),
+  ]}
+>
+  <article class="faq-page container">
+    <header class="faq-head">
+      <p class="eyebrow">FAQ</p>
+      <h1 class="display">Questions, answered.</h1>
+      <p class="faq-lede">
+        Everything you need to know before you install HackerAI: the agents it runs, what it costs,
+        where it works, and where your code goes.
+      </p>
+    </header>
+
+    <div class="faq-list">
+      {
+        faqs.map((item) => (
+          <section class="faq-item">
+            <h2>{item.question}</h2>
+            <p>{item.answer}</p>
+          </section>
+        ))
+      }
+    </div>
+
+    <aside class="faq-cta">
+      <div>
+        <h2>Ready to try it?</h2>
+        <p>Install HackerAI, connect the agent you already pay for, and keep your workflow.</p>
+      </div>
+      <div class="faq-cta-actions">
+        <a class="btn btn-primary" href="/download">Download HackerAI</a>
+        <a class="btn btn-ghost" href="/">Back to home</a>
+      </div>
+    </aside>
+  </article>
+</Layout>
+
+<style>
+  .faq-page {
+    max-width: 900px;
+    padding-top: 64px;
+    padding-bottom: 96px;
+  }
+
+  .faq-head {
+    max-width: 720px;
+    margin-bottom: 56px;
+  }
+
+  .faq-head h1 {
+    font-size: clamp(40px, 6vw, 64px);
+    margin: 16px 0 20px;
+  }
+
+  .faq-lede {
+    color: var(--fg-muted);
+    font-size: 18px;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--border);
+  }
+
+  .faq-item {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+    gap: 32px;
+  }
+
+  .faq-item h2 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+  }
+
+  .faq-item p {
+    color: var(--fg-muted);
+    font-size: 15.5px;
+    line-height: 1.7;
+    letter-spacing: -0.003em;
+  }
+
+  .faq-cta {
+    margin-top: 56px;
+    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .faq-cta h2 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 6px;
+  }
+
+  .faq-cta p {
+    color: var(--fg-muted);
+    font-size: 15px;
+  }
+
+  .faq-cta-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 720px) {
+    .faq-page {
+      padding-top: 40px;
+      padding-bottom: 64px;
+    }
+
+    .faq-item {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 24px 0;
+    }
+
+    .faq-cta {
+      padding: 24px;
+    }
+  }
+</style>

@@ -1,0 +1,10 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["HackerAIReviewDiffModule"],
+    "podspecPath": "HackerAIReviewDiffNative.podspec"
+  },
+  "android": {
+    "modules": ["expo.modules.hackeraiReviewdiff.HackerAIReviewDiffModule"]
+  }
+}

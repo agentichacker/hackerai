@@ -1,0 +1,9 @@
+{
+  "name": "@hackerai/mobile-highlights-native",
+  "version": "0.0.0",
+  "private": true,
+  "types": "./src/HackerAIHighlights.nitro.ts",
+  "peerDependencies": {
+    "react-native-nitro-modules": "*"
+  }
+}

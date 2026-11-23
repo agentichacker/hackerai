@@ -1,0 +1,20 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["HackerAINativeControlsModule", "HackerAIKeyboardCommandsModule"],
+    "appDelegateSubscribers": [
+      "HackerAIWorkspaceOrientationSubscriber",
+      "HackerAIMenuDismissTouchGateSubscriber",
+      "HackerAIBackgroundGraceSubscriber"
+    ]
+  },
+  "android": {
+    "modules": [
+      "expo.modules.hackeraiNativecontrols.HackerAINativeControlsModule",
+      "expo.modules.hackeraiNativecontrols.HackerAIWorkspaceNavigationModule",
+      "expo.modules.hackeraiNativecontrols.HackerAIKeyboardCommandsModule",
+      "expo.modules.hackeraiNativecontrols.HackerAIFoldPostureModule",
+      "expo.modules.hackeraiNativecontrols.HackerAISecretInputModule"
+    ]
+  }
+}

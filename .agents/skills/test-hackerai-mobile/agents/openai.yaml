@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test HackerAI Mobile"
+  short_description: "Test iOS and Android in HackerAI's Device panel"
+  default_prompt: "Use $test-hackerai-mobile to verify the affected native mobile flow through HackerAI's Device panel and AgentDevice."
