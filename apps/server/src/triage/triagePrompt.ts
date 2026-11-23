@@ -5,7 +5,7 @@ import { cliReleaseRepository } from "@hackerai/shared/cliRelease";
 
 const configuredRepository = cliReleaseRepository(process.env);
 /** The source repository this build points users at, when one is configured. */
-export const TRIAGE_REPOSITORY = configuredRepository ?? "your-org/hackerai";
+const TRIAGE_REPOSITORY = configuredRepository ?? "your-org/hackerai";
 export const TRIAGE_REPOSITORY_URL = `https://github.com/${TRIAGE_REPOSITORY}`;
 
 // The canonical playbook carries the placeholder so it stays byte-identical to the

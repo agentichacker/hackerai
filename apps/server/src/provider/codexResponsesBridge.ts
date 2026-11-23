@@ -76,9 +76,6 @@ export function withCodexResponsesBridgeLaunchArgs(
   return launchArgs.trim().length > 0 ? `${launchArgs} ${bridgeArgs}` : bridgeArgs;
 }
 
-/** The non-empty credential Codex and Claude Code need even when HackerAI accepts no key. */
-export const HACKERAI_KEYLESS_CREDENTIAL = "hackerai-keyless";
-
 interface SseEvent {
   readonly type: string;
   readonly sequence_number: number;

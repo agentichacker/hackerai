@@ -54,7 +54,7 @@ export const makeClaudeEnvironment = Effect.fn("makeClaudeEnvironment")(function
  * file's `env` beat the process env, so these have to travel in the SDK settings object, where
  * flag settings outrank every settings file.
  */
-export const CLAUDE_PINNED_ENVIRONMENT_VARIABLES = [
+const CLAUDE_PINNED_ENVIRONMENT_VARIABLES = [
   "ANTHROPIC_BASE_URL",
   "ANTHROPIC_AUTH_TOKEN",
   "ANTHROPIC_API_KEY",

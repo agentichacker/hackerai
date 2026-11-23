@@ -51,9 +51,6 @@ export const API_KEY_PROVIDERS: Readonly<Record<ApiKeyProviderId, ApiKeyProvider
   },
 };
 
-export const isApiKeyProviderId = (value: string): value is ApiKeyProviderId =>
-  (API_KEY_PROVIDER_IDS as ReadonlyArray<string>).includes(value);
-
 /** The text generator a checked key is saved as. It shares ids with provider instances. */
 export function apiKeyTextGeneratorId(provider: ApiKeyProviderId): ProviderInstanceId {
   return ProviderInstanceId.make(`${provider}-api`);
@@ -63,7 +60,7 @@ export const CODEX_DRIVER = ProviderDriverKind.make("codex");
 export const CLAUDE_DRIVER = ProviderDriverKind.make("claudeAgent");
 
 /** The agents whose CLI reads a base URL and key from its environment. */
-export const API_KEY_TOOL_DRIVERS: ReadonlyArray<{
+const API_KEY_TOOL_DRIVERS: ReadonlyArray<{
   readonly driver: ProviderDriverKind;
   readonly label: string;
 }> = [

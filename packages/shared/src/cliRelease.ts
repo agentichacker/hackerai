@@ -73,10 +73,6 @@ export function cliArchiveFileName(version: string, platformKey: CliArchivePlatf
   return `hackerai-${version}-${platformKey}.${platformKey.startsWith("win32") ? "zip" : "tar.gz"}`;
 }
 
-export function cliReleaseDownloadBaseUrl(version: string, baseUrl: string): string {
-  return `${baseUrl.replace(/\/+$/, "")}/v${version}`;
-}
-
 /** `segments` added to `baseUrl`'s path, keeping its query, such as a signed mirror URL's token. */
 export function releaseAssetUrl(baseUrl: string, ...segments: ReadonlyArray<string>): string {
   const url = new URL(baseUrl);
