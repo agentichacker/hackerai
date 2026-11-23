@@ -224,7 +224,7 @@ describe("hosted thread links", () => {
     expect(link).toBe("https://hackerai.sh/threads/env%2E1/thread%3Adelegated%2Fmcp%253A1%2E");
     expect(parseThreadLinkHref(link)).toEqual(thread);
     expect(hostedThreadLink(thread, "https://preview.hackerai.sh/")).toMatch(
-      /^https:\/\/preview\.hackerai\.codes\/threads\//,
+      /^https:\/\/preview\.hackerai\.sh\/threads\//,
     );
   });
 

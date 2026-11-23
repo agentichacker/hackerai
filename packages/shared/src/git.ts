@@ -16,7 +16,7 @@ const TEMP_WORKTREE_HEX_TOKEN = "[0-9a-f]{8}";
 const TEMP_WORKTREE_UUID_V4_TOKEN =
   "[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 const TEMP_WORKTREE_BRANCH_PATTERN = new RegExp(
-  `^(?:${WORKTREE_BRANCH_PREFIX}[-/]${TEMP_WORKTREE_HEX_TOKEN}|hackerai(?:[-/]${TEMP_WORKTREE_HEX_TOKEN}|\\/${TEMP_WORKTREE_UUID_V4_TOKEN}))$`,
+  `^(?:${WORKTREE_BRANCH_PREFIX}[-/]${TEMP_WORKTREE_HEX_TOKEN}|hackerai-code(?:[-/]${TEMP_WORKTREE_HEX_TOKEN}|\\/${TEMP_WORKTREE_UUID_V4_TOKEN}))$`,
 );
 
 export function sanitizeBranchFragment(raw: string): string {
@@ -113,8 +113,7 @@ export function buildTemporaryWorktreeBranchName(
 /** Flatten temporary hackerai/<hex> refs because an existing hackerai branch blocks nested refs. */
 export function flattenTemporaryWorktreeBranchName(refName: string): string {
   const normalized = refName.trim().toLowerCase();
-  const tokenStart = normalized.search(/[-/]/) + 1;
-  const token = normalized.slice(tokenStart, tokenStart + 8);
+  const token = normalized.replace(/^hackerai(?:-code)?[/-]/, "").slice(0, 8);
   return `${WORKTREE_BRANCH_PREFIX}-${token}`;
 }
 

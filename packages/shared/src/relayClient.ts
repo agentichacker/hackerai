@@ -536,17 +536,20 @@ export const makeCloudflaredRelayClient = Effect.fn("cloudflared.make")(function
     );
     yield* fileSystem.writeFileString(path.join(candidate, owner), "");
     for (let attempt = 0; attempt < INSTALL_LOCK_RETRY_COUNT; attempt += 1) {
-      const acquired = yield* Effect.acquireRelease(
-        // Publish a populated directory atomically, with no ownerless acquisition window.
-        fileSystem.rename(candidate, lockPath),
-        () => releaseOwnedLock(lockPath, owner),
-      ).pipe(
-        Effect.as(true),
-        Effect.catchIf(isLockContention, () => Effect.succeed(false)),
-      );
-      if (acquired) return;
-
-      const lockInfo = yield* fileSystem.stat(lockPath).pipe(Effect.option);
+      // Windows renames replace an existing file, which would discard a legacy lock.
+      let lockInfo = yield* fileSystem.stat(lockPath).pipe(Effect.option);
+      if (Option.isNone(lockInfo) || lockInfo.value.type === "Directory") {
+        const acquired = yield* Effect.acquireRelease(
+          // Publish a populated directory atomically, with no ownerless acquisition window.
+          fileSystem.rename(candidate, lockPath),
+          () => releaseOwnedLock(lockPath, owner),
+        ).pipe(
+          Effect.as(true),
+          Effect.catchIf(isLockContention, () => Effect.succeed(false)),
+        );
+        if (acquired) return;
+        lockInfo = yield* fileSystem.stat(lockPath).pipe(Effect.option);
+      }
       if (Option.isNone(lockInfo)) continue;
       if (lockInfo.value.type === "Directory") {
         const owners = yield* fileSystem

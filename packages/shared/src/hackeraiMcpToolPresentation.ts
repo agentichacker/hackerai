@@ -526,7 +526,7 @@ function parseHackerAIMcpToolName(value: string): string | null {
   }
 
   const namespaceMatch =
-    /^(?<server>hackerai[-_]code[-_]direct|hackerai-code|hackerai_code|hackerai)(?:[.:/]|\s*·\s*)(?<tool>.+)$/i.exec(
+    /^(?<server>hackerai[-_]code[-_]direct|hackerai-code|hackerai_code|hackerai)(?:[.:/]|\s*·\s*|\s+)(?<tool>.+)$/i.exec(
       label,
     );
   if (namespaceMatch?.groups) {

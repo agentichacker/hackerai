@@ -241,18 +241,24 @@ describe("isTemporaryWorktreeBranch", () => {
     );
   });
 
-  it("matches legacy hackerai temporary worktree refs", () => {
-    expect(isTemporaryWorktreeBranch("hackerai/deadbeef")).toBe(true);
-    expect(isTemporaryWorktreeBranch("hackerai-deadbeef")).toBe(true);
-    expect(isTemporaryWorktreeBranch("hackerai/f4ae4e0e-f971-4d48-b4f2-9cf0aa54ab12")).toBe(true);
+  it("matches legacy hackerai-code temporary worktree refs", () => {
+    expect(isTemporaryWorktreeBranch("hackerai-code/deadbeef")).toBe(true);
+    expect(isTemporaryWorktreeBranch("hackerai-code-deadbeef")).toBe(true);
+    expect(isTemporaryWorktreeBranch("hackerai-code/f4ae4e0e-f971-4d48-b4f2-9cf0aa54ab12")).toBe(
+      true,
+    );
     expect(
       isTemporaryWorktreeBranch(`${WORKTREE_BRANCH_PREFIX}/f4ae4e0e-f971-4d48-b4f2-9cf0aa54ab12`),
     ).toBe(false);
   });
 
   it("rejects UUID-shaped refs that are not RFC 4122 v4", () => {
-    expect(isTemporaryWorktreeBranch("hackerai/f4ae4e0e-f971-1d48-b4f2-9cf0aa54ab12")).toBe(false);
-    expect(isTemporaryWorktreeBranch("hackerai/f4ae4e0e-f971-4d48-c4f2-9cf0aa54ab12")).toBe(false);
+    expect(isTemporaryWorktreeBranch("hackerai-code/f4ae4e0e-f971-1d48-b4f2-9cf0aa54ab12")).toBe(
+      false,
+    );
+    expect(isTemporaryWorktreeBranch("hackerai-code/f4ae4e0e-f971-4d48-c4f2-9cf0aa54ab12")).toBe(
+      false,
+    );
   });
 
   it("matches the flat fallback used when a plain hackerai branch exists", () => {
@@ -262,9 +268,9 @@ describe("isTemporaryWorktreeBranch", () => {
     expect(isTemporaryWorktreeBranch(`${WORKTREE_BRANCH_PREFIX}-deadbeef-extra`)).toBe(false);
     expect(isTemporaryWorktreeBranch(`${WORKTREE_BRANCH_PREFIX}-feature`)).toBe(false);
     expect(
-      flattenTemporaryWorktreeBranchName("hackerai/f4ae4e0e-f971-4d48-b4f2-9cf0aa54ab12"),
+      flattenTemporaryWorktreeBranchName("hackerai-code/f4ae4e0e-f971-4d48-b4f2-9cf0aa54ab12"),
     ).toBe(`${WORKTREE_BRANCH_PREFIX}-f4ae4e0e`);
-    expect(flattenTemporaryWorktreeBranchName("hackerai-deadbeef")).toBe(
+    expect(flattenTemporaryWorktreeBranchName("hackerai-code-deadbeef")).toBe(
       `${WORKTREE_BRANCH_PREFIX}-deadbeef`,
     );
     expect(flattenTemporaryWorktreeBranchName("hackerai/deadbeef")).toBe(

@@ -165,12 +165,15 @@ describe("RelayClient", () => {
       const manager = yield* RelayClient.makeCloudflaredRelayClient({ baseDir }).pipe(
         Effect.provideService(FileSystem.FileSystem, {
           ...fileSystem,
-          rename: (from, to) =>
+          // A legacy file lock is detected before any rename, which Windows would replace.
+          stat: (path) =>
             fileSystem
-              .rename(from, to)
+              .stat(path)
               .pipe(
-                Effect.tapError(() =>
-                  to === lockPath ? Deferred.succeed(contended, undefined) : Effect.void,
+                Effect.tap((info) =>
+                  path === lockPath && info.type === "File"
+                    ? Deferred.succeed(contended, undefined)
+                    : Effect.void,
                 ),
               ),
         }),
@@ -284,46 +287,49 @@ describe("RelayClient", () => {
     }).pipe(Effect.scoped, Effect.provide(layerInstallRuntime("linux"))),
   );
 
-  it.effect("keeps a replacement lock when a stale contender resumes cleanup", () =>
-    Effect.gen(function* () {
-      const fileSystem = yield* FileSystem.FileSystem;
-      const baseDir = yield* fileSystem.makeTempDirectoryScoped({
-        prefix: "hackerai-cloudflared-test-",
-      });
-      const lockPath = `${baseDir}/tools/cloudflared/${RelayClient.CLOUDFLARED_VERSION}/linux-x64/cloudflared.lock`;
-      const abandoned = "2147483647-exited-installer";
-      const replacement = `${process.pid}-replacement`;
-      yield* fileSystem.makeDirectory(lockPath, { recursive: true });
-      yield* fileSystem.writeFileString(`${lockPath}/${abandoned}`, "");
-      const checked = yield* Deferred.make<void>();
-      let replaced = false;
-      const manager = yield* RelayClient.makeCloudflaredRelayClient({ baseDir }).pipe(
-        Effect.provideService(FileSystem.FileSystem, {
-          ...fileSystem,
-          readDirectory: (path) =>
-            fileSystem.readDirectory(path).pipe(
-              Effect.tap((entries) =>
-                Effect.gen(function* () {
-                  if (path !== lockPath) return;
-                  if (replaced) {
-                    expect(entries).toEqual([replacement]);
-                    yield* Deferred.succeed(checked, undefined);
-                    return;
-                  }
-                  replaced = true;
-                  yield* fileSystem.rename(lockPath, `${lockPath}.old`);
-                  yield* fileSystem.makeDirectory(lockPath);
-                  yield* fileSystem.writeFileString(`${lockPath}/${replacement}`, "");
-                }),
+  // Windows cannot probe a synthetic PID, nor rename a lock directory another handle holds.
+  it.effect.skipIf(windowsHost)(
+    "keeps a replacement lock when a stale contender resumes cleanup",
+    () =>
+      Effect.gen(function* () {
+        const fileSystem = yield* FileSystem.FileSystem;
+        const baseDir = yield* fileSystem.makeTempDirectoryScoped({
+          prefix: "hackerai-cloudflared-test-",
+        });
+        const lockPath = `${baseDir}/tools/cloudflared/${RelayClient.CLOUDFLARED_VERSION}/linux-x64/cloudflared.lock`;
+        const abandoned = "2147483647-exited-installer";
+        const replacement = `${process.pid}-replacement`;
+        yield* fileSystem.makeDirectory(lockPath, { recursive: true });
+        yield* fileSystem.writeFileString(`${lockPath}/${abandoned}`, "");
+        const checked = yield* Deferred.make<void>();
+        let replaced = false;
+        const manager = yield* RelayClient.makeCloudflaredRelayClient({ baseDir }).pipe(
+          Effect.provideService(FileSystem.FileSystem, {
+            ...fileSystem,
+            readDirectory: (path) =>
+              fileSystem.readDirectory(path).pipe(
+                Effect.tap((entries) =>
+                  Effect.gen(function* () {
+                    if (path !== lockPath) return;
+                    if (replaced) {
+                      expect(entries).toEqual([replacement]);
+                      yield* Deferred.succeed(checked, undefined);
+                      return;
+                    }
+                    replaced = true;
+                    yield* fileSystem.rename(lockPath, `${lockPath}.old`);
+                    yield* fileSystem.makeDirectory(lockPath);
+                    yield* fileSystem.writeFileString(`${lockPath}/${replacement}`, "");
+                  }),
+                ),
               ),
-            ),
-        }),
-      );
-      const installing = yield* manager.install.pipe(Effect.forkChild);
-      yield* Deferred.await(checked);
-      yield* Fiber.interrupt(installing);
-      expect(yield* fileSystem.readDirectory(lockPath)).toEqual([replacement]);
-    }).pipe(Effect.scoped, Effect.provide(layerInstallRuntime("linux"))),
+          }),
+        );
+        const installing = yield* manager.install.pipe(Effect.forkChild);
+        yield* Deferred.await(checked);
+        yield* Fiber.interrupt(installing);
+        expect(yield* fileSystem.readDirectory(lockPath)).toEqual([replacement]);
+      }).pipe(Effect.scoped, Effect.provide(layerInstallRuntime("linux"))),
   );
 
   it.effect("releases the install lock when a download is cancelled", () =>

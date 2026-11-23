@@ -207,12 +207,14 @@ const describe = (error) => ({
   errstr: error && error.errstr,
 });
 let db;
+let opened;
 try {
   // A read-only open cannot be undone by SQL, unlike PRAGMA query_only.
   const next = new DatabaseSync(workerData.filename, {
     readOnly: workerData.readOnly,
     allowExtension: workerData.allowExtension,
   });
+  opened = next;
   next.exec("PRAGMA busy_timeout = 5000;");
   // Reads the header, so a file that is not a database fails here rather than on first use.
   const mode = String(next.prepare("PRAGMA journal_mode").get().journal_mode).toLowerCase();
@@ -223,6 +225,8 @@ try {
   db = next;
   parentPort.postMessage({ type: "ready" });
 } catch (error) {
+  // A rejected open still holds the file handle on Windows until it is closed.
+  try { opened?.close(); } catch {}
   parentPort.postMessage({ type: "unavailable", ...describe(error) });
 }
 const statements = new Map();

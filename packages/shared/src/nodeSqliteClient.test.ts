@@ -23,6 +23,7 @@ import type * as Tracer from "effect/Tracer";
 import { vi } from "vite-plus/test";
 
 import * as SqliteClient from "./nodeSqliteClient.ts";
+import * as HostProcess from "./HostProcess.ts";
 
 const startedWorkers = vi.hoisted((): Array<NodeWorkerThreads.Worker> => []);
 const workerExits = vi.hoisted(() => new WeakMap<NodeWorkerThreads.Worker, Promise<void>>());
@@ -645,39 +646,42 @@ const withFileClient = <A, E>(
     }).pipe(Effect.provide(SqliteClient.layer({ filename, readerWorker: true })));
   }).pipe(Effect.scoped, Effect.provide(NodeServices.layer));
 
-it.effect("uses the writer when the reader cannot open the database", () =>
-  withFileClient((sql, filename) =>
-    Effect.gen(function* () {
-      yield* sql`PRAGMA journal_mode = WAL`;
-      yield* sql`CREATE TABLE entries(name TEXT NOT NULL)`;
-      yield* sql`INSERT INTO entries VALUES ('kept')`;
-      yield* (yield* FileSystem.FileSystem).remove(filename);
-      const startedBefore = startedWorkers.length;
+// Windows cannot unlink the database while the reader still holds it open.
+it.effect.skipIf(HostProcess.Platform.defaultValue() === "win32")(
+  "uses the writer when the reader cannot open the database",
+  () =>
+    withFileClient((sql, filename) =>
+      Effect.gen(function* () {
+        yield* sql`PRAGMA journal_mode = WAL`;
+        yield* sql`CREATE TABLE entries(name TEXT NOT NULL)`;
+        yield* sql`INSERT INTO entries VALUES ('kept')`;
+        yield* (yield* FileSystem.FileSystem).remove(filename);
+        const startedBefore = startedWorkers.length;
 
-      assert.equal(yield* sql.withTransaction(countEntries(sql)).pipe(SqliteClient.readOnly), 1);
-      assert.equal(yield* sql.withTransaction(countEntries(sql)).pipe(SqliteClient.readOnly), 1);
+        assert.equal(yield* sql.withTransaction(countEntries(sql)).pipe(SqliteClient.readOnly), 1);
+        assert.equal(yield* sql.withTransaction(countEntries(sql)).pipe(SqliteClient.readOnly), 1);
 
-      // A read beside an open read transaction must not start a worker on the next slot.
-      const held = yield* Deferred.make<void>();
-      const release = yield* Deferred.make<void>();
-      const holder = yield* sql
-        .withTransaction(
-          countEntries(sql).pipe(
-            Effect.andThen(Deferred.succeed(held, undefined)),
-            Effect.andThen(Deferred.await(release)),
-          ),
-        )
-        .pipe(SqliteClient.readOnly, Effect.forkChild);
-      yield* Deferred.await(held);
-      const other = yield* countEntries(sql).pipe(SqliteClient.readOnly, (effect) =>
-        Effect.forkChild(effect, { startImmediately: true }),
-      );
-      yield* Deferred.succeed(release, undefined);
-      yield* Fiber.join(holder);
-      assert.equal(yield* Fiber.join(other), 1);
-      assert.equal(startedWorkers.length, startedBefore + 1);
-    }),
-  ),
+        // A read beside an open read transaction must not start a worker on the next slot.
+        const held = yield* Deferred.make<void>();
+        const release = yield* Deferred.make<void>();
+        const holder = yield* sql
+          .withTransaction(
+            countEntries(sql).pipe(
+              Effect.andThen(Deferred.succeed(held, undefined)),
+              Effect.andThen(Deferred.await(release)),
+            ),
+          )
+          .pipe(SqliteClient.readOnly, Effect.forkChild);
+        yield* Deferred.await(held);
+        const other = yield* countEntries(sql).pipe(SqliteClient.readOnly, (effect) =>
+          Effect.forkChild(effect, { startImmediately: true }),
+        );
+        yield* Deferred.succeed(release, undefined);
+        yield* Fiber.join(holder);
+        assert.equal(yield* Fiber.join(other), 1);
+        assert.equal(startedWorkers.length, startedBefore + 1);
+      }),
+    ),
 );
 
 const withLogLines = <A, E, R>(

@@ -253,8 +253,8 @@ describe("scoreThreadSearch", () => {
       [],
     );
     // Words with digits still forgive one.
-    expect(rankTitles("hackeraicoed", [thread("hackerai perf audit"), thread("Other")])).toEqual([
-      "hackerai perf audit",
+    expect(rankTitles("hackerai3", [thread("hackerai2 perf audit"), thread("Other")])).toEqual([
+      "hackerai2 perf audit",
     ]);
     expect(rankTitles("oath2", [thread("Fix oauth2 redirect")])).toEqual(["Fix oauth2 redirect"]);
     // A typo beats a mid-word accident: "ilde" is "idle", not the middle of "Builder".
@@ -381,8 +381,8 @@ describe("scoreThreadSearch beyond Latin text and titles", () => {
     // Short words before a mere prefix are a coincidence.
     expect(rankTitles("inth", [thread("Show skill names in thread overview")])).toEqual([]);
     expect(rankTitles("tos", [thread("Move Client State to Server")])).toEqual([]);
-    expect(rankTitles("hackeraico", [thread("HackerAI vs Gemini")])).toEqual([
-      "HackerAI vs Gemini",
+    expect(rankTitles("hackeraiconn", [thread("HackerAI Connect vs Gemini")])).toEqual([
+      "HackerAI Connect vs Gemini",
     ]);
     expect(rankTitles('"sidebar lag"', [thread("Fix sidebar lag")])).toEqual(["Fix sidebar lag"]);
     // A pasted query with a separate accent mark matches the composed title.
