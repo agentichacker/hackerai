@@ -272,17 +272,11 @@ const installFromArchive = Effect.fn("cloud.pinned_runtime.install_archive")(fun
     });
   }
   const httpClient = input.httpClient;
-  const releaseBaseUrl = input.releaseBaseUrl?.trim();
-  if (releaseBaseUrl === undefined || releaseBaseUrl === "") {
-    return yield* new PinnedRuntimeInstallError({
-      step: "locating the HackerAI release source (set HACKERAI_RELEASE_REPOSITORY or HACKERAI_RELEASE_BASE_URL)",
-    });
-  }
   input.onProgress?.({ stage: "download", received: 0, total: undefined });
   const { fileName, expected } = yield* publishedArchive(input, platformKey);
   const archive = yield* fetchReleaseAsset(
     httpClient,
-    cliReleaseAssetUrl(input.version, fileName, releaseBaseUrl),
+    cliReleaseAssetUrl(input.version, fileName, input.releaseBaseUrl),
     "downloading the HackerAI release archive",
     true,
     input.onProgress,
@@ -338,18 +332,12 @@ const publishedArchive = Effect.fn("cloud.pinned_runtime.published_archive")(fun
   input: PinnedRuntimeInstallInput,
   platformKey: CliArchivePlatformKey,
 ) {
-  const releaseBaseUrl = input.releaseBaseUrl?.trim();
-  if (releaseBaseUrl === undefined || releaseBaseUrl === "") {
-    return yield* new PinnedRuntimeInstallError({
-      step: "locating the HackerAI release source (set HACKERAI_RELEASE_REPOSITORY or HACKERAI_RELEASE_BASE_URL)",
-    });
-  }
   const fileName = cliArchiveFileName(input.version, platformKey);
   const checksums = parseChecksums(
     new TextDecoder().decode(
       yield* fetchReleaseAsset(
         input.httpClient,
-        cliReleaseAssetUrl(input.version, CLI_RELEASE_CHECKSUMS_FILE, releaseBaseUrl),
+        cliReleaseAssetUrl(input.version, CLI_RELEASE_CHECKSUMS_FILE, input.releaseBaseUrl),
         "downloading the HackerAI release checksums",
         false,
       ),

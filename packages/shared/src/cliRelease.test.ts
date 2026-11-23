@@ -47,8 +47,8 @@ describe("cliRelease", () => {
     expect(newestCliReleaseVersion([{ tag_name: "v1.2.3" }], "preview")).toBeUndefined();
   });
 
-  it("resolves the configured release source and fails closed without one", () => {
-    expect(cliReleaseRepository({})).toBeUndefined();
+  it("resolves the configured release source and falls back to this fork's releases", () => {
+    expect(cliReleaseRepository({})).toBe("agentichacker/hackerai");
     expect(cliReleaseRepository({ HACKERAI_RELEASE_REPOSITORY: "../evil" })).toBeUndefined();
     expect(cliReleaseRepository({ HACKERAI_RELEASE_REPOSITORY: "owner/repo" })).toBe("owner/repo");
     expect(cliReleaseRepository({ HACKERAI_REPOSITORY: "owner/source" })).toBe("owner/source");
@@ -58,7 +58,9 @@ describe("cliRelease", () => {
         HACKERAI_REPOSITORY: "owner/source",
       }),
     ).toBe("owner/releases");
-    expect(cliReleaseBaseUrl({})).toBeUndefined();
+    expect(cliReleaseBaseUrl({})).toBe(
+      "https://github.com/agentichacker/hackerai/releases/download",
+    );
     expect(cliReleaseBaseUrl({ HACKERAI_RELEASE_REPOSITORY: "owner/repo" })).toBe(
       "https://github.com/owner/repo/releases/download",
     );

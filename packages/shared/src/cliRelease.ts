@@ -7,15 +7,20 @@ export const CLI_RELEASE_CHECKSUMS_FILE = "SHA256SUMS";
 export const CLI_RELEASE_BASE_URL_ENV = "HACKERAI_RELEASE_BASE_URL";
 // The fork's release repository. Set it to the GitHub owner/repo that publishes this build.
 export const CLI_RELEASE_REPOSITORY_ENV = "HACKERAI_RELEASE_REPOSITORY";
+// Builds that do not configure a release source download this fork's published releases.
+const CLI_RELEASE_DEFAULT_REPOSITORY = "agentichacker/hackerai";
+const CLI_RELEASE_DEFAULT_BASE_URL = `https://github.com/${CLI_RELEASE_DEFAULT_REPOSITORY}/releases/download`;
 
 export type CliReleaseEnvironment = Readonly<Record<string, string | undefined>>;
 
-/** The configured GitHub owner/repo, or undefined when the build has no release source. */
+/** The configured GitHub owner/repo, or undefined when an explicit setting is invalid. */
 export function cliReleaseRepository(env: CliReleaseEnvironment): string | undefined {
   // A self-hosted fork may publish releases from its source repository, so accept
   // the general repository setting when no dedicated release repository is set.
-  const repository = env[CLI_RELEASE_REPOSITORY_ENV]?.trim() || env["HACKERAI_REPOSITORY"]?.trim();
-  const match = repository === undefined ? null : /^([\w.-]+)\/([\w.-]+)$/.exec(repository);
+  const configured = env[CLI_RELEASE_REPOSITORY_ENV]?.trim() || env["HACKERAI_REPOSITORY"]?.trim();
+  const repository =
+    configured === undefined || configured === "" ? CLI_RELEASE_DEFAULT_REPOSITORY : configured;
+  const match = /^([\w.-]+)\/([\w.-]+)$/.exec(repository);
   if (match === null) return undefined;
   const [, owner, name] = match;
   // "." and ".." pass the character class but do not name a GitHub repository.
@@ -78,8 +83,12 @@ export function releaseAssetUrl(baseUrl: string, ...segments: ReadonlyArray<stri
 }
 
 /** A file of release `version`, from `baseUrl` laid out as GitHub's release downloads. */
-export function cliReleaseAssetUrl(version: string, fileName: string, baseUrl: string): string {
-  return releaseAssetUrl(baseUrl, `v${version}`, fileName);
+export function cliReleaseAssetUrl(
+  version: string,
+  fileName: string,
+  baseUrl: string | undefined = CLI_RELEASE_DEFAULT_BASE_URL,
+): string {
+  return releaseAssetUrl(baseUrl?.trim() || CLI_RELEASE_DEFAULT_BASE_URL, `v${version}`, fileName);
 }
 
 export function parseChecksums(text: string): ReadonlyMap<string, string> {
